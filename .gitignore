@@ -1,6 +1,7 @@
 ## Preventing GitHub from viewing data
 
 data/
+.DS_Store
 
 # History files
 .Rhistory
