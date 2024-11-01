@@ -1,0 +1,31 @@
+---
+title: "yes_data_cleaning"
+author: "Mallory Dobias"
+date: "2024-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Packages
+
+```{r}
+
+library(here)
+
+```
+
+
+## R Reading in the Data
+
+```{r reading in data}
+
+raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_October 31, 2024_14.42.csv"))
+
+head(raw_data)
+
+```
+
+
