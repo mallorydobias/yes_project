@@ -45,17 +45,34 @@ head(raw_data)
 ## Removing first two rows with Qualtrics metadata
 
 data_sliced <- raw_data %>%
-                dplyr::slice(-1,-2)
+  dplyr::slice(-1,-2)
 
 # head(data_sliced) # looks good
 
-## checking Qualtrics metadata rows were removed
+## checking Qualtrics metadata rows are removed
 
 search_for_string <- "Date" # creating string to search for
 
 data_sliced %>%
   filter(stringr::str_detect(StartDate, search_for_string)) %>%
   nrow() == 0 # true if "Date" metadata rows are no longer in this column of data frame
+
+```
+
+```{r creating tidy names}
+
+## Cleaning var names
+
+data_named <- data_sliced %>%
+  janitor::clean_names()
+
+## checking var names are now tidy
+
+test_var_names <- tibble(col_names = names(data_named)) # creates data frame of names
+
+test_var_names %>%
+  filter(stringr::str_detect(col_names, "[A-Z]")) %>%
+  nrow() == 0 # true if zero col names contain capital letters
 
 ```
 
