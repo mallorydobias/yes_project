@@ -13,19 +13,49 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 
-library(here) # places working directory at root of project folder
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(janitor)){install.packages('janitor')}
+library(janitor)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
 
 ```
 
-
-## R Reading in the Data
+# Data Reading
 
 ```{r reading in data}
 
-raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_October 31, 2024_14.42.csv"))
+## Reading in NU English survey data
+
+library(here) # places working directory at root of project folder
+
+raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_October 31, 2024_14.42.csv")) # directing to data from project folder root
 
 head(raw_data)
 
 ```
 
+# Data Cleaning
+
+```{r removing first two Qualtrics metadata rows}
+
+## Removing first two rows with Qualtrics metadata
+
+data_sliced <- raw_data %>%
+                dplyr::slice(-1,-2)
+
+# head(data_sliced) # looks good
+
+## checking Qualtrics metadata rows were removed
+
+search_for_string <- "Date" # creating string to search for
+
+data_sliced %>%
+  filter(stringr::str_detect(StartDate, search_for_string)) %>%
+  nrow() == 0 # true if "Date" metadata rows are no longer in this column of data frame
+
+```
 
