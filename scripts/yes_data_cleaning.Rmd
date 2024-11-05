@@ -22,6 +22,9 @@ library(janitor)
 if(!require(dplyr)){install.packages('dplyr')}
 library(dplyr)
 
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
 ```
 
 # Data Reading
@@ -39,6 +42,8 @@ head(raw_data)
 ```
 
 # Data Cleaning
+
+## Cleaning Var Names
 
 ```{r removing first two Qualtrics metadata rows}
 
@@ -66,6 +71,8 @@ data_sliced %>%
 data_named <- data_sliced %>%
   janitor::clean_names()
 
+head(data_named)
+
 ## checking var names are now tidy
 
 test_var_names <- tibble(col_names = names(data_named)) # creates data frame of names
@@ -73,6 +80,31 @@ test_var_names <- tibble(col_names = names(data_named)) # creates data frame of 
 test_var_names %>%
   filter(stringr::str_detect(col_names, "[A-Z]")) %>%
   nrow() == 0 # true if zero col names contain capital letters
+
+```
+
+```{r}
+
+## Naming RISE vars
+
+# first insert an underscore, then replace q with rise var name label
+
+data_rise_named <- data_named %>%
+  rename_with(~str_replace(., "^q([0-9]+)", "q_\\1"), starts_with("q")) %>%
+  rename_with(~ str_replace(., "^q_", "proj_rise_q_"), starts_with("q_"))
+
+## checking rise vars are named correctly
+
+test_rise_pre <- data_named %>%
+  select(starts_with("q"), -questionnaires, -contains("text")) %>%
+  rename_with(~ str_extract(., "\\d+")) # extract digits from rise var names pre cleaning
+
+test_rise_post <- data_rise_named %>%
+  select(starts_with("proj_rise_"), -contains("commit"), -contains("text")) %>%
+  rename_with(~ str_extract(., "\\d+")) # extract digits from rise var names post cleaning
+
+identical(test_rise_pre, test_rise_post) # true if renamed columns (except text cols) are identical to original cols
+
 
 ```
 
