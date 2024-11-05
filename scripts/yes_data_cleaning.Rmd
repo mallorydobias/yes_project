@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 
-library(here)
+library(here) # places working directory at root of project folder
 
 ```
 
