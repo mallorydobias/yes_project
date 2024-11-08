@@ -83,7 +83,7 @@ test_var_names %>%
 
 ```
 
-```{r}
+```{r naming rise vars}
 
 ## Naming RISE vars
 
@@ -104,6 +104,11 @@ test_rise_post <- data_rise_named %>%
   rename_with(~ str_extract(., "\\d+")) # extract digits from rise var names post cleaning
 
 identical(test_rise_pre, test_rise_post) # true if renamed columns (except text cols) are identical to original cols
+
+```
+
+```{r}
+
 
 
 ```
