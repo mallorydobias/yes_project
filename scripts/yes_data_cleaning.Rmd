@@ -1,17 +1,37 @@
 ---
 title: "yes_data_cleaning"
 author: "Mallory Dobias"
-date: "2024-11-01"
-output: html_document
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
 ---
 
 ```{r setup, include=FALSE}
+
+## Setting up R
+
 knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
 ```
 
-# Packages
-
-```{r}
+```{r, include=FALSE}
 
 if(!require(here)){install.packages('here')}
 library(here)
@@ -40,7 +60,7 @@ library(here) # places working directory at root of project folder
 
 raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_October 31, 2024_14.42.csv")) # directing to data from project folder root
 
-head(raw_data)
+# head(raw_data)
 
 ```
 
@@ -74,7 +94,7 @@ data_sliced %>%
 data_named <- data_sliced %>%
   janitor::clean_names()
 
-head(data_named)
+# head(data_named)
 
 ## checking var names are now tidy
 
@@ -112,7 +132,7 @@ identical(test_rise_pre, test_rise_post) # true if renamed columns (except text 
 
 ```
 
-```{r checking rise var naming with pointblank, validate = TRUE}
+```{r checking rise var naming with pointblank, results='asis'}
 
 ## checking rise vars are named correctly
 
@@ -120,22 +140,30 @@ library(pointblank)
 
 test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating a df for validation
 
-test_rise_naming <- create_agent(
-                        tbl = test_rise_naming_df,
-                        actions = warn_on_fail()) %>%
-                    col_vals_equal(vars(test_rise_pre), vars(test_rise_post)) %>%
-                    interrogate()
-
-print(test_rise_naming)
+# test_rise_naming <- create_agent(
+#                         tbl = test_rise_naming_df,
+#                         actions = warn_on_fail()) %>%
+#                     col_vals_equal(vars(test_rise_pre), vars(test_rise_post)) %>%
+#                     interrogate()
+# 
+# print(test_rise_naming)
 
 ```
 
-```{r, validate = TRUE}
+```{r validate = TRUE, include = TRUE}
 
 test_rise_naming_df %>%
-  pointblank::col_vals_equal(vars(test_rise_pre), vars(test_rise_post), actions = warn_on_fail())
+  col_vals_equal(vars(test_rise_pre), vars(test_rise_post), actions = warn_on_fail())
 
 ```
+
+```{r validate = TRUE}
+
+test_rise_naming_df %>%
+  pointblank::test_col_vals_equal(vars(test_rise_pre), vars(test_rise_post))
+
+```
+
 
 
 ## Calculating Composites
@@ -146,10 +174,10 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-vars_mfq <- data_rise_named %>%
-  select(contains("mfq")) %>%
-  head() %>%
-  print()
+# vars_mfq <- data_rise_named %>%
+#   select(contains("mfq")) %>%
+#   head() %>%
+#   print()
 
 ```
 
@@ -213,10 +241,10 @@ Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pr
 
 ## Pulling mfq variables
 
-vars_bhs <- data_mfq_scored %>%
-  select(contains("bhs")) %>%
-  head() %>%
-  print()
+# vars_bhs <- data_mfq_scored %>%
+#   select(contains("bhs")) %>%
+#   head() %>%
+#   print()
 
 ```
 
