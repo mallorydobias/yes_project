@@ -77,15 +77,39 @@ data_sliced <- raw_data %>%
 
 # head(data_sliced) # looks good
 
+```
+
+Removing Qualtrics metadata rows
+
+```{r checking metadata removal setup, include = FALSE}
+
 ## checking Qualtrics metadata rows are removed
 
-search_for_string <- "Date" # creating string to search for
+# pulling row 3 of raw data to compare to row 1 of sliced data
 
-data_sliced %>%
-  filter(stringr::str_detect(StartDate, search_for_string)) %>%
-  nrow() == 0 # true if "Date" metadata rows are no longer in this column of data frame
+test_sliced_pre <- raw_data %>%
+  dplyr::slice(3) # pulling pre-removal row 3 for comparison
+
+test_sliced_post <- data_sliced %>%
+  dplyr::slice(1) # pulling post-removal row 1 for comparison
+
+# combining into one dataframe
+
+test_sliced <- rbind(test_sliced_pre, test_sliced_post)
 
 ```
+
+Checking metadata rows removed correctly
+
+```{r checking metadata removal, validate = TRUE}
+
+test_sliced %>%
+  pointblank::col_vals_equal(vars(ResponseId), 
+                             vars(ResponseId)) # passes if third row response is now first row
+
+```
+
+Converting to tidy var names
 
 ```{r creating tidy names}
 
@@ -106,6 +130,8 @@ test_var_names %>%
 
 ```
 
+Renaming unlabeled project rise vars
+
 ```{r naming rise vars}
 
 ## Naming RISE vars
@@ -118,9 +144,7 @@ data_rise_named <- data_named %>%
 
 ```
 
-Checking columns renamed correctly
-
-```{r checking rise var naming, validate = TRUE}
+```{r checking rise var naming setup, include = FALSE}
 
 ## checking rise vars are named correctly
 
@@ -136,12 +160,15 @@ test_rise_post <- data_rise_named %>%
 
 test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating df for validation
 
-# running pointblank code
+```
+
+Checking columns renamed correctly
+
+```{r checking var naming, validate = TRUE}
 
 test_rise_naming_df %>%
-  pointblank::test_col_vals_equal(vars(test_rise_pre), 
-                                  vars(test_rise_post), 
-                                  threshold = 1) # true if renamed columns (except text cols) are identical to original cols
+  pointblank::col_vals_equal(vars(test_rise_pre), 
+                             vars(test_rise_post)) # passes if renamed columns are identical to original cols
 
 ```
 
@@ -159,6 +186,8 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 #   print()
 
 ```
+
+Mutating mfq character values to numeric values
 
 ```{r mutating mfq values}
 
