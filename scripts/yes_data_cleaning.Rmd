@@ -87,7 +87,7 @@ test_var_names %>%
 
 ## Naming RISE vars
 
-# first insert an underscore, then replace q with rise var name label
+# first insert an underscore, then replace q vars with rise var name labels
 
 data_rise_named <- data_named %>%
   rename_with(~str_replace(., "^q([0-9]+)", "q_\\1"), starts_with("q")) %>%
@@ -109,7 +109,7 @@ identical(test_rise_pre, test_rise_post) # true if renamed columns (except text 
 
 ## Calculating Composites
 
-Calculating depressive symptoms (only measured pre-SSI). Scores can range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
+Calculating depressive symptoms (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
 ```{r pulling mfq values}
 
@@ -117,16 +117,17 @@ Calculating depressive symptoms (only measured pre-SSI). Scores can range from 0
 
 vars_mfq <- data_rise_named %>%
   select(contains("mfq")) %>%
+  head() %>%
   print()
 
 ```
 
-```{r calculating mfq scores}
+```{r mutating mfq values}
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_scored <- data_rise_named %>%
-  mutate(across(starts_with("mfq_"), 
+data_mfq_mutated <- data_rise_named %>%
+  mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
                     . == "Sometimes" ~ 1,
@@ -143,7 +144,7 @@ test_mfq_pre <- data_rise_named %>%
 
 test_mfq_pre
 
-test_mfq_post <- data_mfq_scored %>%
+test_mfq_post <- data_mfq_mutated %>%
   mutate(across(starts_with("mfq_"), 
                 ~ factor(., levels = unique(.)))) %>% # converting to factor class so we can count
   group_by(mfq_1) %>%
@@ -152,7 +153,26 @@ test_mfq_post <- data_mfq_scored %>%
 
 test_mfq_post
 
-identical(test_mfq_pre$count, test_mfq_post$count) # true if responses match from pre to post mutation
+identical(test_mfq_pre$count, test_mfq_post$count) # true if response counts match from pre to post mutation
+
+```
+
+```{r calculating mfq scores}
+
+## Calculating composite mfq scores
+
+data_mfq_scored <- data_mfq_mutated %>%
+  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim"))))
+
+## checking composite calculation was correct
+
+test_mfq_calc <- data_mfq_scored %>%
+  select(response_id, starts_with("mfq_") & -contains("tim")) %>%
+  mutate(manual_mfq_total = mfq_1 + mfq_2 + mfq_3 + mfq_4 + mfq_5 +
+                            mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
+                            mfq_11 + mfq_12 + mfq_13) # manually calculating mfq total
+
+identical(test_mfq_calc$mfq_total, test_mfq_calc$manual_mfq_total) # true if mfq totals are consistent across sum method
 
 ```
 
