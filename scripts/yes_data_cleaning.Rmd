@@ -175,8 +175,6 @@ data_mfq_mutated <- data_rise_named %>%
 
 ```
 
-Checking proper mfq mutation
-
 ```{r checking mfq mutation setup, include=FALSE}
 
 ## checking mutation happened correctly - setting up for pointblank tests
@@ -205,6 +203,8 @@ test_mfq_mutate <- cbind(test_mfq_pre, test_mfq_post)
 
 ```
 
+Checking mfq variables are now numeric class
+
 ```{r mfq numeric class validation, validate=TRUE}
 
 data_mfq_mutated %>%
@@ -212,24 +212,17 @@ data_mfq_mutated %>%
 
 ```
 
+Checking mfq response counts are identical from pre to post mutation
+
 ```{r mfq response counts validation, validate = TRUE}
 
 test_mfq_mutate %>%
   pointblank::col_vals_equal(vars(count_pre), 
-                                  vars(count_post)) # true if response counts are identical pre to post mutation
+                             vars(count_post)) # true if response counts are identical pre to post mutation
 
 ```
 
-This should fail
-
-```{r test chunk, validate = TRUE}
-
-data_mfq_mutated %>%
-  pointblank::col_is_character(vars(mfq_1)) 
-
-```
-
-
+Calculating mfq composite scores
 
 ```{r calculating mfq scores}
 
@@ -238,21 +231,37 @@ data_mfq_mutated %>%
 data_mfq_scored <- data_mfq_mutated %>%
   mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim"))))
 
+```
+
+```{r checking mfq score setup, include = FALSE}
+
 ## checking composite calculation was correct
+
+# manually calculating mfq totals to compare sum methods
 
 test_mfq_calc <- data_mfq_scored %>%
   select(response_id, starts_with("mfq_") & -contains("tim")) %>%
   mutate(manual_mfq_total = mfq_1 + mfq_2 + mfq_3 + mfq_4 + mfq_5 +
                             mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
-                            mfq_11 + mfq_12 + mfq_13) # manually calculating mfq total
+                            mfq_11 + mfq_12 + mfq_13) %>%
+  select(mfq_total, manual_mfq_total)
 
-identical(test_mfq_calc$mfq_total, test_mfq_calc$manual_mfq_total) # true if mfq totals are identical across sum method
+```
+
+Checking mfq totals are identical across sum methods
+
+```{r mfq scoring validation, validate = TRUE}
+
+test_mfq_calc %>%
+  pointblank::col_vals_equal(vars(mfq_total), 
+                             vars(manual_mfq_total), 
+                             na_pass = TRUE) # true if mfq totals are identical across sum methods
 
 ```
 
 Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Scores range from x to x, where 0 = not true, 1 = sometimes, 2 = true. Source: xxx
 
-```{r pulling bhs values}
+```{r pulling bhs values, include=FALSE}
 
 ## Pulling mfq variables
 
