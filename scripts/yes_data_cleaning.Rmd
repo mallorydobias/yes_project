@@ -100,15 +100,43 @@ data_rise_named <- data_named %>%
 
 test_rise_pre <- data_named %>%
   select(starts_with("q"), -questionnaires, -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) # extract digits from rise var names pre cleaning
+  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names pre cleaning
+  colnames()
 
 test_rise_post <- data_rise_named %>%
   select(starts_with("proj_rise_"), -contains("commit"), -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) # extract digits from rise var names post cleaning
+  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names post cleaning
+  colnames()
 
 identical(test_rise_pre, test_rise_post) # true if renamed columns (except text cols) are identical to original cols
 
 ```
+
+```{r checking rise var naming with pointblank, validate = TRUE}
+
+## checking rise vars are named correctly
+
+library(pointblank)
+
+test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating a df for validation
+
+test_rise_naming <- create_agent(
+                        tbl = test_rise_naming_df,
+                        actions = warn_on_fail()) %>%
+                    col_vals_equal(vars(test_rise_pre), vars(test_rise_post)) %>%
+                    interrogate()
+
+print(test_rise_naming)
+
+```
+
+```{r, validate = TRUE}
+
+test_rise_naming_df %>%
+  pointblank::col_vals_equal(vars(test_rise_pre), vars(test_rise_post), actions = warn_on_fail())
+
+```
+
 
 ## Calculating Composites
 
@@ -181,7 +209,7 @@ identical(test_mfq_calc$mfq_total, test_mfq_calc$manual_mfq_total) # true if mfq
 
 Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Scores range from x to x, where 0 = not true, 1 = sometimes, 2 = true. Source: xxx
 
-```{r pulling mfq values}
+```{r pulling bhs values}
 
 ## Pulling mfq variables
 
