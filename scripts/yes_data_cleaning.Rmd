@@ -25,6 +25,9 @@ library(dplyr)
 if(!require(stringr)){install.packages('stringr')}
 library(stringr)
 
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank)
+
 ```
 
 # Data Reading
@@ -109,7 +112,7 @@ identical(test_rise_pre, test_rise_post) # true if renamed columns (except text 
 
 ## Calculating Composites
 
-Calculating depressive symptoms (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
+Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
 ```{r pulling mfq values}
 
@@ -172,7 +175,20 @@ test_mfq_calc <- data_mfq_scored %>%
                             mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
                             mfq_11 + mfq_12 + mfq_13) # manually calculating mfq total
 
-identical(test_mfq_calc$mfq_total, test_mfq_calc$manual_mfq_total) # true if mfq totals are consistent across sum method
+identical(test_mfq_calc$mfq_total, test_mfq_calc$manual_mfq_total) # true if mfq totals are identical across sum method
+
+```
+
+Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Scores range from x to x, where 0 = not true, 1 = sometimes, 2 = true. Source: xxx
+
+```{r pulling mfq values}
+
+## Pulling mfq variables
+
+vars_bhs <- data_mfq_scored %>%
+  select(contains("bhs")) %>%
+  head() %>%
+  print()
 
 ```
 
