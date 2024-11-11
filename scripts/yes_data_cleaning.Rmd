@@ -107,9 +107,52 @@ identical(test_rise_pre, test_rise_post) # true if renamed columns (except text 
 
 ```
 
-```{r}
+## Calculating Composites
 
+Calculating depressive symptoms (only measured pre-SSI). Scores can range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
+```{r pulling mfq values}
+
+## Pulling mfq variables
+
+vars_mfq <- data_rise_named %>%
+  select(contains("mfq")) %>%
+  print()
+
+```
+
+```{r calculating mfq scores}
+
+## Mutating character values to numeric across multiple mfq columns 
+
+data_mfq_scored <- data_rise_named %>%
+  mutate(across(starts_with("mfq_"), 
+                ~ case_when(
+                    . == "Not True" ~ 0,
+                    . == "Sometimes" ~ 1,
+                    . == "True" ~ 2,
+                    TRUE ~ NA_real_ # Handle other cases with NA
+                )))
+
+## checking mutation happened correctly
+
+test_mfq_pre <- data_rise_named %>%
+  group_by(mfq_1) %>%
+  summarize(count = n()) %>% # counting responses pre-mutation
+  arrange(desc(count)) # arranged in descending count order
+
+test_mfq_pre
+
+test_mfq_post <- data_mfq_scored %>%
+  mutate(across(starts_with("mfq_"), 
+                ~ factor(., levels = unique(.)))) %>% # converting to factor class so we can count
+  group_by(mfq_1) %>%
+  summarize(count = n()) %>% # counting responses post-mutation
+  arrange(desc(count)) # arranged in descending count order
+
+test_mfq_post
+
+identical(test_mfq_pre$count, test_mfq_post$count) # true if responses match from pre to post mutation
 
 ```
 
