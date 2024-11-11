@@ -116,61 +116,40 @@ data_rise_named <- data_named %>%
   rename_with(~str_replace(., "^q([0-9]+)", "q_\\1"), starts_with("q")) %>%
   rename_with(~ str_replace(., "^q_", "proj_rise_q_"), starts_with("q_"))
 
+```
+
+Checking columns renamed correctly
+
+```{r checking rise var naming, validate = TRUE}
+
 ## checking rise vars are named correctly
 
 test_rise_pre <- data_named %>%
   select(starts_with("q"), -questionnaires, -contains("text")) %>%
   rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names pre cleaning
-  colnames()
+  colnames() # create df of pre-named var names for comparison
 
 test_rise_post <- data_rise_named %>%
   select(starts_with("proj_rise_"), -contains("commit"), -contains("text")) %>%
   rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names post cleaning
-  colnames()
+  colnames() # create df of post-named var names for comparison
 
-identical(test_rise_pre, test_rise_post) # true if renamed columns (except text cols) are identical to original cols
+test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating df for validation
 
-```
-
-```{r checking rise var naming with pointblank, results='asis'}
-
-## checking rise vars are named correctly
-
-library(pointblank)
-
-test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating a df for validation
-
-# test_rise_naming <- create_agent(
-#                         tbl = test_rise_naming_df,
-#                         actions = warn_on_fail()) %>%
-#                     col_vals_equal(vars(test_rise_pre), vars(test_rise_post)) %>%
-#                     interrogate()
-# 
-# print(test_rise_naming)
-
-```
-
-```{r validate = TRUE, include = TRUE}
+# running pointblank code
 
 test_rise_naming_df %>%
-  col_vals_equal(vars(test_rise_pre), vars(test_rise_post), actions = warn_on_fail())
+  pointblank::test_col_vals_equal(vars(test_rise_pre), 
+                                  vars(test_rise_post), 
+                                  threshold = 1) # true if renamed columns (except text cols) are identical to original cols
 
 ```
-
-```{r validate = TRUE}
-
-test_rise_naming_df %>%
-  pointblank::test_col_vals_equal(vars(test_rise_pre), vars(test_rise_post))
-
-```
-
-
 
 ## Calculating Composites
 
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
-```{r pulling mfq values}
+```{r pulling mfq values, include=FALSE}
 
 ## Pulling mfq variables
 
@@ -194,27 +173,63 @@ data_mfq_mutated <- data_rise_named %>%
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
 
-## checking mutation happened correctly
+```
+
+Checking proper mfq mutation
+
+```{r checking mfq mutation setup, include=FALSE}
+
+## checking mutation happened correctly - setting up for pointblank tests
+
+# creating df of count for each response, pre mutation
 
 test_mfq_pre <- data_rise_named %>%
-  group_by(mfq_1) %>%
+  group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
-  arrange(desc(count)) # arranged in descending count order
+  arrange(desc(count)) %>% # arranged in descending count order
+  rename(mfq_1_pre = mfq_1, count_pre = count) # renaming before combining to one df
 
-test_mfq_pre
+# creating df of count for each response, post mutation
 
 test_mfq_post <- data_mfq_mutated %>%
   mutate(across(starts_with("mfq_"), 
                 ~ factor(., levels = unique(.)))) %>% # converting to factor class so we can count
-  group_by(mfq_1) %>%
+  group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses post-mutation
-  arrange(desc(count)) # arranged in descending count order
+  arrange(desc(count)) %>% # arranged in descending count order
+  rename(mfq_1_post = mfq_1, count_post = count) # renaming before combining to one df
 
-test_mfq_post
+# creating overall df for comparison
 
-identical(test_mfq_pre$count, test_mfq_post$count) # true if response counts match from pre to post mutation
+test_mfq_mutate <- cbind(test_mfq_pre, test_mfq_post)
 
 ```
+
+```{r mfq numeric class validation, validate=TRUE}
+
+data_mfq_mutated %>%
+  pointblank::col_is_numeric(vars(mfq_1)) # true if mfq vars are now numeric
+
+```
+
+```{r mfq response counts validation, validate = TRUE}
+
+test_mfq_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                                  vars(count_post)) # true if response counts are identical pre to post mutation
+
+```
+
+This should fail
+
+```{r test chunk, validate = TRUE}
+
+data_mfq_mutated %>%
+  pointblank::col_is_character(vars(mfq_1)) 
+
+```
+
+
 
 ```{r calculating mfq scores}
 
