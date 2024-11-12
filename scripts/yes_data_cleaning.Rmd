@@ -530,15 +530,44 @@ Mutating shs character values to numeric values
 data_shs_mutated <- data_bhs_scored %>%
   mutate(across(contains("shs_") & -contains("tim"), 
                 ~ case_when(
-                    . == "Definitely false" ~ 1,
-                    . == "Mostly false" ~ 2,
-                    . == "Somewhat false" ~ 3,
-                    . == "Slightly false" ~ 4,
-                    . == "Slightly true" ~ 5,
-                    . == "Somewhat true" ~ 6,
-                    . == "Mostly true" ~ 7,
-                    . == "Definitely true" ~ 8,
+                    . == "Definitely False" ~ 1,
+                    . == "Mostly False" ~ 2,
+                    . == "Somewhat False" ~ 3,
+                    . == "Slightly False" ~ 4,
+                    . == "Slightly True" ~ 5,
+                    . == "Somewhat True" ~ 6,
+                    . == "Mostly True" ~ 7,
+                    . == "Definitely True" ~ 8,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
+ 
+```
+
+Checking shs variables are now numeric class
+
+```{r shs numeric class validation, validate=TRUE}
+
+data_shs_mutated %>%
+  pointblank::col_is_numeric(vars(pre_shs_1)) # passes if vars are now numeric
+
+```
+
+```{r using function to setup shs mutation check, include=FALSE}
+
+# `data_bhs_scored` is the pre-mutation dataframe
+# and `data_shs_mutated` is the post-mutation dataframe,
+# and we want to compare the value counts of "pre_shs_1":
+
+test_mutate <- prep_mutation_check(data_bhs_scored, data_shs_mutated, "pre_shs_1")
+
+```
+
+Checking shs response counts are identical from pre to post mutation
+
+```{r shs response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
