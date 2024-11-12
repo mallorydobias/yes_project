@@ -571,3 +571,61 @@ test_mutate %>%
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
+Calculating shs row means
+
+```{r calculating shs scores}
+
+## Calculating composite scores
+
+data_shs_scored <- data_shs_mutated %>%
+  mutate(pre_shs_mean = rowMeans(across(starts_with("pre_shs_") & -contains("tim")), na.rm = TRUE),
+         post_shs_mean = rowMeans(across(starts_with("post_shs_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(across(contains("shs_"), ~ case_when(
+                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                  TRUE ~ .))) # Keep other values unchanged
+
+```
+
+```{r checking shs score setup, include = FALSE}
+
+## checking composite calculation was correct
+
+# manually calculating pre totals to compare sum methods
+
+test_pre_shs_calc <- data_shs_scored %>%
+  select(response_id, starts_with("pre_shs_") & -contains("tim")) %>%
+  mutate(pre_manual_mean = rowMeans(select(., pre_shs_1, pre_shs_2, pre_shs_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(pre_shs_mean, pre_manual_mean)
+
+# manually calculating post totals to compare sum methods
+
+test_post_shs_calc <- data_shs_scored %>%
+  select(response_id, starts_with("post_shs_") & -contains("tim")) %>%
+  mutate(post_manual_mean = rowMeans(select(., post_shs_1, post_shs_2, post_shs_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(post_shs_mean, post_manual_mean)
+
+```
+
+Checking pre and post shs totals are identical across sum methods
+
+```{r pre shs scoring validation, validate = TRUE}
+
+test_pre_shs_calc %>%
+  pointblank::col_vals_equal(vars(pre_shs_mean), 
+                             vars(pre_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+```{r post shs scoring validation, validate = TRUE}
+
+test_post_shs_calc %>%
+  pointblank::col_vals_equal(vars(post_shs_mean), 
+                             vars(post_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
