@@ -369,6 +369,8 @@ data_bhs_mutated <- data_mfq_scored %>%
 
 ```
 
+Checking bhs variables are now numeric class
+
 ```{r bhs numeric class validation, validate=TRUE}
 
 data_bhs_mutated %>%
@@ -380,7 +382,7 @@ data_bhs_mutated %>%
 
 # `data_mfq_scored` is the pre-mutation dataframe
 # and `data_bhs_mutated` is the post-mutation dataframe,
-# and you want to compare the value counts of "pre_bhs_1":
+# and we want to compare the value counts of "pre_bhs_1":
 
 test_mutate <- prep_mutation_check(data_mfq_scored, data_bhs_mutated, "pre_bhs_1")
 
