@@ -295,7 +295,7 @@ test_mfq_calc %>%
 
 ```
 
-Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Scores range from x to x, where 0 = not true, 1 = sometimes, 2 = true. Source: xxx
+Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
 
 ```{r pulling bhs values, include=FALSE}
 
@@ -308,3 +308,20 @@ Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pr
 
 ```
 
+Mutating bhs character values to numeric values
+
+```{r mutating bhs values}
+
+## Mutating character values to numeric across multiple bhs columns 
+
+data_bhs_mutated <- data_mfq_scored %>%
+  mutate(across(contains("bhs_") & -contains("tim"), 
+                ~ case_when(
+                    . == "Absolutely disagree" ~ 0,
+                    . == "Somewhat disagree" ~ 1,
+                    . == "Somewhat agree" ~ 2,
+                    . == "Absolutely agree" ~ 3,
+                    TRUE ~ NA_real_ # Handle other cases with NA
+                )))
+
+```
