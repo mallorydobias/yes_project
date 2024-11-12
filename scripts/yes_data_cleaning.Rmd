@@ -68,6 +68,8 @@ raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Op
 
 ## Cleaning Var Names
 
+Removing Qualtrics metadata rows
+
 ```{r removing first two Qualtrics metadata rows}
 
 ## Removing first two rows with Qualtrics metadata
@@ -78,8 +80,6 @@ data_sliced <- raw_data %>%
 # head(data_sliced) # looks good
 
 ```
-
-Removing Qualtrics metadata rows
 
 ```{r checking metadata removal setup, include = FALSE}
 
@@ -119,6 +119,13 @@ data_named <- data_sliced %>%
   janitor::clean_names()
 
 # head(data_named)
+
+
+```
+
+Checking var names are tidy
+
+```{r checking tidy names setup}
 
 ## checking var names are now tidy
 
