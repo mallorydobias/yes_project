@@ -226,6 +226,8 @@ test_rename %>%
 
 ## Calculating Composites
 
+### MFQ
+
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
 ```{r pulling mfq values, include=FALSE}
@@ -383,6 +385,8 @@ test_mfq_calc %>%
 
 ```
 
+### BHS
+
 Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
 
 ```{r pulling bhs values, include=FALSE}
@@ -450,8 +454,11 @@ Calculating bhs composite scores
 ## Calculating composite scores
 
 data_bhs_scored <- data_bhs_mutated %>%
-  mutate(pre_bhs_total = rowSums(across(starts_with("pre_bhs_") & -contains("tim"))),
-         post_bhs_total = rowSums(across(starts_with("post_bhs_") & -contains("tim")))) 
+  mutate(pre_bhs_mean = rowMeans(across(starts_with("pre_bhs_") & -contains("tim")), na.rm = TRUE),
+         post_bhs_mean = rowMeans(across(starts_with("post_bhs_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(across(contains("bhs_"), ~ case_when(
+                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                  TRUE ~ .))) # Keep other values unchanged
 
 ```
 
@@ -463,15 +470,19 @@ data_bhs_scored <- data_bhs_mutated %>%
 
 test_pre_bhs_calc <- data_bhs_scored %>%
   select(response_id, starts_with("pre_bhs_") & -contains("tim")) %>%
-  mutate(pre_manual_total = pre_bhs_1 + pre_bhs_2 + pre_bhs_3 + pre_bhs_4) %>%
-  select(pre_bhs_total, pre_manual_total)
+  mutate(pre_manual_mean = rowMeans(select(., pre_bhs_1, pre_bhs_2, pre_bhs_3, pre_bhs_4), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(pre_bhs_mean, pre_manual_mean)
 
 # manually calculating post totals to compare sum methods
 
 test_post_bhs_calc <- data_bhs_scored %>%
   select(response_id, starts_with("post_bhs_") & -contains("tim")) %>%
-  mutate(post_manual_total = post_bhs_1 + post_bhs_2 + post_bhs_3 + post_bhs_4) %>%
-  select(post_bhs_total, post_manual_total)
+  mutate(post_manual_mean = rowMeans(select(., post_bhs_1, post_bhs_2, post_bhs_3, post_bhs_4), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(post_bhs_mean, post_manual_mean)
 
 ```
 
@@ -480,8 +491,8 @@ Checking pre and post bhs totals are identical across sum methods
 ```{r pre bhs scoring validation, validate = TRUE}
 
 test_pre_bhs_calc %>%
-  pointblank::col_vals_equal(vars(pre_bhs_total), 
-                             vars(pre_manual_total), 
+  pointblank::col_vals_equal(vars(pre_bhs_mean), 
+                             vars(pre_manual_mean), 
                              na_pass = TRUE) # passes if totals are identical across sum methods
 
 ```
@@ -489,9 +500,16 @@ test_pre_bhs_calc %>%
 ```{r post bhs scoring validation, validate = TRUE}
 
 test_post_bhs_calc %>%
-  pointblank::col_vals_equal(vars(post_bhs_total), 
-                             vars(post_manual_total), 
+  pointblank::col_vals_equal(vars(post_bhs_mean), 
+                             vars(post_manual_mean), 
                              na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+```{r}
+
+data_bhs_scored %>%
+  names()
 
 ```
 
