@@ -459,25 +459,39 @@ data_bhs_scored <- data_bhs_mutated %>%
 
 ## checking composite calculation was correct
 
-# manually calculating totals to compare sum methods
+# manually calculating pre totals to compare sum methods
 
-test_mfq_calc <- data_mfq_scored %>%
-  select(response_id, starts_with("mfq_") & -contains("tim")) %>%
-  mutate(manual_mfq_total = mfq_1 + mfq_2 + mfq_3 + mfq_4 + mfq_5 +
-                            mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
-                            mfq_11 + mfq_12 + mfq_13) %>%
-  select(mfq_total, manual_mfq_total)
+test_pre_bhs_calc <- data_bhs_scored %>%
+  select(response_id, starts_with("pre_bhs_") & -contains("tim")) %>%
+  mutate(pre_manual_total = pre_bhs_1 + pre_bhs_2 + pre_bhs_3 + pre_bhs_4) %>%
+  select(pre_bhs_total, pre_manual_total)
+
+# manually calculating post totals to compare sum methods
+
+test_post_bhs_calc <- data_bhs_scored %>%
+  select(response_id, starts_with("post_bhs_") & -contains("tim")) %>%
+  mutate(post_manual_total = post_bhs_1 + post_bhs_2 + post_bhs_3 + post_bhs_4) %>%
+  select(post_bhs_total, post_manual_total)
 
 ```
 
-Checking bhs totals are identical across sum methods
+Checking pre and post bhs totals are identical across sum methods
 
-```{r bhs scoring validation, validate = TRUE}
+```{r pre bhs scoring validation, validate = TRUE}
 
-test_mfq_calc %>%
-  pointblank::col_vals_equal(vars(mfq_total), 
-                             vars(manual_mfq_total), 
-                             na_pass = TRUE) # passes if mfq totals are identical across sum methods
+test_pre_bhs_calc %>%
+  pointblank::col_vals_equal(vars(pre_bhs_total), 
+                             vars(pre_manual_total), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+```{r post bhs scoring validation, validate = TRUE}
+
+test_post_bhs_calc %>%
+  pointblank::col_vals_equal(vars(post_bhs_total), 
+                             vars(post_manual_total), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
 
 ```
 
