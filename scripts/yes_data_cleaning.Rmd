@@ -211,6 +211,15 @@ data_mfq_mutated <- data_rise_named %>%
 
 ```
 
+Checking mfq variables are now numeric class
+
+```{r mfq numeric class validation, validate=TRUE}
+
+data_mfq_mutated %>%
+  pointblank::col_is_numeric(vars(mfq_1)) # true if mfq vars are now numeric
+
+```
+
 ```{r checking mfq mutation setup, include=FALSE}
 
 ## checking mutation happened correctly - setting up for pointblank tests
@@ -239,12 +248,46 @@ test_mfq_mutate <- cbind(test_mfq_pre, test_mfq_post)
 
 ```
 
-Checking mfq variables are now numeric class
+```{r writing a function to setup future mutation checks, include=FALSE}
 
-```{r mfq numeric class validation, validate=TRUE}
+# Custom function to compare value counts before and after mutation
+prep_mutation_check <- function(data_pre, data_post, var) {
+  
+  # Step 1: Create pre-mutation counts
+  test_pre <- data_pre %>%
+    select(var) %>%
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_pre"), everything())  # Rename columns for pre-mutation
+  
+  # Step 2: Create post-mutation counts
+  test_post <- data_post %>%
+    select(var) %>%
+    mutate(across(all_of(var), ~ factor(., levels = unique(.)))) %>%  # Convert to factor
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_post"), everything())  # Rename columns for post-mutation
+  
+  # Step 3: Combine pre and post counts into one dataframe for comparison
+  test_comparison <- bind_cols(test_pre, test_post)
+  
+  return(test_comparison)
+}
 
-data_mfq_mutated %>%
-  pointblank::col_is_numeric(vars(mfq_1)) # true if mfq vars are now numeric
+```
+
+```{r testing function to setup future mutation checks, include=FALSE}
+
+# Example usage:
+# Assuming `data_rise_named` is the pre-mutation dataframe
+# and `data_mfq_mutated` is the post-mutation dataframe,
+# and you want to compare the value counts of "mfq_1":
+
+test_mutate <- prep_mutation_check(data_rise_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
 
 ```
 
@@ -252,7 +295,7 @@ Checking mfq response counts are identical from pre to post mutation
 
 ```{r mfq response counts validation, validate = TRUE}
 
-test_mfq_mutate %>%
+test_mutate %>%
   pointblank::col_vals_equal(vars(count_pre), 
                              vars(count_post)) # true if response counts are identical pre to post mutation
 
@@ -325,3 +368,4 @@ data_bhs_mutated <- data_mfq_scored %>%
                 )))
 
 ```
+
