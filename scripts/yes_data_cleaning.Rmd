@@ -179,7 +179,7 @@ test_rise_naming_df %>%
 
 ```
 
-Changing "pi_" (post-intervention) variable prefix to "post_" prefix, for clarity
+Renaming "pi_" (post-intervention) variable prefixes to "post_" prefixes, for clarity
 
 ```{r renaming pi vars with post label}
 
@@ -226,7 +226,7 @@ test_rename %>%
 
 ## Calculating Composites
 
-### MFQ
+### Depression
 
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
@@ -385,9 +385,9 @@ test_mfq_calc %>%
 
 ```
 
-### BHS
+### Hopelessness
 
-Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
+Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Row mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
 
 ```{r pulling bhs values, include=FALSE}
 
@@ -447,7 +447,7 @@ test_mutate %>%
 
 ```
 
-Calculating bhs composite scores
+Calculating bhs row means
 
 ```{r calculating bhs scores}
 
@@ -506,10 +506,39 @@ test_post_bhs_calc %>%
 
 ```
 
-```{r}
+### Hope (Pathways)
 
-data_bhs_scored %>%
-  names()
+Calculating agency using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 0 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
+
+```{r pulling shs values, include=FALSE}
+
+## Pulling shs variables
+
+# vars_shs <- data_bhs_scored %>%
+#   select(contains("shs")) %>%
+#   head() %>%
+#   print()
 
 ```
 
+Mutating shs character values to numeric values
+
+```{r mutating shs values}
+
+## Mutating character values to numeric across multiple shs columns 
+
+data_shs_mutated <- data_bhs_scored %>%
+  mutate(across(contains("shs_") & -contains("tim"), 
+                ~ case_when(
+                    . == "Definitely false" ~ 1,
+                    . == "Mostly false" ~ 2,
+                    . == "Somewhat false" ~ 3,
+                    . == "Slightly false" ~ 4,
+                    . == "Slightly true" ~ 5,
+                    . == "Somewhat true" ~ 6,
+                    . == "Mostly true" ~ 7,
+                    . == "Definitely true" ~ 8,
+                    TRUE ~ NA_real_ # Handle other cases with NA
+                )))
+
+```
