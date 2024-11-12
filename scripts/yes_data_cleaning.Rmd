@@ -179,6 +179,51 @@ test_rise_naming_df %>%
 
 ```
 
+Changing "pi_" (post-intervention) variable prefix to "post_" prefix, for clarity
+
+```{r renaming pi vars with post label}
+
+## Renaming "pi_" (post-intervention) vars with "post_" prefix for clarity
+
+data_post_named <- data_rise_named %>%
+  rename_with(~ str_replace(., "^pi_", "post_"))
+
+```
+
+```{r checking post var naming setup, include = FALSE}
+
+## checking vars are renamed correctly
+
+# extracting characters following "pre_" in column names before renaming
+
+test_pre_rename <- tibble(var_names = names(data_rise_named)) %>%
+  filter(str_detect(var_names, "^pre_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pre_" prefix
+  mutate(pre_renamed = str_extract(var_names, "(?<=pre_).*")) %>% # extract characters following "pre_"
+  select(-var_names)
+
+# extracting characters following "post_" in column names after renaming
+
+test_post_rename <- tibble(var_names = names(data_post_named)) %>%
+  filter(str_detect(var_names, "^post_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "post_" prefix
+  mutate(post_renamed = str_extract(var_names, "(?<=post_).*")) %>% # extract characters following "post_"
+  select(-var_names)
+
+# combining to one data frame for comparison
+
+test_rename <- cbind(test_pre_rename, test_post_rename)
+
+```
+
+Checking columns renamed correctly
+
+```{r checking post var renaming, validate = TRUE}
+
+test_rename %>%
+  pointblank::col_vals_equal(vars(pre_renamed), 
+                             vars(post_renamed)) # passes if renamed columns are identical to original cols
+
+```
+
 ## Calculating Composites
 
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
@@ -187,7 +232,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_rise_named %>%
+# vars_mfq <- data_post_named %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -200,7 +245,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_rise_named %>%
+data_mfq_mutated <- data_post_named %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -226,7 +271,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_rise_named %>%
+test_mfq_pre <- data_post_named %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -281,11 +326,11 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 ```{r testing function to setup future mutation checks, include=FALSE}
 
 # Example usage:
-# Assuming `data_rise_named` is the pre-mutation dataframe
+# Assuming `data_post_named` is the pre-mutation dataframe
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_rise_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_post_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
@@ -397,3 +442,42 @@ test_mutate %>%
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
+
+Calculating bhs composite scores
+
+```{r calculating bhs scores}
+
+## Calculating composite scores
+
+data_bhs_scored <- data_bhs_mutated %>%
+  mutate(pre_bhs_total = rowSums(across(starts_with("pre_bhs_") & -contains("tim"))),
+         post_bhs_total = rowSums(across(starts_with("post_bhs_") & -contains("tim")))) 
+
+```
+
+```{r checking bhs score setup, include = FALSE}
+
+## checking composite calculation was correct
+
+# manually calculating totals to compare sum methods
+
+test_mfq_calc <- data_mfq_scored %>%
+  select(response_id, starts_with("mfq_") & -contains("tim")) %>%
+  mutate(manual_mfq_total = mfq_1 + mfq_2 + mfq_3 + mfq_4 + mfq_5 +
+                            mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
+                            mfq_11 + mfq_12 + mfq_13) %>%
+  select(mfq_total, manual_mfq_total)
+
+```
+
+Checking bhs totals are identical across sum methods
+
+```{r bhs scoring validation, validate = TRUE}
+
+test_mfq_calc %>%
+  pointblank::col_vals_equal(vars(mfq_total), 
+                             vars(manual_mfq_total), 
+                             na_pass = TRUE) # passes if mfq totals are identical across sum methods
+
+```
+
