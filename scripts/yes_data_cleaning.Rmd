@@ -216,7 +216,7 @@ Checking mfq variables are now numeric class
 ```{r mfq numeric class validation, validate=TRUE}
 
 data_mfq_mutated %>%
-  pointblank::col_is_numeric(vars(mfq_1)) # true if mfq vars are now numeric
+  pointblank::col_is_numeric(vars(mfq_1)) # passes if mfq vars are now numeric
 
 ```
 
@@ -297,7 +297,7 @@ Checking mfq response counts are identical from pre to post mutation
 
 test_mutate %>%
   pointblank::col_vals_equal(vars(count_pre), 
-                             vars(count_post)) # true if response counts are identical pre to post mutation
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
 
@@ -334,7 +334,7 @@ Checking mfq totals are identical across sum methods
 test_mfq_calc %>%
   pointblank::col_vals_equal(vars(mfq_total), 
                              vars(manual_mfq_total), 
-                             na_pass = TRUE) # true if mfq totals are identical across sum methods
+                             na_pass = TRUE) # passes if mfq totals are identical across sum methods
 
 ```
 
@@ -369,3 +369,29 @@ data_bhs_mutated <- data_mfq_scored %>%
 
 ```
 
+```{r bhs numeric class validation, validate=TRUE}
+
+data_bhs_mutated %>%
+  pointblank::col_is_numeric(vars(pre_bhs_1)) # passes if vars are now numeric
+
+```
+
+```{r using function to setup bhs mutation check, include=FALSE}
+
+# `data_mfq_scored` is the pre-mutation dataframe
+# and `data_bhs_mutated` is the post-mutation dataframe,
+# and you want to compare the value counts of "pre_bhs_1":
+
+test_mutate <- prep_mutation_check(data_mfq_scored, data_bhs_mutated, "pre_bhs_1")
+
+```
+
+Checking bhs response counts are identical from pre to post mutation
+
+```{r bhs response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
