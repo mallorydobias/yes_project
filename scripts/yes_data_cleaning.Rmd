@@ -688,3 +688,206 @@ data_hate_mutated %>%
 
 
 ```
+
+Calculating hate row means
+
+```{r calculating hate scores}
+
+## Calculating composite scores
+
+data_hate_scored <- data_hate_mutated %>%
+  mutate(pre_self_hate_mean = rowMeans(across(starts_with("pre_self_hate_") & -contains("tim")), na.rm = TRUE),
+         post_self_hate_mean = rowMeans(across(starts_with("post_self_hate_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(across(contains("self_hate_"), ~ case_when(
+                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                  TRUE ~ .))) # Keep other values unchanged
+
+```
+
+```{r checking hate score setup, include = FALSE}
+
+## checking composite calculation was correct
+
+# manually calculating pre totals to compare sum methods
+
+test_pre_hate_calc <- data_hate_scored %>%
+  select(response_id, starts_with("pre_self_hate_") & -contains("tim")) %>%
+  mutate(pre_manual_mean = rowMeans(select(., pre_self_hate_1, pre_self_hate_2, pre_self_hate_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(pre_self_hate_mean, pre_manual_mean)
+
+# manually calculating post totals to compare sum methods
+
+test_post_hate_calc <- data_hate_scored %>%
+  select(response_id, starts_with("post_self_hate_") & -contains("tim")) %>%
+  mutate(post_manual_mean = rowMeans(select(., post_self_hate_1, post_self_hate_2, post_self_hate_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(post_self_hate_mean, post_manual_mean)
+
+```
+
+Checking pre and post hate totals are identical across sum methods
+
+```{r pre hate scoring validation, validate = TRUE}
+
+test_pre_hate_calc %>%
+  pointblank::col_vals_equal(vars(pre_self_hate_mean), 
+                             vars(pre_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+```{r post hate scoring validation, validate = TRUE}
+
+test_post_hate_calc %>%
+  pointblank::col_vals_equal(vars(post_self_hate_mean), 
+                             vars(post_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+### PFS
+
+Calculating program feedback scores using the Program feedback scale (measured post SSI). Row mean scores range from 1 to 5, where 1 = really disagree, and 5 = really agree. Source: https://mental.jmir.org/2020/6/e20513
+
+```{r pulling pfs values, include=FALSE}
+
+## Pulling pfs variables
+
+# vars_pfs <- data_hate_scored %>%
+#   select(contains("pfs") & -contains("like") & 
+#            -contains("change") & 
+#            -contains("more") &
+#            -contains("tim")) %>%
+#   head() %>%
+#   print()
+
+```
+
+Mutating pfs character values to numeric values
+
+```{r mutating pfs values}
+
+## Mutating character values to numeric across multiple pfs columns 
+
+data_pfs_mutated <- data_hate_scored %>%
+  mutate(across(contains("pfs_") & -contains("like") & 
+               -contains("change") &
+               -contains("more") &
+               -contains("tim"),
+                ~ case_when(
+                    . == "Really Disagree" ~ 1,
+                    . == "Disagree" ~ 2,
+                    . == "Neutral" ~ 3,
+                    . == "Agree" ~ 4,
+                    . == "Really Agree" ~ 5,
+                    TRUE ~ NA_real_ # Handle other cases with NA
+                )))
+ 
+```
+
+Checking pfs variables are now numeric class
+
+```{r pfs numeric class check}
+
+## Checking that all pfs vars are numeric class
+
+data_pfs_mutated %>%
+  select(contains("pfs") & 
+         -contains("like") & 
+         -contains("change") &
+         -contains("more") &
+         -contains("tim"),) %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
+
+
+```
+
+```{r using function to setup pfs mutation check, include=FALSE}
+
+# `data_hate_scored` is the pre-mutation dataframe
+# and `data_pfs_mutated` is the post-mutation dataframe,
+# and we want to compare the value counts of "pfs_1":
+
+test_mutate <- prep_mutation_check(data_hate_scored, data_pfs_mutated, "pfs_1")
+
+```
+
+Checking pfs response counts are identical from pre to post mutation
+
+```{r pfs response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Calculating pfs row means
+
+```{r calculating pfs scores}
+
+## Calculating composite scores
+
+data_pfs_scored <- data_pfs_mutated %>%
+  mutate(pfs_mean = rowMeans(across(contains("pfs_") & 
+                                                  -contains("like") & 
+                                                  -contains("change") &
+                                                  -contains("more") &
+                                                  -contains("tim")), na.rm = TRUE)) %>%
+  mutate(across(contains("pfs") &
+                -contains("like") & 
+                -contains("change") &
+                -contains("more") &
+                -contains("tim")
+            ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                  TRUE ~ .))) # Keep other values unchanged
+
+```
+
+```{r checking hate score setup, include = FALSE}
+
+## checking composite calculation was correct
+
+# manually calculating pre totals to compare sum methods
+
+test_pre_hate_calc <- data_hate_scored %>%
+  select(response_id, starts_with("pre_self_hate_") & -contains("tim")) %>%
+  mutate(pre_manual_mean = rowMeans(select(., pre_self_hate_1, pre_self_hate_2, pre_self_hate_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(pre_self_hate_mean, pre_manual_mean)
+
+# manually calculating post totals to compare sum methods
+
+test_post_hate_calc <- data_hate_scored %>%
+  select(response_id, starts_with("post_self_hate_") & -contains("tim")) %>%
+  mutate(post_manual_mean = rowMeans(select(., post_self_hate_1, post_self_hate_2, post_self_hate_3), na.rm = TRUE)) %>%
+  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
+                                        TRUE ~ .))) %>% # Keep other values unchanged
+  select(post_self_hate_mean, post_manual_mean)
+
+```
+
+Checking pre and post hate totals are identical across sum methods
+
+```{r pre hate scoring validation, validate = TRUE}
+
+test_pre_hate_calc %>%
+  pointblank::col_vals_equal(vars(pre_self_hate_mean), 
+                             vars(pre_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+```{r post hate scoring validation, validate = TRUE}
+
+test_post_hate_calc %>%
+  pointblank::col_vals_equal(vars(post_self_hate_mean), 
+                             vars(post_manual_mean), 
+                             na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
