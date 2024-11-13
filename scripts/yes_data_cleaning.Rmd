@@ -498,14 +498,14 @@ test_post_bhs_calc <- data_bhs_scored %>%
 
 ```
 
-Checking pre and post bhs totals are identical across sum methods
+Checking pre and post bhs means are identical across averaging methods
 
 ```{r pre bhs scoring validation, validate = TRUE}
 
 test_pre_bhs_calc %>%
   pointblank::col_vals_equal(vars(pre_bhs_mean), 
                              vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -514,7 +514,7 @@ test_pre_bhs_calc %>%
 test_post_bhs_calc %>%
   pointblank::col_vals_equal(vars(post_bhs_mean), 
                              vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -627,14 +627,14 @@ test_post_shs_calc <- data_shs_scored %>%
 
 ```
 
-Checking pre and post shs totals are identical across sum methods
+Checking pre and post shs means are identical across averaging methods
 
 ```{r pre shs scoring validation, validate = TRUE}
 
 test_pre_shs_calc %>%
   pointblank::col_vals_equal(vars(pre_shs_mean), 
                              vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -643,7 +643,7 @@ test_pre_shs_calc %>%
 test_post_shs_calc %>%
   pointblank::col_vals_equal(vars(post_shs_mean), 
                              vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -728,14 +728,14 @@ test_post_hate_calc <- data_hate_scored %>%
 
 ```
 
-Checking pre and post hate totals are identical across sum methods
+Checking pre and post hate means are identical across averaging methods
 
 ```{r pre hate scoring validation, validate = TRUE}
 
 test_pre_hate_calc %>%
   pointblank::col_vals_equal(vars(pre_self_hate_mean), 
                              vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -744,7 +744,7 @@ test_pre_hate_calc %>%
 test_post_hate_calc %>%
   pointblank::col_vals_equal(vars(post_self_hate_mean), 
                              vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
+                             na_pass = TRUE) # passes if means are identical across methods
 
 ```
 
@@ -833,18 +833,20 @@ Calculating pfs row means
 ## Calculating composite scores
 
 data_pfs_scored <- data_pfs_mutated %>%
+  # Calculate the row means of relevant pfs_ columns, excluding specific patterns
   mutate(pfs_mean = rowMeans(across(contains("pfs_") & 
-                                                  -contains("like") & 
-                                                  -contains("change") &
-                                                  -contains("more") &
-                                                  -contains("tim")), na.rm = TRUE)) %>%
-  mutate(across(contains("pfs") &
-                -contains("like") & 
-                -contains("change") &
-                -contains("more") &
-                -contains("tim")
-            ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                  TRUE ~ .))) # Keep other values unchanged
+                                    !contains("like") & 
+                                    !contains("change") &
+                                    !contains("more") &
+                                    !contains("tim")), na.rm = TRUE)) %>%
+  # Replace NaN values with NA_real_ across relevant pfs columns
+  mutate(across(contains("pfs_") &
+                !contains("like") & 
+                !contains("change") &
+                !contains("more") &
+                !contains("tim"),
+                ~ case_when(is.nan(.x) ~ NA_real_,  # Replace NaN with NA
+                            TRUE ~ .x))) # Keep other values unchanged
 
 ```
 
@@ -852,42 +854,28 @@ data_pfs_scored <- data_pfs_mutated %>%
 
 ## checking composite calculation was correct
 
-# manually calculating pre totals to compare sum methods
+# manually calculating totals to compare sum methods
 
-test_pre_hate_calc <- data_hate_scored %>%
-  select(response_id, starts_with("pre_self_hate_") & -contains("tim")) %>%
-  mutate(pre_manual_mean = rowMeans(select(., pre_self_hate_1, pre_self_hate_2, pre_self_hate_3), na.rm = TRUE)) %>%
+test_pfs_calc <- data_pfs_scored %>%
+  select(response_id, starts_with("pfs") & 
+                                    !contains("like") & 
+                                    !contains("change") &
+                                    !contains("more") &
+                                    !contains("tim")) %>%
+  mutate(manual_mean = rowMeans(select(., pfs_1, pfs_2, pfs_3, pfs_4, pfs_5, pfs_6, pfs_7), na.rm = TRUE)) %>%
   mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
                                         TRUE ~ .))) %>% # Keep other values unchanged
-  select(pre_self_hate_mean, pre_manual_mean)
-
-# manually calculating post totals to compare sum methods
-
-test_post_hate_calc <- data_hate_scored %>%
-  select(response_id, starts_with("post_self_hate_") & -contains("tim")) %>%
-  mutate(post_manual_mean = rowMeans(select(., post_self_hate_1, post_self_hate_2, post_self_hate_3), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(post_self_hate_mean, post_manual_mean)
+  select(pfs_mean, manual_mean)
 
 ```
 
-Checking pre and post hate totals are identical across sum methods
+Checking pfs mean is identical across averaging methods
 
-```{r pre hate scoring validation, validate = TRUE}
+```{r pfs scoring validation, validate = TRUE}
 
-test_pre_hate_calc %>%
-  pointblank::col_vals_equal(vars(pre_self_hate_mean), 
-                             vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if totals are identical across sum methods
-
-```
-
-```{r post hate scoring validation, validate = TRUE}
-
-test_post_hate_calc %>%
-  pointblank::col_vals_equal(vars(post_self_hate_mean), 
-                             vars(post_manual_mean), 
+test_pfs_calc %>%
+  pointblank::col_vals_equal(vars(pfs_mean), 
+                             vars(manual_mean), 
                              na_pass = TRUE) # passes if totals are identical across sum methods
 
 ```
