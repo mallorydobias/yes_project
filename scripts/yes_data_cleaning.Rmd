@@ -48,6 +48,9 @@ library(stringr)
 if(!require(pointblank)){install.packages('pointblank')}
 library(pointblank)
 
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
 ```
 
 # Data Reading
@@ -119,7 +122,6 @@ data_named <- data_sliced %>%
   janitor::clean_names()
 
 # head(data_named)
-
 
 ```
 
@@ -260,10 +262,15 @@ data_mfq_mutated <- data_post_named %>%
 
 Checking mfq variables are now numeric class
 
-```{r mfq numeric class validation, validate=TRUE}
+```{r mfq numeric class check}
+
+## Checking that all mfq vars are numeric class
 
 data_mfq_mutated %>%
-  pointblank::col_is_numeric(vars(mfq_1)) # passes if mfq vars are now numeric
+  select(contains("mfq") & -contains("tim")) %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
+
 
 ```
 
@@ -420,10 +427,15 @@ data_bhs_mutated <- data_mfq_scored %>%
 
 Checking bhs variables are now numeric class
 
-```{r bhs numeric class validation, validate=TRUE}
+```{r bhs numeric class check}
+
+## Checking that all bhs vars are numeric class
 
 data_bhs_mutated %>%
-  pointblank::col_is_numeric(vars(pre_bhs_1)) # passes if vars are now numeric
+  select(contains("bhs")) %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
+
 
 ```
 
@@ -508,7 +520,7 @@ test_post_bhs_calc %>%
 
 ### Hope (Pathways)
 
-Calculating agency using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 0 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
+Calculating hope using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 0 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
 
 ```{r pulling shs values, include=FALSE}
 
@@ -545,10 +557,15 @@ data_shs_mutated <- data_bhs_scored %>%
 
 Checking shs variables are now numeric class
 
-```{r shs numeric class validation, validate=TRUE}
+```{r shs numeric class check}
+
+## Checking that all shs vars are numeric class
 
 data_shs_mutated %>%
-  pointblank::col_is_numeric(vars(pre_shs_1)) # passes if vars are now numeric
+  select(contains("shs")) %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
+
 
 ```
 
@@ -627,5 +644,47 @@ test_post_shs_calc %>%
   pointblank::col_vals_equal(vars(post_shs_mean), 
                              vars(post_manual_mean), 
                              na_pass = TRUE) # passes if totals are identical across sum methods
+
+```
+
+### Self-Hate
+
+Calculating self-hate using a 3-item version of the Self-Hate Scale (measured pre and post SSI). Row mean scores range from 1 to 6, where 1 = not at all true for me, and 6 = very true for me. Source (abbreviated scale): https://mental.jmir.org/2020/6/e20513. Source (full scale): https://doi.org/10.1016/j.jad.2018.11.047 
+
+NOTE: The original scale is a 7-point Likert scale, we've used 6-point Likert scales for items in this data and in the original YES data. 
+
+```{r pulling selfhate values, include=FALSE}
+
+## Pulling selfhate variables
+
+# vars_hate <- data_shs_scored %>%
+#   select(contains("self_hate")) %>%
+#   head() %>%
+#   print()
+
+```
+
+Mutating hate character values to numeric values
+
+```{r mutating hate values}
+
+## Converting number character values from sliding scale to numeric values
+
+data_hate_mutated <- data_shs_scored %>%
+  mutate(across(contains("self_hate") & where(is.character), as.numeric))
+
+```
+
+Checking hate variables are now numeric class
+
+```{r hate numeric class check}
+
+## Checking that all self-hate vars are numeric class
+
+data_hate_mutated %>%
+  select(contains("self_hate")) %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
+
 
 ```
