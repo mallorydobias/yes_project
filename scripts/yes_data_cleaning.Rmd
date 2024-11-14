@@ -951,13 +951,19 @@ test_pfs_calc %>%
 
 # Reorganizing Columns
 
-Dropping unnecessary columns and columns that are scale scores calculated within qualtrics
+Dropping unnecessary columns
 
 ```{r dropping cols}
 
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
-         -recorded_date, -user_language, -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
+         -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
+  select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
+  select(-questionnaires) # dropping col redundant with volunteer col
+
+# data_pfs_scored %>%
+#   select(ssi_choice, ssi_choose) %>%
+#   filter(ssi_choose != "") # handful of cases folks came in with a decision; need to retain both columns and combine info into one MD
 
 ```
 
@@ -971,20 +977,73 @@ data_col_added <- data_col_dropped %>%
 
 ```
 
-Reorganizing column order
+Reorganizing column order to place important columns first, and then to follow chronological order
 
 ```{r reorganizing col order}
 
-glimpse(data_col_added)
-# 
-# data_reorged <- data_col_added %>%
-#   select(response_id, language, data_id, contains("date"), ip_address, contains("location"), 
-#          perc_progress, finished, ssi_source, ssi_choose, 
-#          contains("volunteer") & !contains("tim"),
-#          contains("dem"), starts_with("prog"), contains("tim"))
-#          
-# 
-# glimpse(data_reorged)         
+## Reorganizing cols to prioritize important cols first and then chronological order
+
+data_reorged <- data_col_added %>%
+  select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
+         perc_progress, finished, ssi_source, ssi_choice, ssi_choose,
+         starts_with("volunteer_") & !contains("tim"),
+         starts_with("dem_") & !contains("tim"), 
+         starts_with("ssi_prev"), starts_with("ssi_times"), 
+         starts_with("mfq_") & !contains("tim"), 
+         starts_with("pre_") & !contains("tim"), 
+         ssi_started,
+         starts_with("abc") & !contains("tim"),
+         starts_with("proj_care") & !contains("tim"),
+         starts_with("proj_rise") & !contains("tim"),
+         starts_with("proj_pers") & !contains("tim"),
+         ssi_completed,
+         starts_with("advice"),
+         starts_with("pfs_") & !contains("tim"),
+         starts_with("perc_change_") & !contains("tim"),
+         starts_with("post_") & !contains("tim"),
+         contains("tim"))
+
+```
+
+```{r checking col order setup, include=FALSE}
+
+## creating data frames of names pre and post reorg for comparison
+
+pre_reorg_names <- data_col_added %>%
+  names() # names pre
+
+post_reorg_names <- data_reorged %>%
+  names() # names post
+
+# Create tibbles for easier manipulation
+
+pre_reorg_df <- tibble(names = pre_reorg_names)
+post_reorg_df <- tibble(names = post_reorg_names)
+
+# Get the unique names (names not in both data frames)
+
+test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
+  group_by(names) %>%
+  filter(n() == 1)
          
+```
+
+Checking that reorganizing happened correctly (i.e., no columns dropped) 
+
+```{r checking reorg did not lose cols}
+
+## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
+
+n_cols_dropped <- test_reorg %>%
+  nrow() == 0
+
+n_cols_dropped # true if no columns were dropped by reorg
+
+```
+
+```{r}
+
+glimpse(data_reorged)
+
 ```
 
