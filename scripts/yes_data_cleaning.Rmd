@@ -879,3 +879,17 @@ test_pfs_calc %>%
                              na_pass = TRUE) # passes if means are identical across averaging methods
 
 ```
+
+# Reorganizing Columns
+
+Dropping unnecessary columns and columns that are scale scores calculated within qualtrics (sc0, sc1, sc2).
+
+```{r dropping cols}
+
+data_col_dropped <- data_pfs_scored %>%
+  select(-contains("recipient"), -contains("distribution"),)
+
+```
+
+post_control_1
+
