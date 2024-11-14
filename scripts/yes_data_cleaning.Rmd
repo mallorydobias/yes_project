@@ -226,61 +226,72 @@ test_rename %>%
 
 ```
 
-Renaming perceived control items for clarity
+Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
 
-```{r renaming perceived control vars}
+```{r renaming prog vars with ssi label}
 
-## Renaming control vars for clarity
+## Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
 
-data_control_named <- data_post_named %>%
-  mutate(pre_perceived_control = pre_control_1, 
-         post_perceived_control = post_control_1)
+data_prog_named <- data_post_named %>%
+  rename_with(~ str_replace(., "^prog_", "ssi_"))
+
+```
+
+```{r checking prog var naming setup, include = FALSE}
+
+## checking vars are renamed correctly
+
+# extracting characters following "prog_" in column names before renaming
+
+test_pre_rename <- tibble(var_names = names(data_post_named)) %>%
+  filter(str_detect(var_names, "^prog_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "prog_" prefix
+  mutate(pre_renamed = str_extract(var_names, "(?<=prog_).*")) %>% # extract characters following "prog_"
+  select(-var_names)
+
+# extracting characters following "ssi_" in column names after renaming
+
+test_post_rename <- tibble(var_names = names(data_prog_named)) %>%
+  filter(str_detect(var_names, "^ssi_") & !str_detect(var_names, "tim") & !str_detect(var_names, "choose")
+         & !str_detect(var_names, "source")) %>% # keep non-time rows with "ssi_" prefix
+  mutate(post_renamed = str_extract(var_names, "(?<=ssi_).*")) %>% # extract characters following "ssi_"
+  select(-var_names)
+
+# combining to one data frame for comparison
+
+test_rename <- cbind(test_pre_rename, test_post_rename)
 
 ```
 
 Checking columns renamed correctly
 
-```{r checking control var renaming, validate = TRUE}
-
-test_rename <- data_control_named
+```{r checking prog var renaming, validate = TRUE}
 
 test_rename %>%
-  pointblank::col_vals_equal(vars(pre_perceived_control), 
-                             vars(pre_control_1)) %>%
-  pointblank::col_vals_equal(vars(post_perceived_control), 
-                             vars(post_control_1)) # passes if renamed pre column is identical to original column
+  pointblank::col_vals_equal(vars(pre_renamed), 
+                             vars(post_renamed)) # passes if renamed columns are identical to original cols
 
 ```
 
-Renaming status items items for clarity and consistency
+Renaming individual items for clarity
 
-```{r renaming status vars}
+```{r renaming individual vars}
 
-## Renaming status vars for clarity
+## Renaming individual vars for clarity
 
-data_status_named <- data_control_named %>%
-  mutate(perc_progress = progress, 
+data_items_named <- data_prog_named %>%
+  rename(pre_perceived_control = pre_control_1, 
+         post_perceived_control = post_control_1,
+         perc_progress = progress, 
          volunteer_questionnaires_yn = volunteer,
          ssi_started = project_started,
-         ssi_completed = project_completed)
-
-```
-
-Checking columns renamed correctly
-
-```{r checking status var renaming, validate = TRUE}
-
-test_rename <- data_status_named
-
-test_rename %>%
-  pointblank::col_vals_equal(vars(perc_progress), 
-                             vars(progress)) %>%
-  pointblank::col_vals_equal(vars(volunteer_questionnaires_yn), 
-                             vars(volunteer)) %>%
-  pointblank::col_vals_equal(vars(ssi_started), 
-                             vars(project_started)) %>%
-  pointblank::col_vals_equal(vars(ssi_completed), 
-                             vars(project_completed)) # passes if renamed pre column is identical to original column
+         ssi_completed = project_completed,
+         ssi_choice = ssi_which_activity,
+         ssi_prev_completed = ssi_prev_activity,
+         ssi_prev_completed_name = ssi_prev_activity_2,
+         ssi_times_completed_personality = ssi_proj_personal,
+         ssi_times_completed_care = ssi_proj_care,
+         ssi_times_completed_abc = ssi_proj_abc,
+         ssi_times_completed_rise = ssi_proj_rise)
 
 ```
 
@@ -294,7 +305,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_status_named %>%
+# vars_mfq <- data_items_named %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -307,7 +318,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_status_named %>%
+data_mfq_mutated <- data_items_named %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -908,7 +919,7 @@ data_pfs_scored <- data_pfs_mutated %>%
 
 ```
 
-```{r checking hate score setup, include = FALSE}
+```{r checking pfs score setup, include = FALSE}
 
 ## checking composite calculation was correct
 
@@ -946,8 +957,7 @@ Dropping unnecessary columns and columns that are scale scores calculated within
 
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
-         -recorded_date, -user_language, -contains("control_1"), -progress, -volunteer, -questionnaires, 
-         -project_started, -project_completed, -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
+         -recorded_date, -user_language, -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
 
 ```
 
@@ -965,16 +975,16 @@ Reorganizing column order
 
 ```{r reorganizing col order}
 
-# glimpse(data_col_added)
-
-data_reorged <- data_col_added %>%
-  select(response_id, language, data_id, contains("date"), ip_address, contains("location"), 
-         perc_progress, finished, ssi_source, ssi_choose, 
-         contains("volunteer") & !contains("tim"),
-         contains("dem"), starts_with("prog"), contains("tim"))
-         
-
-glimpse(data_reorged)         
+glimpse(data_col_added)
+# 
+# data_reorged <- data_col_added %>%
+#   select(response_id, language, data_id, contains("date"), ip_address, contains("location"), 
+#          perc_progress, finished, ssi_source, ssi_choose, 
+#          contains("volunteer") & !contains("tim"),
+#          contains("dem"), starts_with("prog"), contains("tim"))
+#          
+# 
+# glimpse(data_reorged)         
          
 ```
 
