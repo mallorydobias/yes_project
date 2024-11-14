@@ -349,6 +349,54 @@ n_ids_missing_age # true if ids missing age data are identical pre and post age 
 
 ```
 
+Cleaning values in start_date and end_date columns
+
+```{r cleaning date columns}
+
+data_dated <- data_w_nas %>%
+  mutate(start_date = str_remove(start_date, " .*$"),
+         end_date = str_remove(end_date, " .*$"))
+
+```
+
+```{r checking date cleaning setup, include=FALSE}
+
+## Checking dates are identical pre to post cleaning
+
+# pulling first 10 characters in date column pre-cleaning
+
+test_pre_date <- data_w_nas %>%
+  mutate(start_date = str_sub(start_date, 1, 10),
+    end_date = str_sub(end_date, 1, 10)) %>%
+  select(pre_start_date = start_date, pre_end_date = end_date)
+
+# pulling first 10 characters in date column pre-cleaning
+
+test_post_date <- data_dated %>%
+  mutate(start_date = str_sub(start_date, 1, 10),
+    end_date = str_sub(end_date, 1, 10)) %>%
+  select(post_start_date = start_date, post_end_date = end_date)
+
+# binding cols together for comparison
+
+test_dates <- cbind(test_pre_date, test_post_date)
+
+```
+
+Checking dates cleaned correctly
+
+```{r checking date cleaning, validate = TRUE}
+
+## checking start_date and end_date are identical pre to post cleaning
+
+test_dates %>%
+  pointblank::col_vals_equal(vars(pre_start_date), 
+                             vars(post_start_date)) %>%
+  pointblank::col_vals_equal(vars(pre_end_date), 
+                             vars(post_end_date)) # passes if dates are identical pre to post cleaning
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -359,7 +407,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_w_nas %>%
+# vars_mfq <- data_dated %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -372,7 +420,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_w_nas %>%
+data_mfq_mutated <- data_dated %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
