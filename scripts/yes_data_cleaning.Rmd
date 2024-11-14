@@ -226,6 +226,32 @@ test_rename %>%
 
 ```
 
+Renaming perceived control items for clarity
+
+```{r renaming perceived control vars}
+
+## Renaming control vars for clarity
+
+data_control_named <- data_post_named %>%
+  mutate(pre_perceived_control = pre_control_1, 
+         post_perceived_control = post_control_1)
+
+```
+
+Checking columns renamed correctly
+
+```{r checking post var renaming, validate = TRUE}
+
+test_rename <- data_control_named
+
+test_rename %>%
+  pointblank::col_vals_equal(vars(pre_perceived_control), 
+                             vars(pre_control_1)) %>%
+  pointblank::col_vals_equal(vars(post_perceived_control), 
+                             vars(post_control_1)) # passes if renamed pre column is identical to original column
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -882,14 +908,31 @@ test_pfs_calc %>%
 
 # Reorganizing Columns
 
-Dropping unnecessary columns and columns that are scale scores calculated within qualtrics (sc0, sc1, sc2).
+Dropping unnecessary columns and columns that are scale scores calculated within qualtrics
 
 ```{r dropping cols}
 
 data_col_dropped <- data_pfs_scored %>%
-  select(-contains("recipient"), -contains("distribution")) ## MD LEFT OFF HERE, NEED TO DROP OTHER UNNECESSARY COLUMNS, ADD COLUMNS, AND REDORDER
+  select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
+         -recorded_date, -user_language, -contains("control_1"), -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
 
 ```
 
-post_control_1
+Adding cols to document language and data source
+
+```{r adding cols}
+
+data_col_added <- data_col_dropped %>%
+  mutate(language = "english",
+         data_id = "d09")
+
+```
+
+Reorganizing column order
+
+```{r reorganizing col order}
+
+
+
+```
 
