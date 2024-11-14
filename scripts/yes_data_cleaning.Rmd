@@ -295,6 +295,60 @@ data_items_named <- data_prog_named %>%
 
 ```
 
+## Cleaning Values
+
+MD to do:
+
+- remove time from date cols
+- clean dem variables with multiple options
+- clean up ssi_prev_completed_name
+- create combined ssi_choose and ssi_choice col
+- convert var classes
+
+Replacing empty cells with NAs
+
+```{r replacing empty cells with nas}
+
+## Replacing empty cells with NAs
+
+data_w_nas <- data_items_named %>%
+  mutate_all(~ na_if(., ""))
+
+```
+
+```{r checking nas setup, include=FALSE}
+
+## Creating data frames of ids of folks with missing data for age pre and post nas
+
+test_pre_nas <- data_items_named %>%
+  filter(dem_age == "") %>%
+  select(response_id) # ids with missing data pre nas ("")
+
+test_post_nas <- data_w_nas %>%
+  filter(is.na(dem_age)) %>%
+  select(response_id) # ids with missing data post nas (NA)
+
+# Get the unique names (names not in both data frames)
+
+test_nas <- bind_rows(test_pre_nas, test_post_nas) %>%
+  group_by(response_id) %>%
+  filter(n() == 1)
+         
+```
+
+Checking that nas mutation happened correctly
+
+```{r checking reorg did not lose cols}
+
+## Checking ids with empty data for age are identical to ids with nas for age
+
+n_ids_missing_age <- test_nas %>%
+  nrow() == 0
+
+n_ids_missing_age # true if ids missing age data are identical pre and post age mutation
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -305,7 +359,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_items_named %>%
+# vars_mfq <- data_w_nas %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -318,7 +372,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_items_named %>%
+data_mfq_mutated <- data_w_nas %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -431,7 +485,7 @@ Calculating mfq composite scores
 ## Calculating composite mfq scores
 
 data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim"))))
+  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE))
 
 ```
 
@@ -949,7 +1003,7 @@ test_pfs_calc %>%
 
 ```
 
-# Reorganizing Columns
+## Reorganizing Columns
 
 Dropping unnecessary columns
 
@@ -1062,7 +1116,7 @@ n_cols_dropped # true if no columns were dropped by reorg
 
 ```{r}
 
-glimpse(data_reorged)
+# glimpse(data_reorged)
 
 ```
 
