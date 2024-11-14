@@ -240,7 +240,7 @@ data_control_named <- data_post_named %>%
 
 Checking columns renamed correctly
 
-```{r checking post var renaming, validate = TRUE}
+```{r checking control var renaming, validate = TRUE}
 
 test_rename <- data_control_named
 
@@ -249,6 +249,38 @@ test_rename %>%
                              vars(pre_control_1)) %>%
   pointblank::col_vals_equal(vars(post_perceived_control), 
                              vars(post_control_1)) # passes if renamed pre column is identical to original column
+
+```
+
+Renaming status items items for clarity and consistency
+
+```{r renaming status vars}
+
+## Renaming status vars for clarity
+
+data_status_named <- data_control_named %>%
+  mutate(perc_progress = progress, 
+         volunteer_questionnaires_yn = volunteer,
+         ssi_started = project_started,
+         ssi_completed = project_completed)
+
+```
+
+Checking columns renamed correctly
+
+```{r checking status var renaming, validate = TRUE}
+
+test_rename <- data_status_named
+
+test_rename %>%
+  pointblank::col_vals_equal(vars(perc_progress), 
+                             vars(progress)) %>%
+  pointblank::col_vals_equal(vars(volunteer_questionnaires_yn), 
+                             vars(volunteer)) %>%
+  pointblank::col_vals_equal(vars(ssi_started), 
+                             vars(project_started)) %>%
+  pointblank::col_vals_equal(vars(ssi_completed), 
+                             vars(project_completed)) # passes if renamed pre column is identical to original column
 
 ```
 
@@ -262,7 +294,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_post_named %>%
+# vars_mfq <- data_status_named %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -275,7 +307,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_post_named %>%
+data_mfq_mutated <- data_status_named %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -914,7 +946,8 @@ Dropping unnecessary columns and columns that are scale scores calculated within
 
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
-         -recorded_date, -user_language, -contains("control_1"), -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
+         -recorded_date, -user_language, -contains("control_1"), -progress, -volunteer, -questionnaires, 
+         -project_started, -project_completed, -sc0, -sc1, -sc2) # dropping unnecessary qualtrics metadata and scale scores
 
 ```
 
@@ -932,7 +965,16 @@ Reorganizing column order
 
 ```{r reorganizing col order}
 
+# glimpse(data_col_added)
 
+data_reorged <- data_col_added %>%
+  select(response_id, language, data_id, contains("date"), ip_address, contains("location"), 
+         perc_progress, finished, ssi_source, ssi_choose, 
+         contains("volunteer") & !contains("tim"),
+         contains("dem"), starts_with("prog"), contains("tim"))
+         
 
+glimpse(data_reorged)         
+         
 ```
 
