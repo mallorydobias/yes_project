@@ -887,7 +887,7 @@ Dropping unnecessary columns and columns that are scale scores calculated within
 ```{r dropping cols}
 
 data_col_dropped <- data_pfs_scored %>%
-  select(-contains("recipient"), -contains("distribution"),)
+  select(-contains("recipient"), -contains("distribution")) ## MD LEFT OFF HERE, NEED TO DROP OTHER UNNECESSARY COLUMNS, ADD COLUMNS, AND REDORDER
 
 ```
 
