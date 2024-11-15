@@ -279,7 +279,8 @@ Renaming individual items for clarity
 ## Renaming individual vars for clarity
 
 data_items_named <- data_prog_named %>%
-  rename(pre_perceived_control = pre_control_1, 
+  rename(dem_sex_orientation_other_text = dem_sex_orientation_9_text,
+         pre_perceived_control = pre_control_1, 
          post_perceived_control = post_control_1,
          perc_progress = progress, 
          volunteer_questionnaires_yn = volunteer,
@@ -299,7 +300,6 @@ data_items_named <- data_prog_named %>%
 
 MD to do:
 
-- clean dem variables with multiple options
 - clean up ssi_prev_completed_name responses into shorter character strings
 - create combined ssi_choose and ssi_choice col
 - convert var classes
@@ -700,6 +700,15 @@ data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
   rename(dem_gender_other_text = dem_gender_identity_17_text)
 
 ```
+
+Converting variable classes
+
+```{r}
+
+
+
+```
+
 
 ## Calculating Composites
 
@@ -1365,7 +1374,8 @@ data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
   select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
-  select(-questionnaires) # dropping col redundant with volunteer col
+  select(-questionnaires) %>% # dropping col redundant with volunteer col
+  select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
 
 # data_pfs_scored %>%
 #   select(ssi_choice, ssi_choose) %>%
@@ -1393,7 +1403,10 @@ data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
          perc_progress, finished, ssi_source, ssi_choice, ssi_choose,
          starts_with("volunteer_") & !contains("tim"),
-         starts_with("dem_") & !contains("tim"), 
+         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
+         starts_with("dem_gender_") & !contains("tim"),
+         starts_with("dem_sex_orientation") & !contains("tim"), 
+         starts_with("dem_race") & !contains("tim"),
          starts_with("ssi_prev"), starts_with("ssi_times"), 
          starts_with("mfq_") & !contains("tim"), 
          starts_with("pre_bhs_") & !contains("tim"), 
@@ -1468,7 +1481,7 @@ n_cols_dropped # true if no columns were dropped by reorg
 
 ```{r}
 
-# glimpse(data_reorged)
+glimpse(data_reorged)
 
 ```
 
