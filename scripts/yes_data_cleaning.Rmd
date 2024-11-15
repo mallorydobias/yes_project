@@ -51,6 +51,9 @@ library(pointblank)
 if(!require(tidyr)){install.packages('tidyr')}
 library(tidyr)
 
+if(!require(purrr)){install.packages('purrr')}
+library(purrr)
+
 ```
 
 # Data Reading
@@ -302,7 +305,7 @@ MD to do:
 
 - clean up ssi_prev_completed_name responses into shorter character strings
 - create combined ssi_choose and ssi_choice col
-- convert var classes
+- convert var classes in ssi slides only (the rest are ready)
 
 Replacing empty cells with NAs
 
@@ -1494,7 +1497,19 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))
 
-glimpse(data_classes_mutated)
+```
+
+# Saving Data
+
+```{r saving cleaned data}
+
+data <- data_classes_mutated
+
+# Define the folder and file path
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_nu_english_clean.csv"
+full_path <- file.path(folder_path, file_name)
 
 ```
+
 
