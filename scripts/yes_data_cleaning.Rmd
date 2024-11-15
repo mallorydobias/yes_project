@@ -402,8 +402,8 @@ Creating separate race and ethnicity columns, given participants could select mu
 
 ## Cleaning race and ethnicity variable for easier totals
 
-# one column per response option
-# no's only exist in cases where participants responded to the question
+# creating one column per race/ethnicity response option
+# adding no's in cases where participants responded to the question
 # but did not endorse a particular racial or ethnic identity
 
 data_race_cleaned <- data_dated %>%
@@ -429,26 +429,55 @@ data_race_cleaned <- data_dated %>%
     TRUE ~ NA_character_))
 
 # data_race_cleaned %>%
-#   select(contains("race")) # looks goods
+#   select(contains("race")) # looks good
 
 ```
 
-```{r}
+```{r checking race var cleaning setup, include=FALSE}
 
-## MD needs to write code to check this worked
+## Creating data frames of ids of folks endorsing Asian racial identity
 
-# perhaps filter to rows with specific character string in original dem_race_ethnicity col
-# select only the id column
+test_pre_mutuate_count <- data_dated %>%
+  filter(str_detect(dem_race_ethnicity, "Asian")) %>%
+  select(pre_response_id = response_id) # ids of Asian participants pre mutation
 
-# filter to rows with yes in the specific race column created
-# select only the id column
+test_post_mutate_count <- data_race_cleaned %>%
+  filter(dem_race_asian == "yes") %>%
+  select(post_response_id = response_id) # ids of Asian participants post mutation
 
-# bind these data frames, compare to see if identical
+## Creating data frames of ids of folks with missing data for race and ethnicity
 
-# Also compare number of NAs in original and new cols to see if identical
+test_pre_mutate_nas <- data_race_cleaned %>%
+  filter(is.na(dem_race_ethnicity)) %>%
+  select(pre_response_id = response_id)
+
+test_post_mutate_nas <- data_race_cleaned %>%
+  filter(is.na(dem_race_asian)) %>%
+  select(post_response_id = response_id)
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_pre_mutuate_count, test_post_mutate_count)
+
+test_mutate_nas <- cbind(test_pre_mutate_nas, test_post_mutate_nas)
 
 ```
 
+Checking race variable cleaned correctly
+
+```{r checking race cleaning, validate = TRUE}
+
+## checking dem_race_asian and dem_race_ethnicity align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if yeses are identical pre to post cleaning
+
+test_mutate_nas %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if nas are identical pre to post cleaning
+
+```
 
 ## Calculating Composites
 
