@@ -701,15 +701,6 @@ data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
 
 ```
 
-Converting variable classes
-
-```{r}
-
-
-
-```
-
-
 ## Calculating Composites
 
 ### Depression
@@ -1479,9 +1470,31 @@ n_cols_dropped # true if no columns were dropped by reorg
 
 ```
 
-```{r}
+## Converting Classes
 
-glimpse(data_reorged)
+Converting variable classes
+
+```{r mutating var classes}
+
+data_classes_mutated <- data_reorged %>%
+  mutate(language = as.factor(language),
+         data_id = as.factor(data_id),
+         perc_progress = as.numeric(perc_progress),
+         finished = as.factor(finished),
+         volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
+         ssi_prev_completed = as.factor(ssi_prev_completed),
+         pre_perceived_control = as.numeric(pre_perceived_control),
+         ssi_started = as.factor(ssi_started),
+         ssi_completed = as.factor(ssi_completed),
+         advice_permission = as.factor(advice_permission)) %>%
+  mutate(across(contains("date"), as.Date)) %>%
+  mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
+  mutate(across(contains("times_completed"), as.numeric)) %>%
+  mutate(across(contains("commit"), as.factor)) %>%
+  mutate(across(contains("perc_change"), as.factor)) %>%
+  mutate(across(contains("_tim_"), as.numeric))
+
+glimpse(data_classes_mutated)
 
 ```
 
