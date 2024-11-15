@@ -51,8 +51,8 @@ library(pointblank)
 if(!require(tidyr)){install.packages('tidyr')}
 library(tidyr)
 
-if(!require(purrr)){install.packages('purrr')}
-library(purrr)
+if(!require(readr)){install.packages('readr')}
+library(readr)
 
 ```
 
@@ -1506,9 +1506,14 @@ data_classes_mutated <- data_reorged %>%
 data <- data_classes_mutated
 
 # Define the folder and file path
+
 folder_path <- here("data", "clean")  # Path to my desired folder
 file_name <- "yes_data_nu_english_clean.csv"
 full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .csv file
+
+# write_csv(data, full_path)
 
 ```
 
