@@ -460,7 +460,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_dated %>%
+# vars_mfq <- data_race_cleaned %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -473,7 +473,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_dated %>%
+data_mfq_mutated <- data_race_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
