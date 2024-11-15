@@ -445,6 +445,8 @@ data_race_cleaned <- data_dated %>%
 
 # bind these data frames, compare to see if identical
 
+# Also compare number of NAs in original and new cols to see if identical
+
 ```
 
 
