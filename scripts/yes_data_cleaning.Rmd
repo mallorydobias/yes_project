@@ -479,6 +479,39 @@ test_mutate_nas %>%
 
 ```
 
+Creating separate gender identity columns, given participants could select multiple options. This will make it easier to quantify group totals later
+
+```{r cleaning gender identity}
+
+## Cleaning gender identity variable for easier totals
+
+# creating one column per gender response option
+# adding no's in cases where participants responded to the question
+# but did not endorse a particular gender identity
+
+# this is a little harder because the same character string
+# appears in multiple answer choices;
+# carefully selecting responses that have exact string only
+# or exact string followed or preceded by a comma
+
+data_gender_cleaned <- data_race_cleaned %>%
+  rename(dem_gender_diff_sex = dem_sex_and_gender) %>%
+  mutate(dem_gender_boy_man = case_when(
+    str_detect(dem_gender_identity, "^Male$") | str_detect(dem_gender_identity, "Male,") ~ "yes",
+    !str_detect(dem_gender_identity, "^Male$") & !str_detect(dem_gender_identity, "Male,") 
+      & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_))
+
+data_gender_cleaned %>%
+  select(contains("gender")) %>%
+  filter(str_detect(dem_gender_identity, "Male")) # looks good
+
+data_race_cleaned %>%
+  filter(str_detect(dem_gender_identity, "Male,")) %>%
+  select(contains("gender"))
+
+```
+
 ## Calculating Composites
 
 ### Depression
