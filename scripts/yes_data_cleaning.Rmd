@@ -481,7 +481,7 @@ test_mutate_nas %>%
 
 Creating separate gender identity columns, given participants could select multiple options. This will make it easier to quantify group totals later
 
-```{r cleaning gender identity}
+```{r cleaning gender identity boys}
 
 ## Cleaning gender identity variable for easier totals
 
@@ -494,21 +494,63 @@ Creating separate gender identity columns, given participants could select multi
 # carefully selecting responses that have exact string only
 # or exact string followed or preceded by a comma
 
-data_gender_cleaned <- data_race_cleaned %>%
+## Boys and men
+
+data_gender_boys_cleaned <- data_race_cleaned %>%
   rename(dem_gender_diff_sex = dem_sex_and_gender) %>%
   mutate(dem_gender_boy_man = case_when(
     str_detect(dem_gender_identity, "^Male$") | str_detect(dem_gender_identity, "Male,") ~ "yes",
     !str_detect(dem_gender_identity, "^Male$") & !str_detect(dem_gender_identity, "Male,") 
       & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_))
+    TRUE ~ NA_character_)) 
 
-data_gender_cleaned %>%
-  select(contains("gender")) %>%
-  filter(str_detect(dem_gender_identity, "Male")) # looks good
+# checking this worked
 
-data_race_cleaned %>%
-  filter(str_detect(dem_gender_identity, "Male,")) %>%
-  select(contains("gender"))
+# data_gender_boys_cleaned %>%
+#   filter(str_detect(dem_gender_identity, "Male")) %>%
+#   select(dem_gender_identity, dem_gender_boy_man) # looks good
+
+```
+
+```{r cleaning gender identity girls}
+
+## Girls and women
+
+data_gender_girls_cleaned <- data_gender_boys_cleaned %>%
+  mutate(dem_gender_girl_woman = case_when(
+    str_detect(dem_gender_identity, "^Female$") | str_detect(dem_gender_identity, "Female,") ~ "yes",
+    !str_detect(dem_gender_identity, "^Female$") & !str_detect(dem_gender_identity, "Female,") 
+      & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+# checking this worked
+
+# data_gender_girls_cleaned %>%
+#   filter(str_detect(dem_gender_identity, "Female")) %>%
+#   select(dem_gender_identity, dem_gender_girl_woman) # looks good
+
+```
+
+```{r cleaning gender identity trans}
+
+## Trans folks
+
+data_gender_trans_cleaned <- data_gender_girls_cleaned %>%
+  mutate(dem_gender_trans = case_when(
+    str_detect(dem_gender_identity, "^Transgender$") | 
+      str_detect(dem_gender_identity, "Transgender,") |
+      str_detect(dem_gender_identity, ",Transgender") ~ "yes",
+    !str_detect(dem_gender_identity, "^Transgender$") & 
+      !str_detect(dem_gender_identity, "Transgender,") &
+      !str_detect(dem_gender_identity, ",Transgender") 
+      & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+# checking this worked
+
+# data_gender_trans_cleaned %>%
+#   filter(str_detect(dem_gender_identity, "Transgender")) %>%
+#   select(dem_gender_identity, dem_gender_trans) # looks good
 
 ```
 
