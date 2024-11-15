@@ -299,9 +299,8 @@ data_items_named <- data_prog_named %>%
 
 MD to do:
 
-- remove time from date cols
 - clean dem variables with multiple options
-- clean up ssi_prev_completed_name
+- clean up ssi_prev_completed_name responses into shorter character strings
 - create combined ssi_choose and ssi_choice col
 - convert var classes
 
@@ -396,6 +395,58 @@ test_dates %>%
                              vars(post_end_date)) # passes if dates are identical pre to post cleaning
 
 ```
+
+Creating separate race and ethnicity columns, given participants could select multiple options. This will make it easier to quantify group totals later
+
+```{r cleaning race and ethnicity}
+
+## Cleaning race and ethnicity variable for easier totals
+
+# one column per response option
+# no's only exist in cases where participants responded to the question
+# but did not endorse a particular racial or ethnic identity
+
+data_race_cleaned <- data_dated %>%
+  mutate(dem_race_asian = case_when(
+    str_detect(dem_race_ethnicity, "Asian") ~ "yes",
+    !str_detect(dem_race_ethnicity, "Asian") & !is.na(dem_race_ethnicity) ~ "no",
+    TRUE ~ NA_character_)) %>%
+  mutate(dem_race_black = case_when(
+    str_detect(dem_race_ethnicity, "African American") ~ "yes",
+    !str_detect(dem_race_ethnicity, "African American") & !is.na(dem_race_ethnicity) ~ "no",
+    TRUE ~ NA_character_)) %>%
+  mutate(dem_race_latin_hisp = case_when(
+    str_detect(dem_race_ethnicity, "Latino/Hispanic") ~ "yes",
+    !str_detect(dem_race_ethnicity, "Latino/Hispanic") & !is.na(dem_race_ethnicity) ~ "no",
+    TRUE ~ NA_character_)) %>%
+  mutate(dem_race_white = case_when(
+    str_detect(dem_race_ethnicity, "Caucasian") ~ "yes",
+    !str_detect(dem_race_ethnicity, "Caucasian") & !is.na(dem_race_ethnicity) ~ "no",
+    TRUE ~ NA_character_)) %>%
+  mutate(dem_race_other = case_when(
+    str_detect(dem_race_ethnicity, "Other") ~ "yes",
+    !str_detect(dem_race_ethnicity, "Other") & !is.na(dem_race_ethnicity) ~ "no",
+    TRUE ~ NA_character_))
+
+# data_race_cleaned %>%
+#   select(contains("race")) # looks goods
+
+```
+
+```{r}
+
+## MD needs to write code to check this worked
+
+# perhaps filter to rows with specific character string in original dem_race_ethnicity col
+# select only the id column
+
+# filter to rows with yes in the specific race column created
+# select only the id column
+
+# bind these data frames, compare to see if identical
+
+```
+
 
 ## Calculating Composites
 
