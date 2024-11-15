@@ -499,9 +499,11 @@ Creating separate gender identity columns, given participants could select multi
 data_gender_boys_cleaned <- data_race_cleaned %>%
   rename(dem_gender_diff_sex = dem_sex_and_gender) %>%
   mutate(dem_gender_boy_man = case_when(
-    str_detect(dem_gender_identity, "^Male$") | str_detect(dem_gender_identity, "Male,") ~ "yes",
-    !str_detect(dem_gender_identity, "^Male$") & !str_detect(dem_gender_identity, "Male,") 
-      & !is.na(dem_gender_identity) ~ "no",
+    str_detect(dem_gender_identity, "^Male$") | 
+      str_detect(dem_gender_identity, "Male,") ~ "yes",
+    !str_detect(dem_gender_identity, "^Male$") & 
+      !str_detect(dem_gender_identity, "Male,") &
+      !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) 
 
 # checking this worked
@@ -518,16 +520,12 @@ data_gender_boys_cleaned <- data_race_cleaned %>%
 
 data_gender_girls_cleaned <- data_gender_boys_cleaned %>%
   mutate(dem_gender_girl_woman = case_when(
-    str_detect(dem_gender_identity, "^Female$") | str_detect(dem_gender_identity, "Female,") ~ "yes",
-    !str_detect(dem_gender_identity, "^Female$") & !str_detect(dem_gender_identity, "Female,") 
-      & !is.na(dem_gender_identity) ~ "no",
+    str_detect(dem_gender_identity, "^Female$") | 
+      str_detect(dem_gender_identity, "Female,") ~ "yes",
+    !str_detect(dem_gender_identity, "^Female$") & 
+      !str_detect(dem_gender_identity, "Female,") &
+      !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) 
-
-# checking this worked
-
-# data_gender_girls_cleaned %>%
-#   filter(str_detect(dem_gender_identity, "Female")) %>%
-#   select(dem_gender_identity, dem_gender_girl_woman) # looks good
 
 ```
 
@@ -542,15 +540,164 @@ data_gender_trans_cleaned <- data_gender_girls_cleaned %>%
       str_detect(dem_gender_identity, ",Transgender") ~ "yes",
     !str_detect(dem_gender_identity, "^Transgender$") & 
       !str_detect(dem_gender_identity, "Transgender,") &
-      !str_detect(dem_gender_identity, ",Transgender") 
-      & !is.na(dem_gender_identity) ~ "no",
+      !str_detect(dem_gender_identity, ",Transgender") &
+      !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) 
 
-# checking this worked
+```
 
-# data_gender_trans_cleaned %>%
-#   filter(str_detect(dem_gender_identity, "Transgender")) %>%
-#   select(dem_gender_identity, dem_gender_trans) # looks good
+```{r cleaning gender identity ftm}
+
+## FTM trans folks
+
+data_gender_ftm_cleaned <- data_gender_trans_cleaned %>%
+  mutate(dem_gender_ftm_trans = case_when(str_detect(dem_gender_identity, "FTM") ~ "yes",
+    !str_detect(dem_gender_identity, "FTM") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity mtf}
+
+## MTF trans folks
+
+data_gender_mtf_cleaned <- data_gender_ftm_cleaned %>%
+  mutate(dem_gender_mtf_trans = case_when(str_detect(dem_gender_identity, "MTF") ~ "yes",
+    !str_detect(dem_gender_identity, "MTF") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity trans masc}
+
+## Trans masc folks
+
+data_gender_trans_masc_cleaned <- data_gender_ftm_cleaned %>%
+  mutate(dem_gender_trans_masc = case_when(str_detect(dem_gender_identity, "masculine") ~ "yes",
+    !str_detect(dem_gender_identity, "masculine") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity trans fem}
+
+## Trans fem folks
+
+data_gender_trans_fem_cleaned <- data_gender_trans_masc_cleaned %>%
+  mutate(dem_gender_trans_fem = case_when(str_detect(dem_gender_identity, "feminine") ~ "yes",
+    !str_detect(dem_gender_identity, "feminine") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity genderqueer}
+
+## Genderqueer folks
+
+data_gender_genderqueer_cleaned <- data_gender_trans_fem_cleaned %>%
+  mutate(dem_gender_genderqueer = case_when(str_detect(dem_gender_identity, "Genderqueer") ~ "yes",
+    !str_detect(dem_gender_identity, "Genderqueer") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity gender expansive}
+
+## Gender expansive folks
+
+data_gender_expansive_cleaned <- data_gender_genderqueer_cleaned %>%
+  mutate(dem_gender_expansive = case_when(str_detect(dem_gender_identity, "expansive") ~ "yes",
+    !str_detect(dem_gender_identity, "expansive") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender identity intersex}
+
+## Intersex folks
+
+data_gender_intersex_cleaned <- data_gender_genderqueer_cleaned %>%
+  mutate(dem_gender_intersex = case_when(str_detect(dem_gender_identity, "Intersex") ~ "yes",
+    !str_detect(dem_gender_identity, "Intersex") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender androgynous}
+
+## Androgynous folks
+
+data_gender_androgynous_cleaned <- data_gender_intersex_cleaned %>%
+  mutate(dem_gender_androgynous = case_when(str_detect(dem_gender_identity, "Androgynous") ~ "yes",
+    !str_detect(dem_gender_identity, "Androgynous") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender nonbinary}
+
+## Nonbinary folks
+
+data_gender_nonbinary_cleaned <- data_gender_androgynous_cleaned %>%
+  mutate(dem_gender_nonbinary = case_when(str_detect(dem_gender_identity, "Nonbinary") ~ "yes",
+    !str_detect(dem_gender_identity, "Nonbinary") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender two spirited}
+
+## Two-spirited folks
+
+data_gender_two_spirited_cleaned <- data_gender_nonbinary_cleaned %>%
+  mutate(dem_gender_two_spirited = case_when(str_detect(dem_gender_identity, "Two-spirited") ~ "yes",
+    !str_detect(dem_gender_identity, "Two-spirited") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender third gender}
+
+## Third gender folks
+
+data_gender_third_gender_cleaned <- data_gender_two_spirited_cleaned %>%
+  mutate(dem_gender_third_gender = case_when(str_detect(dem_gender_identity, "Third") ~ "yes",
+    !str_detect(dem_gender_identity, "Third") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender agender}
+
+## Agender folks
+
+data_gender_agender_cleaned <- data_gender_third_gender_cleaned %>%
+  mutate(dem_gender_agender = case_when(str_detect(dem_gender_identity, "Agender") ~ "yes",
+    !str_detect(dem_gender_identity, "Agender") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender unsure}
+
+## Folks who endorse "unsure"
+
+data_gender_unsure_cleaned <- data_gender_agender_cleaned %>%
+  mutate(dem_gender_unsure = case_when(str_detect(dem_gender_identity, "Not sure") ~ "yes",
+    !str_detect(dem_gender_identity, "Not sure") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) 
+
+```
+
+```{r cleaning gender other}
+
+## Folks who endorse "other"
+
+data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
+  mutate(dem_gender_other = case_when(str_detect(dem_gender_identity, "Other") ~ "yes",
+    !str_detect(dem_gender_identity, "Other") & !is.na(dem_gender_identity) ~ "no",
+    TRUE ~ NA_character_)) %>%
+  rename(dem_gender_other_text = dem_gender_identity_17_text)
 
 ```
 
@@ -564,7 +711,7 @@ Calculating depressive symptoms using the Short Form Mood and Feelings Questionn
 
 ## Pulling mfq variables
 
-# vars_mfq <- data_race_cleaned %>%
+# vars_mfq <- data_gender_other_cleaned %>%
 #   select(contains("mfq")) %>%
 #   head() %>%
 #   print()
@@ -577,7 +724,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_race_cleaned %>%
+data_mfq_mutated <- data_gender_other_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
