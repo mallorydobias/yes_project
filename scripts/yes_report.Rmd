@@ -1,0 +1,71 @@
+---
+title: "yes_report"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
+```
+
+```{r, include=FALSE}
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(janitor)){install.packages('janitor')}
+library(janitor)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+```
+
+# Data Reading
+
+```{r reading in data}
+
+## Reading in cleaned survey data
+
+library(here) # places working directory at root of project folder
+
+data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # directing to data from project folder root
+
+head(data)
+
+```
