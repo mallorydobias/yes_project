@@ -843,7 +843,7 @@ plots_all
 
 ```
 
-# Completion Rates
+# SSI Completion
 
 ## ABC
 
@@ -952,5 +952,15 @@ n_completed_any_ssi
 ```{r perc completed any ssi}
 
 perc_completed_any_ssi
+
+```
+
+# Questionnaire Completion
+
+Around half of the time (`r perc_agreed_questionnaires` %), people agreed to fill out optional questionnaires.
+
+```{r perc agreed questionnaires}
+
+perc_agreed_questionnaires
 
 ```
