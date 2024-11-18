@@ -77,9 +77,9 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ## Hopelessness
 
-Visualizing BHS pre vs. post ABC; 
+Visualizing BHS scores pre vs. post ABC; 
 
-```{r visualizing pre-post hopelessness abc setup, include=FALSE, warning=FALSE}
+```{r plot setup, include=FALSE, warning=FALSE}
 
 ## Loading required packages
 
@@ -94,6 +94,10 @@ font_add_google(name = "Noto Sans",
 
 showtext::showtext_auto()
 
+```
+
+```{r visualizing pre-post hopelessness abc setup, include=FALSE}
+
 ## Selecting pre and post vars for abc
 
 pre_post_bhs_abc <- data %>% 
@@ -103,24 +107,68 @@ pre_post_bhs_abc <- data %>%
 # Converting to long data format
 
 pre_post_bhs_abc_long <- pivot_longer(pre_post_bhs_abc, 
-                                           cols = contains("bhs_mean"), 
+                                           cols = contains("mean"), 
                                            names_to = "timing", 
                                            values_to = "hopelessness")
+
+##  Renaming for plot
+
+plot_data_bhs_abc <- pre_post_bhs_abc_long %>% 
+  mutate(timing = case_when(str_detect(timing, "pre") ~ "Before",
+         str_detect(timing, "post") ~ "After",
+         is.na(timing) ~ NA_character_))
+
+```
+
+```{r writing plot function for future plots, include=FALSE}
+
+## Writing a function for future plot setup
+
+process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label) {
+  # Select pre and post variables based on the ssi string
+  pre_post_outcome <- data %>%
+    filter(str_detect(ssi_started, ssi_string)) %>%
+    dplyr::select(contains(pre_var), 
+                  contains(post_var))
+  
+  # Convert to long data format
+  pre_post_outcome_long <- pre_post_outcome %>%
+    pivot_longer(cols = contains("mean"), 
+                 names_to = "timing", 
+                 values_to = outcome_label)
+  
+  # Mutate 'timing' to label pre/post as 'Before'/'After'
+  plot_data <- pre_post_outcome_long %>%
+    mutate(timing = case_when(
+      str_detect(timing, "pre") ~ "Before",
+      str_detect(timing, "post") ~ "After",
+      is.na(timing) ~ NA_character_
+    ))
+  
+  return(plot_data)
+}
+
+```
+
+```{r running custom plot function on abc data, include=FALSE}
+
+## Running function on abc data
+
+plot_data_bhs_abc_function <- process_plot_data(data, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r checking data frames are identical with and without function, include=FALSE}
+
+identical(plot_data_bhs_abc, plot_data_bhs_abc_function) # true if processed data is identical using function
 
 ```
 
 ```{r visualizing pre-post hopelessness abc, include=FALSE, warning=FALSE}
 
-##  Renaming for plot
-
-plot_data_bhs_abc <- pre_post_bhs_abc_long %>% 
-  mutate(timing = case_when(timing == "pre_bhs_mean" ~ "Before",
-         timing == "post_bhs_mean" ~ "After",
-         is.na(timing) ~ NA_character_))
-
 ## Plotting
 
-plot_abc_bhs <- plot_data_bhs_abc %>%
+plot_abc_bhs <- plot_data_bhs_abc_function %>%
   ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
   geom_density_ridges(alpha = 0.4,
                       jittered_points = TRUE,
@@ -134,7 +182,7 @@ plot_abc_bhs <- plot_data_bhs_abc %>%
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
   labs(x = "Hopelessness", y = " ",
-       title = "Project ABC")
+       title = "Scores before and after ABC")
 
 ```
 
