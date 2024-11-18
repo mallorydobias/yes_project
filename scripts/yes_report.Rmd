@@ -62,9 +62,7 @@ library(patchwork)
 
 ```
 
-# Data Reading
-
-```{r reading in data}
+```{r reading in data, include=FALSE}
 
 ## Reading in cleaned survey data
 
@@ -75,6 +73,16 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 # head(data) # looks good
 
 ```
+
+# Summary
+
+This report uses data from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
+
++In `perc_completed_any_ssi`% of cases where someone started an ssi (n = `n_started_any_ssi`), they completed it (n = `n_completed_any_ssi`)
++In `perc_completed_abc`% of cases where someone started ABC (n = `n_started_abc`), they completed it (n = `n_completed_abc`)
++In `perc_completed_care`% of cases where someone started CARE (n = `n_started_care`), they completed it (n = `n_completed_care`)
++In `perc_completed_pp`% of cases where someone started Project Personality (n = `n_started_pp`), they completed it (n = `n_completed_pp`)
++In `perc_completed_rise`% of cases where someone started RISE (n = `n_started_rise`), they completed it (n = `n_completed_rise`)
 
 # Plotting Outcomes 
 
