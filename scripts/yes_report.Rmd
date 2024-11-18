@@ -729,7 +729,7 @@ plots_all
 
 ```
 
-# Usage Metics
+# Completion Rates
 
 ## ABC
 
