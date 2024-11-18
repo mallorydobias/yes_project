@@ -31,7 +31,7 @@ validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from poi
 
 ```
 
-```{r, include=FALSE}
+```{r packages, include=FALSE}
 
 if(!require(here)){install.packages('here')}
 library(here)
@@ -62,6 +62,13 @@ library(patchwork)
 
 ```
 
+```{r note, include=FALSE}
+
+## The next several chunks setup the data for our analysis and 
+## calculate values that are required for the summary
+
+```
+
 ```{r reading in data, include=FALSE}
 
 ## Reading in cleaned survey data
@@ -74,15 +81,22 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ```
 
+```{r filtering to youth only data for analysis, include=FALSE}
+
+data_youth <- data %>%
+  filter(dem_age != "18 or older")
+
+```
+
 ```{r calculating perc complete of those who started for abc, include=FALSE}
 
-n_started_abc <- data %>%
+n_started_abc <- data_youth %>%
   filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
-n_completed_abc <- data %>%
+n_completed_abc <- data_youth %>%
   filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
@@ -94,13 +108,13 @@ perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
 
 ```{r calculating perc complete of those who started for care, include=FALSE}
 
-n_started_care <- data %>%
+n_started_care <- data_youth %>%
   filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
-n_completed_care <- data %>%
+n_completed_care <- data_youth %>%
   filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
@@ -112,13 +126,13 @@ perc_completed_care <- round((n_completed_care / n_started_care) * 100, 2)
 
 ```{r calculating perc complete of those who started for pp, include=FALSE}
 
-n_started_pp <- data %>%
+n_started_pp <- data_youth %>%
   filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
-n_completed_pp <- data %>%
+n_completed_pp <- data_youth %>%
   filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
@@ -130,13 +144,13 @@ perc_completed_pp <- round((n_completed_pp / n_started_pp) * 100, 2)
 
 ```{r calculating perc complete of those who started for rise, include=FALSE}
 
-n_started_rise <- data %>%
+n_started_rise <- data_youth %>%
   filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
-n_completed_rise <- data %>%
+n_completed_rise <- data_youth %>%
   filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
@@ -148,12 +162,12 @@ perc_completed_rise <- round((n_completed_rise / n_started_rise) * 100, 2)
 
 ```{r calculating perc complete of those who started any ssi, include=FALSE}
 
-n_started_any_ssi <- data %>%
+n_started_any_ssi <- data_youth %>%
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
-n_completed_any_ssi <- data %>%
+n_completed_any_ssi <- data_youth %>%
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
   tally()
@@ -164,17 +178,23 @@ perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100,
 
 ```{r calculating perc agreed to questionnaires, include=FALSE}
 
-n_agreed_questionnaires <- data %>%
+n_agreed_questionnaires <- data_youth %>%
   filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed
   select(volunteer_questionnaires_yn) %>%
   tally()
 
-n_answered_questionnaires_item <- data %>%
+n_answered_questionnaires_item <- data_youth %>%
   filter(!is.na(volunteer_questionnaires_yn)) %>% # filtering to those who started an ssi
   select(volunteer_questionnaires_yn) %>%
   tally()
 
 perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2)
+
+```
+
+```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
 
 ```
 
@@ -190,7 +210,7 @@ This report uses data from the largest English-speaking survey among YES data so
 
 Approximately half of the time (`r perc_agreed_questionnaires` % of cases), people agreed to complete optional questionnaires.
 
-# Plotting Outcomes 
+# Clinical Outcomes 
 
 ```{r plot setup, include=FALSE, warning=FALSE}
 
@@ -223,7 +243,7 @@ Visualizing bhs scores (hopelessness) pre vs. post abc
 
 ## Selecting pre and post vars for abc
 
-pre_post_bhs_abc <- data %>% 
+pre_post_bhs_abc <- data_youth %>% 
   filter(str_detect(ssi_started, "A.B.C.")) %>%
   dplyr::select(pre_bhs_mean, post_bhs_mean)
 
@@ -249,7 +269,7 @@ plot_data_bhs_abc <- pre_post_bhs_abc_long %>%
 
 process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label) {
   # Select pre and post variables based on the ssi string
-  pre_post_outcome <- data %>%
+  pre_post_outcome <- data_youth %>%
     filter(str_detect(ssi_started, ssi_string)) %>%
     dplyr::select(contains(pre_var), 
                   contains(post_var))
@@ -277,7 +297,7 @@ process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label
 
 ## Running plot setup function
 
-plot_data_bhs_abc_function <- process_plot_data(data, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+plot_data_bhs_abc_function <- process_plot_data(data_youth, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
 ```
 
@@ -322,7 +342,7 @@ Visualizing shs scores (hope-pathways subscale) pre vs. post abc
 
 ## Running plot setup function
 
-plot_data_shs_abc_function <- process_plot_data(data, "A.B.C.", "pre_shs_mean", "post_shs_mean", "hope")
+plot_data_shs_abc_function <- process_plot_data(data_youth, "A.B.C.", "pre_shs_mean", "post_shs_mean", "hope")
 
 ```
 
@@ -361,7 +381,7 @@ Visualizing self-hate scores pre vs. post abc
 
 ## Running plot setup function
 
-plot_data_hate_abc_function <- process_plot_data(data, "A.B.C.", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+plot_data_hate_abc_function <- process_plot_data(data_youth, "A.B.C.", "pre_self_hate_mean", "post_self_hate_mean", "hate")
 
 ```
 
@@ -422,7 +442,7 @@ Visualizing bhs scores (hopelessness) pre vs. post care
 
 ## Running plot setup function
 
-plot_data_bhs_care_function <- process_plot_data(data, "C.A.R.E", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+plot_data_bhs_care_function <- process_plot_data(data_youth, "C.A.R.E", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
 ```
 
@@ -461,7 +481,7 @@ Visualizing shs scores (hope-pathways subscale) pre vs. post care
 
 ## Running plot setup function
 
-plot_data_shs_care_function <- process_plot_data(data, "C.A.R.E", "pre_shs_mean", "post_shs_mean", "hope")
+plot_data_shs_care_function <- process_plot_data(data_youth, "C.A.R.E", "pre_shs_mean", "post_shs_mean", "hope")
 
 ```
 
@@ -500,7 +520,7 @@ Visualizing self-hate scores pre vs. post care
 
 ## Running plot setup function
 
-plot_data_hate_care_function <- process_plot_data(data, "C.A.R.E", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+plot_data_hate_care_function <- process_plot_data(data_youth, "C.A.R.E", "pre_self_hate_mean", "post_self_hate_mean", "hate")
 
 ```
 
@@ -561,7 +581,7 @@ Visualizing bhs scores (hopelessness) pre vs. post project personality
 
 ## Running plot setup function
 
-plot_data_bhs_pp_function <- process_plot_data(data, "Personality", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+plot_data_bhs_pp_function <- process_plot_data(data_youth, "Personality", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
 ```
 
@@ -600,7 +620,7 @@ Visualizing shs scores (hope-pathways subscale) pre vs. post project personality
 
 ## Running plot setup function
 
-plot_data_shs_pp_function <- process_plot_data(data, "Personality", "pre_shs_mean", "post_shs_mean", "hope")
+plot_data_shs_pp_function <- process_plot_data(data_youth, "Personality", "pre_shs_mean", "post_shs_mean", "hope")
 
 ```
 
@@ -639,7 +659,7 @@ Visualizing self-hate scores pre vs. post project personality
 
 ## Running plot setup function
 
-plot_data_hate_pp_function <- process_plot_data(data, "Personality", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+plot_data_hate_pp_function <- process_plot_data(data_youth, "Personality", "pre_self_hate_mean", "post_self_hate_mean", "hate")
 
 ```
 
@@ -700,7 +720,7 @@ Visualizing bhs scores (hopelessness) pre vs. post project rise
 
 ## Running plot setup function
 
-plot_data_bhs_rise_function <- process_plot_data(data, "RISE", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+plot_data_bhs_rise_function <- process_plot_data(data_youth, "RISE", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
 ```
 
@@ -739,7 +759,7 @@ Visualizing shs scores (hope-pathways subscale) pre vs. post project rise
 
 ## Running plot setup function
 
-plot_data_shs_rise_function <- process_plot_data(data, "Personality", "pre_shs_mean", "post_shs_mean", "hope")
+plot_data_shs_rise_function <- process_plot_data(data_youth, "RISE", "pre_shs_mean", "post_shs_mean", "hope")
 
 ```
 
@@ -778,7 +798,7 @@ Visualizing self-hate scores pre vs. post project rise
 
 ## Running plot setup function
 
-plot_data_hate_rise_function <- process_plot_data(data, "Personality", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+plot_data_hate_rise_function <- process_plot_data(data_youth, "RISE", "pre_self_hate_mean", "post_self_hate_mean", "hate")
 
 ```
 
