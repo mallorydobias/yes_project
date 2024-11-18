@@ -83,6 +83,8 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ```{r filtering to youth only data for analysis, include=FALSE}
 
+## Filtering to youth only for our analysis
+
 data_youth <- data %>%
   filter(dem_age != "18 or older")
 
@@ -318,7 +320,7 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#32A2A0", "grey")) +
   scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -357,7 +359,7 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#32A2A0", "grey")) +
   scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -396,7 +398,7 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#32A2A0", "grey")) +
   scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -457,7 +459,7 @@ plot_care_bhs <- plot_data_bhs_care_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#A52B4D", "grey")) +
   scale_color_manual(values = c("#A52B4D", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -496,7 +498,7 @@ plot_care_shs <- plot_data_shs_care_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#A52B4D", "grey")) +
   scale_color_manual(values = c("#A52B4D", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -535,7 +537,7 @@ plot_care_hate <- plot_data_hate_care_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#A52B4D", "grey")) +
   scale_color_manual(values = c("#A52B4D", "grey")) +
-  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -596,7 +598,7 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#3F9CF5", "grey")) +
   scale_color_manual(values = c("#3F9CF5", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -635,7 +637,7 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#3F9CF5", "grey")) +
   scale_color_manual(values = c("#3F9CF5", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -674,7 +676,7 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#3F9CF5", "grey")) +
   scale_color_manual(values = c("#3F9CF5", "grey")) +
-  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -735,7 +737,7 @@ plot_rise_bhs <- plot_data_bhs_rise_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#F48151", "grey")) +
   scale_color_manual(values = c("#F48151", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -774,7 +776,7 @@ plot_rise_shs <- plot_data_shs_rise_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#F48151", "grey")) +
   scale_color_manual(values = c("#F48151", "grey")) +
-  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),
@@ -813,7 +815,7 @@ plot_rise_hate <- plot_data_hate_rise_function %>%
                       position = "raincloud") +
   scale_fill_manual(values = c("#F48151", "grey")) +
   scale_color_manual(values = c("#F48151", "grey")) +
-  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
   theme_light() +
   theme(legend.position = "none",
         text = element_text(family = "noto sans"),

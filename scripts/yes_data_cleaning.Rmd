@@ -998,7 +998,7 @@ test_post_bhs_calc %>%
 
 ### Hope (Pathways)
 
-Calculating hope using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 0 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
+Calculating hope using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 1 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
 
 ```{r pulling shs values, include=FALSE}
 
