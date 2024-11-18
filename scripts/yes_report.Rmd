@@ -188,7 +188,7 @@ This report uses data from the largest English-speaking survey among YES data so
 + In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
 + In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
 
-Approximately half (`r perc_agreed_questionnaires` %) of time, people agreed to complete optional questionnaires.
+Approximately half of the time (`r perc_agreed_questionnaires` % of cases), people agreed to complete optional questionnaires.
 
 # Plotting Outcomes 
 
