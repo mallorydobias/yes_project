@@ -196,7 +196,7 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 Plotting hopelessness pre and post abc
 
-```{r plotting bhs pre and post abc, warning=FALSE}
+```{r plotting bhs pre and post abc, warning=FALSE, message=FALSE}
 
 plot_abc_bhs
 
@@ -235,7 +235,7 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
 
 Plotting hope pre and post abc
 
-```{r plotting shs pre and post abc, warning=FALSE}
+```{r plotting shs pre and post abc, warning=FALSE, message=FALSE}
 
 plot_abc_shs
 
@@ -274,7 +274,7 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
 
 Plotting self-hate pre and post abc
 
-```{r plotting hate pre and post abc, warning=FALSE}
+```{r plotting hate pre and post abc, warning=FALSE, message=FALSE}
 
 plot_abc_hate
 
@@ -282,13 +282,15 @@ plot_abc_hate
 
 Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining abc pre post outcomes plots, warning=FALSE}
+```{r combining abc pre post outcomes plots, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for abc
 
-plot_abc_bhs + plot_abc_shs + plot_abc_hate +
+plots_abc <- plot_abc_bhs + plot_abc_shs + plot_abc_hate +
   plot_annotation(title = "Outcomes before vs after ABC Project",
                   theme = theme(plot.title = element_text(hjust = 0.5)))
+
+plots_abc
 
 ```
 
@@ -333,7 +335,7 @@ plot_care_bhs <- plot_data_bhs_care_function %>%
 
 Plotting hopelessness pre and post care
 
-```{r plotting bhs pre and post care, warning=FALSE}
+```{r plotting bhs pre and post care, warning=FALSE, message=FALSE}
 
 plot_care_bhs
 
@@ -372,7 +374,7 @@ plot_care_shs <- plot_data_shs_care_function %>%
 
 Plotting hope pre and post care
 
-```{r plotting shs pre and post care, warning=FALSE}
+```{r plotting shs pre and post care, warning=FALSE, message=FALSE}
 
 plot_care_shs
 
@@ -419,13 +421,15 @@ plot_care_hate
 
 Combining all project care pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project care; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project care; right plot shows distributions of self-hate scores before and after project care. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining care pre post outcomes plots, warning=FALSE}
+```{r combining care pre post outcomes plots, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for care
 
-plot_care_bhs + plot_care_shs + plot_care_hate +
+plots_care <- plot_care_bhs + plot_care_shs + plot_care_hate +
   plot_annotation(title = "Outcomes before vs after Project CARE",
                   theme = theme(plot.title = element_text(hjust = 0.5)))
+
+plots_care
 
 ```
 
@@ -470,7 +474,7 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
 
 Plotting hopelessness pre and post project personality
 
-```{r plotting bhs pre and post pp, warning=FALSE}
+```{r plotting bhs pre and post pp, warning=FALSE, message=FALSE}
 
 plot_pp_bhs
 
@@ -509,7 +513,7 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
 
 Plotting hope pre and post project personality
 
-```{r plotting shs pre and post pp, warning=FALSE}
+```{r plotting shs pre and post pp, warning=FALSE, message=FALSE}
 
 plot_pp_shs
 
@@ -548,7 +552,7 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
 
 Plotting self-hate pre and post project personality
 
-```{r plotting hate pre and post pp, warning=FALSE}
+```{r plotting hate pre and post pp, warning=FALSE, message=FALSE}
 
 plot_pp_hate
 
@@ -556,13 +560,15 @@ plot_pp_hate
 
 Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining pp pre post outcomes plots, warning=FALSE}
+```{r combining pp pre post outcomes plots, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
 
-plot_pp_bhs + plot_pp_shs + plot_pp_hate +
+plots_pp <- plot_pp_bhs + plot_pp_shs + plot_pp_hate +
   plot_annotation(title = "Outcomes before vs after Project Personality",
                   theme = theme(plot.title = element_text(hjust = 0.5)))
+
+plots_pp
 
 ```
 
@@ -607,7 +613,7 @@ plot_rise_bhs <- plot_data_bhs_rise_function %>%
 
 Plotting hopelessness pre and post project rise
 
-```{r plotting bhs pre and post rise, warning=FALSE}
+```{r plotting bhs pre and post rise, warning=FALSE, message=FALSE}
 
 plot_rise_bhs
 
@@ -646,7 +652,7 @@ plot_rise_shs <- plot_data_shs_rise_function %>%
 
 Plotting hope pre and post project rise
 
-```{r plotting shs pre and post rise, warning=FALSE}
+```{r plotting shs pre and post rise, warning=FALSE, message=FALSE}
 
 plot_rise_shs
 
@@ -685,7 +691,7 @@ plot_rise_hate <- plot_data_hate_rise_function %>%
 
 Plotting self-hate pre and post project rise
 
-```{r plotting hate pre and post rise, warning=FALSE}
+```{r plotting hate pre and post rise, warning=FALSE, message=FALSE}
 
 plot_rise_hate
 
@@ -693,12 +699,33 @@ plot_rise_hate
 
 Combining all project rise pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project rise; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project rise; right plot shows distributions of self-hate scores before and after project rise Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining rise pre post outcomes plots, warning=FALSE}
+```{r combining rise pre post outcomes plots, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for rise
 
-plot_rise_bhs + plot_rise_shs + plot_rise_hate +
+plots_rise <- plot_rise_bhs + plot_rise_shs + plot_rise_hate +
   plot_annotation(title = "Outcomes before vs after Project RISE",
                   theme = theme(plot.title = element_text(hjust = 0.5)))
 
+plots_rise
+
 ```
+
+## All
+
+```{r combining all pre post outcomes plots, warning=FALSE, message=FALSE}
+
+library(patchwork)
+
+# Combine the plots vertically
+plots_all <- plots_abc / plots_care / plots_pp / plots_rise  + 
+  plot_annotation(
+    title = "Outcomes before and after all SSIs",
+    caption = "Hopelessness, hope, self-hate before + after abc (green), project care (red), project personality (blue), and project rise (orange)"
+  )
+
+# Show the combined plot
+plots_all
+
+```
+
