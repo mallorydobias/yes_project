@@ -416,3 +416,15 @@ Plotting self-hate pre and post project personality
 plot_pp_hate
 
 ```
+
+Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+
+```{r combining pp pre post outcomes plots, warning=FALSE}
+
+## Plotting all pre post outcomes for pp
+
+plot_pp_bhs + plot_pp_shs + plot_pp_hate +
+  plot_annotation(title = "Outcomes before vs after Project Personality",
+                  theme = theme(plot.title = element_text(hjust = 0.5)))
+
+```
