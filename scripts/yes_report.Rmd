@@ -1,5 +1,5 @@
 ---
-title: "yes_report"
+title: "yes_example_report"
 author: "Mallory Dobias"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -36,23 +36,26 @@ validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from poi
 if(!require(here)){install.packages('here')}
 library(here)
 
-if(!require(janitor)){install.packages('janitor')}
-library(janitor)
-
 if(!require(dplyr)){install.packages('dplyr')}
 library(dplyr)
 
 if(!require(stringr)){install.packages('stringr')}
 library(stringr)
 
-if(!require(pointblank)){install.packages('pointblank')}
-library(pointblank)
-
 if(!require(tidyr)){install.packages('tidyr')}
 library(tidyr)
 
 if(!require(readr)){install.packages('readr')}
 library(readr)
+
+if(!require(tidyverse)){install.packages('tidyverse')}
+library(tidyverse)
+
+if(!require(ggridges)){install.packages('ggridges')}
+library(ggridges)
+
+if(!require(showtext)){install.packages('showtext')}
+library(showtext)
 
 ```
 
@@ -66,6 +69,78 @@ library(here) # places working directory at root of project folder
 
 data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # directing to data from project folder root
 
-head(data)
+# head(data) # looks good
 
 ```
+
+# Outcomes 
+
+## Hopelessness
+
+Visualizing BHS pre vs. post ABC; 
+
+```{r visualizing pre-post hopelessness abc setup, include=FALSE, warning=FALSE}
+
+## Loading required packages
+
+library(tidyverse)
+library(ggridges)
+library(showtext)
+
+## Setting up fonts
+
+font_add_google(name = "Noto Sans",
+                family = "noto sans")
+
+showtext::showtext_auto()
+
+## Selecting pre and post vars for abc
+
+pre_post_bhs_abc <- data %>% 
+  filter(str_detect(ssi_started, "A.B.C.")) %>%
+  dplyr::select(pre_bhs_mean, post_bhs_mean)
+
+# Converting to long data format
+
+pre_post_bhs_abc_long <- pivot_longer(pre_post_bhs_abc, 
+                                           cols = contains("bhs_mean"), 
+                                           names_to = "timing", 
+                                           values_to = "hopelessness")
+
+```
+
+```{r visualizing pre-post hopelessness abc, include=FALSE, warning=FALSE}
+
+##  Renaming for plot
+
+plot_data_bhs_abc <- pre_post_bhs_abc_long %>% 
+  mutate(timing = case_when(timing == "pre_bhs_mean" ~ "Before",
+         timing == "post_bhs_mean" ~ "After",
+         is.na(timing) ~ NA_character_))
+
+## Plotting
+
+plot_abc_bhs <- plot_data_bhs_abc %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("blue", "grey")) +
+  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ",
+       title = "Project ABC")
+
+```
+
+```{r plotting bhs pre and post abc, warning=FALSE}
+
+plot_abc_bhs
+
+```
+
