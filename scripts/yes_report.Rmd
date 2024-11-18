@@ -57,6 +57,9 @@ library(ggridges)
 if(!require(showtext)){install.packages('showtext')}
 library(showtext)
 
+if(!require(patchwork)){install.packages('patchwork')}
+library(patchwork)
+
 ```
 
 # Data Reading
@@ -270,3 +273,16 @@ Plotting self-hate pre and post abc
 plot_abc_hate
 
 ```
+
+Combining all abc outcomes into one plot
+
+```{r combining abc pre post outcomes plots}
+
+## Plotting all pre post outcomes for abc
+
+plot_abc_bhs + plot_abc_shs + plot_abc_hate +
+  plot_annotation(title = "Outcomes before vs after ABC Project",
+                  theme = theme(plot.title = element_text(hjust = 0.5)))
+
+```
+
