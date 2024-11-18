@@ -4,6 +4,9 @@ data/
 .DS_Store
 *.html
 
+## Prevenging GitHub from viewing png files
+*.png
+
 # History files
 .Rhistory
 .Rapp.history

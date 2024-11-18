@@ -78,8 +78,6 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 # Plotting Outcomes 
 
-## ABC
-
 ```{r plot setup, include=FALSE, warning=FALSE}
 
 ## Loading required packages
@@ -94,6 +92,14 @@ font_add_google(name = "Noto Sans",
                 family = "noto sans")
 
 showtext::showtext_auto()
+
+```
+
+## ABC
+
+```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_abc_graphic.png")
 
 ```
 
@@ -176,8 +182,8 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
   geom_density_ridges(alpha = 0.4,
                       jittered_points = TRUE,
                       position = "raincloud") +
-  scale_fill_manual(values = c("blue", "grey")) +
-  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
   scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
   theme_light() +
   theme(legend.position = "none",
@@ -215,8 +221,8 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
   geom_density_ridges(alpha = 0.4,
                       jittered_points = TRUE,
                       position = "raincloud") +
-  scale_fill_manual(values = c("blue", "grey")) +
-  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
   scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
   theme_light() +
   theme(legend.position = "none",
@@ -254,8 +260,8 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
   geom_density_ridges(alpha = 0.4,
                       jittered_points = TRUE,
                       position = "raincloud") +
-  scale_fill_manual(values = c("blue", "grey")) +
-  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
   scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
   theme_light() +
   theme(legend.position = "none",
@@ -274,9 +280,9 @@ plot_abc_hate
 
 ```
 
-Combining all abc outcomes into one plot
+Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining abc pre post outcomes plots}
+```{r combining abc pre post outcomes plots, warning=FALSE}
 
 ## Plotting all pre post outcomes for abc
 
