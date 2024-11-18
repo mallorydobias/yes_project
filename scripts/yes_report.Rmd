@@ -73,11 +73,9 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ```
 
-# Outcomes 
+# Plotting Outcomes 
 
-## Hopelessness
-
-Visualizing BHS scores pre vs. post ABC; 
+## ABC
 
 ```{r plot setup, include=FALSE, warning=FALSE}
 
@@ -95,6 +93,8 @@ font_add_google(name = "Noto Sans",
 showtext::showtext_auto()
 
 ```
+
+Visualizing bhs scores (hopelessness) pre vs. post abc 
 
 ```{r visualizing pre-post hopelessness abc setup, include=FALSE}
 
@@ -150,9 +150,9 @@ process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label
 
 ```
 
-```{r running custom plot function on abc data, include=FALSE}
+```{r running custom plot function on abc bhs data, include=FALSE}
 
-## Running function on abc data
+## Running plot setup function
 
 plot_data_bhs_abc_function <- process_plot_data(data, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
@@ -164,7 +164,7 @@ identical(plot_data_bhs_abc, plot_data_bhs_abc_function) # true if processed dat
 
 ```
 
-```{r visualizing pre-post hopelessness abc, include=FALSE, warning=FALSE}
+```{r visualizing pre-post bhs abc, include=FALSE, warning=FALSE}
 
 ## Plotting
 
@@ -181,10 +181,11 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hopelessness", y = " ",
-       title = "Scores before and after ABC")
+  labs(x = "Hopelessness", y = " ")
 
 ```
+
+Plotting hopelessness pre and post abc
 
 ```{r plotting bhs pre and post abc, warning=FALSE}
 
@@ -192,3 +193,80 @@ plot_abc_bhs
 
 ```
 
+Visualizing shs scores (hope-pathways subscale) pre vs. post abc 
+
+```{r running custom plot function on abc shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_abc_function <- process_plot_data(data, "A.B.C.", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs abc, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_abc_shs <- plot_data_shs_abc_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("blue", "grey")) +
+  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hope (Pathways)", y = " ")
+
+```
+
+Plotting hope pre and post abc
+
+```{r plotting shs pre and post abc, warning=FALSE}
+
+plot_abc_shs
+
+```
+
+Visualizing self-hate scores pre vs. post abc 
+
+```{r running custom plot function on abc hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_abc_function <- process_plot_data(data, "A.B.C.", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate abc, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_abc_hate <- plot_data_hate_abc_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("blue", "grey")) +
+  scale_color_manual(values = c("dark blue", "grey")) +
+  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Plotting self-hate pre and post abc
+
+```{r plotting hate pre and post abc, warning=FALSE}
+
+plot_abc_hate
+
+```
