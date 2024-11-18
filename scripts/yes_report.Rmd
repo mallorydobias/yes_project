@@ -166,11 +166,11 @@ perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100,
 
 This report uses data from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
 
-+In `perc_completed_any_ssi`% of cases where someone started an ssi (n = `n_started_any_ssi`), they completed it (n = `n_completed_any_ssi`)
-+In `perc_completed_abc`% of cases where someone started ABC (n = `n_started_abc`), they completed it (n = `n_completed_abc`)
-+In `perc_completed_care`% of cases where someone started CARE (n = `n_started_care`), they completed it (n = `n_completed_care`)
-+In `perc_completed_pp`% of cases where someone started Project Personality (n = `n_started_pp`), they completed it (n = `n_completed_pp`)
-+In `perc_completed_rise`% of cases where someone started RISE (n = `n_started_rise`), they completed it (n = `n_completed_rise`)
++ In `r perc_completed_any_ssi`% of cases where someone started any SSI (n = `r n_started_any_ssi`), they completed it (n = `r n_completed_any_ssi`)
++ In `r perc_completed_abc`% of cases where someone started ABC (n = `r n_started_abc`), they completed it (n = `r n_completed_abc`)
++ In `r perc_completed_care`% of cases where someone started CARE (n = `r n_started_care`), they completed it (n = `r n_completed_care`)
++ In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
++ In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
 
 # Plotting Outcomes 
 
@@ -829,7 +829,7 @@ plots_all
 
 ## ABC
 
-Of `n_started_abc` cases where someone started abc, `n_completed_abc` cases completed the intervention. This results in an abc completion rate of `perc_completed_abc`%.
+Of `r n_started_abc` cases where someone started abc, `r n_completed_abc` cases completed the intervention. This results in an abc completion rate of `r perc_completed_abc`%.
 
 ```{r n started abc}
 
@@ -851,7 +851,7 @@ perc_completed_abc
 
 ## Project CARE
 
-Of `n_started_care` cases where someone started care, `n_completed_care` cases completed the intervention. This results in an project care completion rate of `perc_completed_care`%.
+Of `r n_started_care` cases where someone started care, `r n_completed_care` cases completed the intervention. This results in an project care completion rate of `r perc_completed_care`%.
 
 ```{r n started care}
 
@@ -873,7 +873,7 @@ perc_completed_care
 
 ## Project Personality
 
-Of `n_started_pp` cases where someone started project personality, `n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `perc_completed_pp`%.
+Of `r n_started_pp` cases where someone started project personality, `r n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `r perc_completed_pp`%.
 
 ```{r n started pp}
 
@@ -895,7 +895,7 @@ perc_completed_pp
 
 ## Project RISE
 
-Of `n_started_rise` cases where someone started project rise, `n_completed_rise` cases completed the intervention. This results in a project rise completion rate of `perc_completed_rise`%.
+Of `r n_started_rise` cases where someone started project rise, `r n_completed_rise` cases completed the intervention. This results in a project rise completion rate of `r perc_completed_rise`%.
 
 ```{r n started rise}
 
@@ -917,7 +917,7 @@ perc_completed_rise
 
 ## All
 
-Of `n_started_any_ssi` cases where someone started any ssi, `n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `perc_completed_any_ssi`% for any ssi.
+Of `r n_started_any_ssi` cases where someone started any ssi, `r n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `r perc_completed_any_ssi`% for any ssi.
 
 ```{r n started any ssi}
 
