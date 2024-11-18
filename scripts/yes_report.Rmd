@@ -565,3 +565,140 @@ plot_pp_bhs + plot_pp_shs + plot_pp_hate +
                   theme = theme(plot.title = element_text(hjust = 0.5)))
 
 ```
+
+## Project RISE
+
+```{r, out.width = "260px", out.height = "240px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_rise_graphic.png")
+
+```
+
+Visualizing bhs scores (hopelessness) pre vs. post project rise 
+
+```{r running custom plot function on rise bhs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_bhs_rise_function <- process_plot_data(data, "RISE", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r visualizing pre-post bhs rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_bhs <- plot_data_bhs_rise_function %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ")
+
+```
+
+Plotting hopelessness pre and post project rise
+
+```{r plotting bhs pre and post rise, warning=FALSE}
+
+plot_rise_bhs
+
+```
+
+Visualizing shs scores (hope-pathways subscale) pre vs. post project rise
+
+```{r running custom plot function on rise shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_rise_function <- process_plot_data(data, "Personality", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_shs <- plot_data_shs_rise_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(0, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hope (Pathways)", y = " ")
+
+```
+
+Plotting hope pre and post project rise
+
+```{r plotting shs pre and post rise, warning=FALSE}
+
+plot_rise_shs
+
+```
+
+Visualizing self-hate scores pre vs. post project rise
+
+```{r running custom plot function on rise hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_rise_function <- process_plot_data(data, "Personality", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_hate <- plot_data_hate_rise_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(1, NA)) +  # Set x-axis to start at 0, leave the upper limit as default
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Plotting self-hate pre and post project rise
+
+```{r plotting hate pre and post rise, warning=FALSE}
+
+plot_rise_hate
+
+```
+
+Combining all project rise pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project rise; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project rise; right plot shows distributions of self-hate scores before and after project rise Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+
+```{r combining rise pre post outcomes plots, warning=FALSE}
+
+## Plotting all pre post outcomes for rise
+
+plot_rise_bhs + plot_rise_shs + plot_rise_hate +
+  plot_annotation(title = "Outcomes before vs after Project RISE",
+                  theme = theme(plot.title = element_text(hjust = 0.5)))
+
+```
