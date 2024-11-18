@@ -162,6 +162,22 @@ perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100,
 
 ```
 
+```{r calculating perc agreed to questionnaires, include=FALSE}
+
+n_agreed_questionnaires <- data %>%
+  filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed
+  select(volunteer_questionnaires_yn) %>%
+  tally()
+
+n_answered_questionnaires_item <- data %>%
+  filter(!is.na(volunteer_questionnaires_yn)) %>% # filtering to those who started an ssi
+  select(volunteer_questionnaires_yn) %>%
+  tally()
+
+perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2)
+
+```
+
 # Summary
 
 This report uses data from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
@@ -171,6 +187,8 @@ This report uses data from the largest English-speaking survey among YES data so
 + In `r perc_completed_care`% of cases where someone started CARE (n = `r n_started_care`), they completed it (n = `r n_completed_care`)
 + In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
 + In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
+
+Approximately half (`r perc_agreed_questionnaires` %) of time, people agreed to complete optional questionnaires.
 
 # Plotting Outcomes 
 
