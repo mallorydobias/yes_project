@@ -74,6 +74,94 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ```
 
+```{r calculating perc complete of those who started for abc, include=FALSE}
+
+n_started_abc <- data %>%
+  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_abc <- data %>%
+  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
+
+```
+
+```{r calculating perc complete of those who started for care, include=FALSE}
+
+n_started_care <- data %>%
+  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_care <- data %>%
+  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_care <- round((n_completed_care / n_started_care) * 100, 2)
+
+```
+
+```{r calculating perc complete of those who started for pp, include=FALSE}
+
+n_started_pp <- data %>%
+  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_pp <- data %>%
+  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_pp <- round((n_completed_pp / n_started_pp) * 100, 2)
+
+```
+
+```{r calculating perc complete of those who started for rise, include=FALSE}
+
+n_started_rise <- data %>%
+  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_rise <- data %>%
+  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_rise <- round((n_completed_rise / n_started_rise) * 100, 2)
+
+```
+
+```{r calculating perc complete of those who started any ssi, include=FALSE}
+
+n_started_any_ssi <- data %>%
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_any_ssi <- data %>%
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100, 2)
+
+```
+
 # Summary
 
 This report uses data from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
@@ -741,23 +829,6 @@ plots_all
 
 ## ABC
 
-```{r calculating perc complete of those who started for abc, include=FALSE}
-
-n_started_abc <- data %>%
-  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_abc <- data %>%
-  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
-
-```
 Of `n_started_abc` cases where someone started abc, `n_completed_abc` cases completed the intervention. This results in an abc completion rate of `perc_completed_abc`%.
 
 ```{r n started abc}
@@ -779,24 +850,6 @@ perc_completed_abc
 ```
 
 ## Project CARE
-
-```{r calculating perc complete of those who started for care, include=FALSE}
-
-n_started_care <- data %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_care <- data %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_care <- round((n_completed_care / n_started_care) * 100, 2)
-
-```
 
 Of `n_started_care` cases where someone started care, `n_completed_care` cases completed the intervention. This results in an project care completion rate of `perc_completed_care`%.
 
@@ -820,24 +873,6 @@ perc_completed_care
 
 ## Project Personality
 
-```{r calculating perc complete of those who started for pp, include=FALSE}
-
-n_started_pp <- data %>%
-  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_pp <- data %>%
-  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_pp <- round((n_completed_pp / n_started_pp) * 100, 2)
-
-```
-
 Of `n_started_pp` cases where someone started project personality, `n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `perc_completed_pp`%.
 
 ```{r n started pp}
@@ -860,24 +895,6 @@ perc_completed_pp
 
 ## Project RISE
 
-```{r calculating perc complete of those who started for rise, include=FALSE}
-
-n_started_rise <- data %>%
-  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_rise <- data %>%
-  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_rise <- round((n_completed_rise / n_started_rise) * 100, 2)
-
-```
-
 Of `n_started_rise` cases where someone started project rise, `n_completed_rise` cases completed the intervention. This results in a project rise completion rate of `perc_completed_rise`%.
 
 ```{r n started rise}
@@ -899,22 +916,6 @@ perc_completed_rise
 ```
 
 ## All
-
-```{r calculating perc complete of those who started any ssi, include=FALSE}
-
-n_started_any_ssi <- data %>%
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_any_ssi <- data %>%
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100, 2)
-
-```
 
 Of `n_started_any_ssi` cases where someone started any ssi, `n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `perc_completed_any_ssi`% for any ssi.
 
