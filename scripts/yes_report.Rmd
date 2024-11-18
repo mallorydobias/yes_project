@@ -33,6 +33,8 @@ validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from poi
 
 ```{r packages, include=FALSE}
 
+## Loading packages
+
 if(!require(here)){install.packages('here')}
 library(here)
 
@@ -202,7 +204,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-This report uses data from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
+This report uses youth data (under 18) from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
 
 + In `r perc_completed_any_ssi`% of cases where someone started any SSI (n = `r n_started_any_ssi`), they completed it (n = `r n_completed_any_ssi`)
 + In `r perc_completed_abc`% of cases where someone started ABC (n = `r n_started_abc`), they completed it (n = `r n_completed_abc`)
@@ -210,7 +212,7 @@ This report uses data from the largest English-speaking survey among YES data so
 + In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
 + In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
 
-Approximately half of the time (`r perc_agreed_questionnaires` % of cases), people agreed to complete optional questionnaires.
+Approximately half of the time (`r perc_agreed_questionnaires` % of cases), youth agreed to complete optional questionnaires.
 
 # Clinical Outcomes 
 
@@ -857,7 +859,7 @@ library(patchwork)
 plots_all <- plots_abc / plots_care / plots_pp / plots_rise  + 
   plot_annotation(
     title = "Outcomes before and after all SSIs",
-    caption = "Hopelessness, hope, self-hate before + after abc (green), project care (red), project personality (blue), and project rise (orange)"
+    caption = "hopelessness, hope, self-hate before + after ABC (green), CARE (red), Project Personality (blue), and RISE (orange)"
   )
 
 # Show the combined plot
@@ -979,7 +981,7 @@ perc_completed_any_ssi
 
 # Questionnaire Completion
 
-Around half of the time (`r perc_agreed_questionnaires` %), people agreed to fill out optional questionnaires.
+Around half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill out optional questionnaires.
 
 ```{r perc agreed questionnaires}
 
