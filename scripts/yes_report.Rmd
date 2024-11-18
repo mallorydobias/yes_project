@@ -804,7 +804,7 @@ n_completed_care
 
 ```
 
-```{r perc completed abc}
+```{r perc completed care}
 
 perc_completed_care
 
