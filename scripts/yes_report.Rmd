@@ -321,15 +321,15 @@ library(stats)
 
 ## Computing paired t-test
 
-t_self_hate <- t.test(data_youth_abc$post_bhs_mean, data_youth_abc$pre_bhs_mean, paired = TRUE)
+t_abc_bhs <- t.test(data_youth_abc$post_bhs_mean, data_youth_abc$pre_bhs_mean, paired = TRUE)
 
 ## Saving p-value for report
 
-abc_bhs_p_value <- t_self_hate$p.value
+abc_bhs_p_value <- t_abc_bhs$p.value
 
 ## Saving t-value for effect size calc
 
-abc_bhs_t_value <- t_self_hate$statistic
+abc_bhs_t_value <- t_abc_bhs$statistic
 
 ## Saving n pairs for effect size calc 
 
@@ -347,6 +347,41 @@ library(MOTE)
 ##  Calculating dz effect size, paired t-test
 
 abc_bhs_dz_value <- round(d.dep.t.diff.t(abc_bhs_t_value, abc_bhs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test shs abc, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_abc_shs <- t.test(data_youth_abc$post_shs_mean, data_youth_abc$pre_shs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_shs_p_value <- t_abc_shs$p.value
+
+## Saving t-value for effect size calc
+
+abc_shs_t_value <- t_abc_shs$statistic
+
+## Saving n pairs for effect size calc 
+
+abc_shs_n_pairs <- data_youth_abc %>%
+  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
+  select(post_shs_mean, pre_shs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size shs abc}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_shs_dz_value <- round(d.dep.t.diff.t(abc_shs_t_value, abc_shs_n_pairs, a = 0.05)$d, 2)
 
 ```
 
@@ -418,7 +453,7 @@ Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (
 
 ```{r t test results abc bhs}
 
-t_self_hate
+t_abc_bhs
 
 ```
 
@@ -525,7 +560,19 @@ plot_abc_bhs
 
 ```
 
-Visualizing shs scores (hope-pathways subscale) pre vs. post abc 
+Conducting a paired t-test to evaluate pre vs post-abc changes in hope (shs pathways scores). For those who chose the abc intervention with data at both time points, hope increased from pre to post abc, dz = `r abc_shs_dz_value`.
+
+```{r t test results abc bhs}
+
+t_abc_shs
+
+```
+
+```{r t test effect size abc bhs}
+
+abc_shs_dz_value
+
+```
 
 ```{r running custom plot function on abc shs data, include=FALSE}
 
