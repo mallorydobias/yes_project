@@ -265,7 +265,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-This report uses youth data (under 18) from the largest English-speaking survey among YES data sources. The report includes examples of outcomes/results Mallory can generate for anyone interested in these data. For example, in these data to date:
+This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). In these data to date:
 
 + In `r perc_completed_any_ssi`% of cases where someone started any SSI (n = `r n_started_any_ssi`), they completed it (n = `r n_completed_any_ssi`)
 + In `r perc_completed_abc`% of cases where someone started ABC (n = `r n_started_abc`), they completed it (n = `r n_completed_abc`)
