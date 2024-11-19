@@ -385,6 +385,41 @@ abc_shs_dz_value <- round(d.dep.t.diff.t(abc_shs_t_value, abc_shs_n_pairs, a = 0
 
 ```
 
+```{r t test hate abc, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_abc_hate <- t.test(data_youth_abc$post_self_hate_mean, data_youth_abc$pre_self_hate_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_hate_p_value <- t_abc_hate$p.value
+
+## Saving t-value for effect size calc
+
+abc_hate_t_value <- t_abc_hate$statistic
+
+## Saving n pairs for effect size calc 
+
+abc_hate_n_pairs <- data_youth_abc %>%
+  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
+  select(post_self_hate_mean, pre_self_hate_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size shs abc}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_hate_dz_value <- round(d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$d, 2)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -562,13 +597,13 @@ plot_abc_bhs
 
 Conducting a paired t-test to evaluate pre vs post-abc changes in hope (shs pathways scores). For those who chose the abc intervention with data at both time points, hope increased from pre to post abc, dz = `r abc_shs_dz_value`.
 
-```{r t test results abc bhs}
+```{r t test results abc shs}
 
 t_abc_shs
 
 ```
 
-```{r t test effect size abc bhs}
+```{r t test effect size abc shs}
 
 abc_shs_dz_value
 
@@ -611,7 +646,19 @@ plot_abc_shs
 
 ```
 
-Visualizing self-hate scores pre vs. post abc 
+Conducting a paired t-test to evaluate pre vs post-abc changes in self-hate (self-hate scale scores). For those who chose the abc intervention with data at both time points, self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.
+
+```{r t test results abc hate}
+
+t_abc_hate
+
+```
+
+```{r t test effect size abc hate}
+
+abc_hate_dz_value
+
+```
 
 ```{r running custom plot function on abc hate data, include=FALSE}
 
