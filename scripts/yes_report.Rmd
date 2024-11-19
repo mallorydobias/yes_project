@@ -340,7 +340,7 @@ abc_bhs_n_pairs <- data_youth_abc %>%
 
 ```
 
-```{r t test effect size bhs abc}
+```{r t test effect size bhs abc, include=FALSE}
 
 library(MOTE)
 
@@ -375,7 +375,7 @@ abc_shs_n_pairs <- data_youth_abc %>%
 
 ```
 
-```{r t test effect size shs abc}
+```{r t test effect size shs abc, include=FALSE}
 
 library(MOTE)
 
@@ -410,13 +410,134 @@ abc_hate_n_pairs <- data_youth_abc %>%
 
 ```
 
-```{r t test effect size shs abc}
+```{r t test effect size hate abc, include=FALSE}
 
 library(MOTE)
 
 ##  Calculating dz effect size, paired t-test
 
 abc_hate_dz_value <- round(d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r abc effect sizes list, include=FALSE}
+
+## Saving abc dz values for report
+
+abc_dz_values <- c(abc_bhs_dz_value, abc_shs_dz_value, abc_hate_dz_value)
+
+```
+
+```{r t test bhs care, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_care_bhs <- t.test(data_youth_care$post_bhs_mean, data_youth_care$pre_bhs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+care_bhs_p_value <- t_care_bhs$p.value
+
+## Saving t-value for effect size calc
+
+care_bhs_t_value <- t_care_bhs$statistic
+
+## Saving n pairs for effect size calc 
+
+care_bhs_n_pairs <- data_youth_care %>%
+  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
+  select(post_bhs_mean, pre_bhs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size bhs care, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+care_bhs_dz_value <- round(d.dep.t.diff.t(care_bhs_t_value, care_bhs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test shs care, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_care_shs <- t.test(data_youth_care$post_shs_mean, data_youth_care$pre_shs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+care_shs_p_value <- t_care_shs$p.value
+
+## Saving t-value for effect size calc
+
+care_shs_t_value <- t_care_shs$statistic
+
+## Saving n pairs for effect size calc 
+
+care_shs_n_pairs <- data_youth_care %>%
+  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
+  select(post_shs_mean, pre_shs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size shs care, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+care_shs_dz_value <- round(d.dep.t.diff.t(care_shs_t_value, care_shs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test hate care, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_care_hate <- t.test(data_youth_care$post_self_hate_mean, data_youth_care$pre_self_hate_mean, paired = TRUE)
+
+## Saving p-value for report
+
+care_hate_p_value <- t_care_hate$p.value
+
+## Saving t-value for effect size calc
+
+care_hate_t_value <- t_care_hate$statistic
+
+## Saving n pairs for effect size calc 
+
+care_hate_n_pairs <- data_youth_care %>%
+  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
+  select(post_self_hate_mean, pre_self_hate_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size hate care, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+care_hate_dz_value <- round(d.dep.t.diff.t(care_hate_t_value, care_hate_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r care effect sizes list, include=FALSE}
+
+## Saving abc dz values for report
+
+care_dz_values <- c(care_bhs_dz_value, care_shs_dz_value, care_hate_dz_value)
 
 ```
 
@@ -450,12 +571,17 @@ Of cases where someone started an SSI:
 
 More than half of the time (`r perc_agreed_questionnaires`% of cases), youth agreed to complete optional questionnaires. 
 
-Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` out of 5.
+Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` out of 5:
 
 + ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
 + CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
 + Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
 + RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
+
+Of cases with data at both time points:
+
++ Hopelessness decreased, hope increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
++ Hopelessness decreased, hope increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
 
 # Clinical Outcomes 
 
@@ -719,7 +845,19 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Visualizing bhs scores (hopelessness) pre vs. post care
+Conducting a paired t-test to evaluate pre vs post-care changes in hopelessness (bhs scores). For those who chose the care intervention with data at both time points, hopelessness decreased from pre to post care, dz = `r care_bhs_dz_value`.
+
+```{r t test results care bhs}
+
+t_care_bhs
+
+```
+
+```{r t test effect size care bhs}
+
+care_bhs_dz_value
+
+```
 
 ```{r running custom plot function on care bhs data, include=FALSE}
 
@@ -758,7 +896,19 @@ plot_care_bhs
 
 ```
 
-Visualizing shs scores (hope-pathways subscale) pre vs. post care 
+Conducting a paired t-test to evaluate pre vs post-care changes in hope (shs pathways scores). For those who chose the care intervention with data at both time points, we detect no significant change in hope from pre to post care, dz = `r care_shs_dz_value`.
+
+```{r t test results care shs}
+
+t_care_shs
+
+```
+
+```{r t test effect size care shs}
+
+care_shs_dz_value
+
+```
 
 ```{r running custom plot function on care shs data, include=FALSE}
 
@@ -797,7 +947,19 @@ plot_care_shs
 
 ```
 
-Visualizing self-hate scores pre vs. post care 
+Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, self-hate decreased from pre to post care, dz = `r abc_hate_dz_value`.
+
+```{r t test results care hate}
+
+t_care_hate
+
+```
+
+```{r t test effect size care hate}
+
+care_hate_dz_value
+
+```
 
 ```{r running custom plot function on care hate data, include=FALSE}
 
