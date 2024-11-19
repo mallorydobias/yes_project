@@ -62,6 +62,12 @@ library(showtext)
 if(!require(patchwork)){install.packages('patchwork')}
 library(patchwork)
 
+if(!require(stats)){install.packages('stats')}
+library(stats)
+
+if(!require(MOTE)){install.packages('MOTE')}
+library(MOTE)
+
 ```
 
 ```{r note, include=FALSE}
@@ -89,6 +95,59 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 data_youth <- data %>%
   filter(dem_age != "18 or older")
+
+```
+
+```{r calculating n milestones, include=FALSE}
+
+## Calculating n milestones
+
+n_started_survey <- data_youth %>%
+  tally() # started the survey
+
+n_chose_any_ssi <- data_youth %>%
+  filter(!is.na(ssi_choice)) %>%
+  tally() # chose any ssi
+
+n_chose_abc <- data_youth %>%
+  filter(str_detect(ssi_choice, "A.B.C")) %>%
+  tally() # chose abc
+
+n_chose_care <- data_youth %>%
+  filter(str_detect(ssi_choice, "C.A.R.E")) %>%
+  tally() # chose care
+  
+n_chose_pp <- data_youth %>%
+  filter(str_detect(ssi_choice, "Personality")) %>%
+  tally() # chose pp
+
+n_chose_rise <- data_youth %>%
+  filter(str_detect(ssi_choice, "RISE")) %>%
+  tally() # chose pp
+
+```
+
+```{r calculating perc milestones, include=FALSE}
+
+## Percent of cases who chose an ssi, of those who started the survey
+
+perc_chose_any_ssi <- round((n_chose_any_ssi/n_started_survey)*100, 2)
+
+## Percent of cases who chose abc, of those who chose any ssi
+
+perc_chose_abc <- round((n_chose_abc/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose care, of those who chose any ssi
+
+perc_chose_care <- round((n_chose_care/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose pp, of those who chose any ssi
+
+perc_chose_pp <- round((n_chose_pp/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose pp, of those who chose any ssi
+
+perc_chose_rise <- round((n_chose_rise/n_chose_any_ssi)*100, 2)
 
 ```
 
@@ -256,6 +315,40 @@ m_pfs_rise <- round(mean(data_youth_rise$pfs_mean, na.rm = TRUE), 2)
 
 ```
 
+```{r t test bhs abc, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_self_hate <- t.test(data_youth_abc$post_bhs_mean, data_youth_abc$pre_bhs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_bhs_p_value <- t_self_hate$p.value
+
+## Saving t-value for effect size calc
+
+abc_bhs_t_value <- t_self_hate$statistic
+
+## Saving n pairs for effect size calc 
+
+abc_bhs_n_pairs <- data_youth_abc %>%
+  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
+  select(post_bhs_mean, pre_bhs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size bhs abc}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_bhs_dz_value <- round(d.dep.t.diff.t(abc_bhs_t_value, abc_bhs_n_pairs, a = 0.05)$d, 2)
+
+```
 
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
@@ -267,11 +360,11 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). In these data to date:
 
-+ In `r perc_completed_any_ssi`% of cases where someone started any SSI (n = `r n_started_any_ssi`), they completed it (n = `r n_completed_any_ssi`)
-+ In `r perc_completed_abc`% of cases where someone started ABC (n = `r n_started_abc`), they completed it (n = `r n_completed_abc`)
-+ In `r perc_completed_care`% of cases where someone started CARE (n = `r n_started_care`), they completed it (n = `r n_completed_care`)
-+ In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
-+ In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
++ `r perc_completed_any_ssi`% of cases completed an SSI (n = `r n_completed_any_ssi`) after starting one (n = `r n_started_any_ssi`)
++ `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
++ `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
++ `r perc_completed_pp`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
++ `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
 
 More than half of the time (`r perc_agreed_questionnaires`% of cases), youth agreed to complete optional questionnaires. 
 
@@ -309,9 +402,21 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Visualizing bhs scores (hopelessness) pre vs. post abc 
+Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, hopelessness decreased from pre to post abc, p = `r abc_bhs_p_value`, dz = `r abc_bhs_dz_value`.
 
-```{r visualizing pre-post hopelessness abc setup, include=FALSE}
+```{r t test results abc bhs}
+
+t_self_hate
+
+```
+
+```{r t test effect size abc bhs}
+
+abc_bhs_dz_value
+
+```
+
+```{r visualizing pre-post bhs abc setup, include=FALSE}
 
 ## Selecting pre and post vars for abc
 
