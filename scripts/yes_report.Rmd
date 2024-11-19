@@ -196,6 +196,67 @@ perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questi
 
 ```
 
+```{r calculating aggregated pfs mean overall, include=FALSE}
+
+## Calculating overall pfs mean, across all ssis
+
+m_pfs_overall <- round(mean(data_youth$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for abc, include=FALSE}
+
+## Pulling only abc responses
+
+data_youth_abc <- data_youth %>%
+  filter(str_detect(ssi_choice, "A.B.C")) # filtering to those who chose abc
+
+## Calculating overall pfs mean for abc
+
+m_pfs_abc <- round(mean(data_youth_abc$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for care, include=FALSE}
+
+## Pulling only care responses
+
+data_youth_care <- data_youth %>%
+  filter(str_detect(ssi_choice, "C.A.R.E")) # filtering to those who chose care
+
+## Calculating overall pfs mean for care
+
+m_pfs_care <- round(mean(data_youth_care$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for pp, include=FALSE}
+
+## Pulling only pp responses
+
+data_youth_pp <- data_youth %>%
+  filter(str_detect(ssi_choice, "Personality")) # filtering to those who chose pp
+
+## Calculating overall pfs mean for pp
+
+m_pfs_pp <- round(mean(data_youth_pp$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for rise, include=FALSE}
+
+## Pulling only rise responses
+
+data_youth_rise <- data_youth %>%
+  filter(str_detect(ssi_choice, "RISE")) # filtering to those who chose rise
+
+## Calculating overall pfs mean for rise
+
+m_pfs_rise <- round(mean(data_youth_rise$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -212,7 +273,14 @@ This report uses youth data (under 18) from the largest English-speaking survey 
 + In `r perc_completed_pp`% of cases where someone started Project Personality (n = `r n_started_pp`), they completed it (n = `r n_completed_pp`)
 + In `r perc_completed_rise`% of cases where someone started RISE (n = `r n_started_rise`), they completed it (n = `r n_completed_rise`)
 
-Approximately half of the time (`r perc_agreed_questionnaires` % of cases), youth agreed to complete optional questionnaires.
+More than half of the time (`r perc_agreed_questionnaires`% of cases), youth agreed to complete optional questionnaires. 
+
+Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` out of 5.
+
++ ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
++ CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
++ Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
++ RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
 
 # Clinical Outcomes 
 
@@ -988,3 +1056,24 @@ Around half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill
 perc_agreed_questionnaires
 
 ```
+
+# Acceptability
+
+```{r}
+
+m_pfs_enjoyed <- round(mean(data_youth$pfs_1, na.rm = TRUE), 2)
+
+m_pfs_understood <- round(mean(data_youth$pfs_2, na.rm = TRUE), 2)
+
+m_pfs_easy <- round(mean(data_youth$pfs_3, na.rm = TRUE), 2)
+
+m_pfs_tried <- round(mean(data_youth$pfs_4, na.rm = TRUE), 2)
+
+m_pfs_helpful <- round(mean(data_youth$pfs_5, na.rm = TRUE), 2)
+
+m_pfs_recommend <- round(mean(data_youth$pfs_6, na.rm = TRUE), 2)
+
+m_pfs_agree <- round(mean(data_youth$pfs_7, na.rm = TRUE), 2)
+
+```
+
