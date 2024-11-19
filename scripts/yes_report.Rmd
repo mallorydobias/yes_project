@@ -301,7 +301,7 @@ showtext::showtext_auto()
 
 ```
 
-## ABC
+## ABC Project
 
 ```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
 
@@ -937,7 +937,7 @@ plots_all
 
 # SSI Completion
 
-## ABC
+## ABC Project
 
 Of `r n_started_abc` cases where someone started abc, `r n_completed_abc` cases completed the intervention. This results in an abc completion rate of `r perc_completed_abc`%.
 
@@ -1191,7 +1191,7 @@ identical(summary_pfs_overall, summary_pfs_overall_function) # true if results a
 
 ```
 
-## ABC
+## ABC Project
 
 PFS scale item descriptives for abc
 
@@ -1207,7 +1207,7 @@ summary_pfs_abc
 
 ```
 
-## CARE
+## Project CARE
 
 PFS scale item descriptives for care
 
@@ -1239,7 +1239,7 @@ summary_pfs_pp
 
 ```
 
-## RISE
+## Project RISE
 
 PFS scale item descriptives for rise
 
