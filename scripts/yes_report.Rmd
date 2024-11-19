@@ -358,7 +358,12 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). In these data to date, our YES survey was started `r n_started_survey` times. `r perc_chose_any_ssi`% of cases chose an SSI after starting (n = `r n_chose_any_ssi`). Of the cases where someone chose an SSI:
+This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). 
+
++ Our YES survey was started `r n_started_survey` times
++ `r perc_chose_any_ssi`% of cases chose an SSI after starting the survey (n = `r n_chose_any_ssi`) 
+
+Of the cases where someone chose an SSI:
 
 + `r perc_chose_abc`% chose ABC
 + `r perc_chose_care`% chose CARE
@@ -409,7 +414,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, hopelessness decreased from pre to post abc, p = `r abc_bhs_p_value`, dz = `r abc_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.
 
 ```{r t test results abc bhs}
 
@@ -731,7 +736,7 @@ plot_care_hate <- plot_data_hate_care_function %>%
 
 Plotting self-hate pre and post care
 
-```{r plotting hate pre and post care, warning=FALSE}
+```{r plotting hate pre and post care, warning=FALSE, message=FALSE}
 
 plot_care_hate
 
