@@ -576,7 +576,7 @@ pp_bhs_dz_value <- round(d.dep.t.diff.t(pp_bhs_t_value, pp_bhs_n_pairs, a = 0.05
 
 ```
 
-```{r t test shs care, include=FALSE}
+```{r t test shs pp, include=FALSE}
 
 library(stats)
 
