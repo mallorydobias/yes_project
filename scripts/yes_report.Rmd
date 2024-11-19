@@ -1059,21 +1059,146 @@ perc_agreed_questionnaires
 
 # Acceptability
 
-```{r}
+## All
 
-m_pfs_enjoyed <- round(mean(data_youth$pfs_1, na.rm = TRUE), 2)
+```{r calculating pfs item means across all ssis, include=FALSE}
 
-m_pfs_understood <- round(mean(data_youth$pfs_2, na.rm = TRUE), 2)
+## Calculating individual pfs item means, across all ssis
 
-m_pfs_easy <- round(mean(data_youth$pfs_3, na.rm = TRUE), 2)
+summary_pfs_enjoyed <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_1, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_1, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "enjoyed",
+         mean_value = mean_value,
+         sd_value = sd_value)
 
-m_pfs_tried <- round(mean(data_youth$pfs_4, na.rm = TRUE), 2)
+summary_pfs_understood <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_2, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_2, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "understood",
+         mean_value = mean_value,
+         sd_value = sd_value)
 
-m_pfs_helpful <- round(mean(data_youth$pfs_5, na.rm = TRUE), 2)
+summary_pfs_easy <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_3, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_3, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "easy to use",
+         mean_value = mean_value,
+         sd_value = sd_value)
 
-m_pfs_recommend <- round(mean(data_youth$pfs_6, na.rm = TRUE), 2)
+summary_pfs_tried <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_4, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_4, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "tried my hardest",
+         mean_value = mean_value,
+         sd_value = sd_value)
 
-m_pfs_agree <- round(mean(data_youth$pfs_7, na.rm = TRUE), 2)
+summary_pfs_helpful <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_5, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_5, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "helpful for others",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_recommend <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_6, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_6, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "recommend to others",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_agree <- data_youth %>%
+  summarize(mean_value = round(mean(pfs_7, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_7, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "agree with message",
+         mean_value = mean_value,
+         sd_value = sd_value)
 
 ```
+
+```{r pulling pfs item means across all ssis into one df, include=FALSE}
+
+## Pulling into one data frame
+
+summary_pfs_overall <- dplyr::bind_rows(
+  summary_pfs_enjoyed, summary_pfs_understood, summary_pfs_easy,
+  summary_pfs_tried, summary_pfs_helpful, summary_pfs_recommend,
+  summary_pfs_agree) %>%
+  select(pfs_item, mean = mean_value, sd = sd_value)
+
+```
+
+Overall PFS scale item descriptives across all SSIs
+
+```{r printing overall pfs item descriptives across all ssis}
+
+summary_pfs_overall
+
+```
+
+```{r creating custom function to calculate pfs item descriptives, include=FALSE}
+
+## I'll use this function to calculate pfs item descriptives for each ssi
+
+# Define the function
+calculate_pfs_item_means <- function(data) {
+  
+  # Create a list of variable names and their corresponding item descriptions
+  pfs_items <- list(
+    pfs_1 = "enjoyed",
+    pfs_2 = "understood",
+    pfs_3 = "easy to use",
+    pfs_4 = "tried my hardest",
+    pfs_5 = "helpful for others",
+    pfs_6 = "recommend to others",
+    pfs_7 = "agree with message"
+  )
+  
+  # Initialize an empty list to store the summaries
+  summaries <- list()
+  
+  # Loop through each item and calculate the mean and sd
+  for (pfs in names(pfs_items)) {
+    summary <- data %>%
+      summarize(mean_value = round(mean(.data[[pfs]], na.rm = TRUE), 2),
+                sd_value = round(sd(.data[[pfs]], na.rm = TRUE), 2)) %>%
+      mutate(pfs_item = pfs_items[[pfs]],
+             mean_value = mean_value,
+             sd_value = sd_value)
+    
+    summaries[[pfs]] <- summary
+  }
+  
+  # Combine all summaries into a single data frame
+  summary_pfs_overall <- bind_rows(summaries) %>%
+    select(pfs_item, mean = mean_value, sd = sd_value)
+  
+  return(summary_pfs_overall)
+}
+
+```
+
+```{r testing custom pfs function, include=FALSE}
+
+# Example usage with your data_youth dataset
+summary_pfs_overall_function <- calculate_pfs_item_means(data_youth)
+
+# Print the overall PFS item descriptives
+summary_pfs_overall_function
+
+# Checking if this works
+identical(summary_pfs_overall, summary_pfs_overall_function) # true if results are identical with and without function
+
+```
+
+## ABC
+
+PFS scale item descriptives for abc
+
+```{r}
+
+
+
+```
+
 
