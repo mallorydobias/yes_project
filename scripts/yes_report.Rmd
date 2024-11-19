@@ -1180,7 +1180,7 @@ calculate_pfs_item_means <- function(data) {
 
 ```{r testing custom pfs function, include=FALSE}
 
-# Example usage with your data_youth dataset
+# Testing with overall data_youth dataset
 summary_pfs_overall_function <- calculate_pfs_item_means(data_youth)
 
 # Print the overall PFS item descriptives
@@ -1195,10 +1195,62 @@ identical(summary_pfs_overall, summary_pfs_overall_function) # true if results a
 
 PFS scale item descriptives for abc
 
-```{r}
+```{r pfs item desctiptives for abc}
 
+## Running custom function to get pfs item descriptives 
 
+summary_pfs_abc <- calculate_pfs_item_means(data_youth_abc)
+
+## Print descriptives
+
+summary_pfs_abc
 
 ```
 
+## CARE
 
+PFS scale item descriptives for care
+
+```{r pfs item desctiptives for care}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_care <- calculate_pfs_item_means(data_youth_care)
+
+## Print descriptives
+
+summary_pfs_care
+
+```
+
+## Project Personality
+
+PFS scale item descriptives for project personality
+
+```{r pfs item desctiptives for pp}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_pp <- calculate_pfs_item_means(data_youth_pp)
+
+## Print descriptives
+
+summary_pfs_pp
+
+```
+
+## RISE
+
+PFS scale item descriptives for rise
+
+```{r pfs item desctiptives for rise}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_rise <- calculate_pfs_item_means(data_youth_rise)
+
+## Print descriptives
+
+summary_pfs_rise
+
+```
