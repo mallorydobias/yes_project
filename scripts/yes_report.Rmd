@@ -809,6 +809,7 @@ Of cases with data at both time points:
 + Hopelessness decreased, hope increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
 + Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
 + Hopelessness decreased, hope increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 # Clinical Outcomes 
 
@@ -1422,7 +1423,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`. However, this test is currently run in a very small sample size (n = `r (t_rise_bhs$df) + 1`).
+Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
 ```{r t test results rise bhs}
 
@@ -1473,7 +1474,7 @@ plot_rise_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in hope (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that hope increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (n = `r (t_rise_shs$df) + 1`).
+Conducting a paired t-test to evaluate pre vs post-rise changes in hope (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that hope increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
 ```{r t test results rise shs}
 
@@ -1524,7 +1525,7 @@ plot_rise_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, we should probably not pay attention to the results of this test for now, given the very small sample size (n = `r (t_rise_hate$df) + 1`). 
+Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, we should probably not pay attention to the results of this test for now, given the very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
 
 ```{r t test results rise hate}
 
