@@ -654,6 +654,119 @@ pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value)
 
 ```
 
+```{r t test bhs rise, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_rise_bhs <- t.test(data_youth_rise$post_bhs_mean, data_youth_rise$pre_bhs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+rise_bhs_p_value <- t_rise_bhs$p.value
+
+## Saving t-value for effect size calc
+
+rise_bhs_t_value <- t_rise_bhs$statistic
+
+## Saving n pairs for effect size calc 
+
+rise_bhs_n_pairs <- data_youth_rise %>%
+  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
+  select(post_bhs_mean, pre_bhs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size bhs rise, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+rise_bhs_dz_value <- round(d.dep.t.diff.t(rise_bhs_t_value, rise_bhs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test shs rise, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_rise_shs <- t.test(data_youth_rise$post_shs_mean, data_youth_rise$pre_shs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+rise_shs_p_value <- t_rise_shs$p.value
+
+## Saving t-value for effect size calc
+
+rise_shs_t_value <- t_rise_shs$statistic
+
+## Saving n pairs for effect size calc 
+
+rise_shs_n_pairs <- data_youth_rise %>%
+  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
+  select(post_shs_mean, pre_shs_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size shs rise, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+rise_shs_dz_value <- round(d.dep.t.diff.t(rise_shs_t_value, rise_shs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test hate rise, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_rise_hate <- t.test(data_youth_rise$post_self_hate_mean, data_youth_rise$pre_self_hate_mean, paired = TRUE)
+
+## Saving p-value for report
+
+rise_hate_p_value <- t_rise_hate$p.value
+
+## Saving t-value for effect size calc
+
+rise_hate_t_value <- t_rise_hate$statistic
+
+## Saving n pairs for effect size calc 
+
+rise_hate_n_pairs <- data_youth_rise %>%
+  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
+  select(post_self_hate_mean, pre_self_hate_mean) %>%
+  nrow()
+
+```
+
+```{r t test effect size hate rise, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+rise_hate_dz_value <- round(d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$d, 3)
+
+```
+
+```{r rise effect sizes list, include=FALSE}
+
+## Saving dz values for report
+
+rise_dz_values <- c(rise_hate_dz_value)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -695,6 +808,7 @@ Of cases with data at both time points:
 
 + Hopelessness decreased, hope increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
 + Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
++ Hopelessness decreased, hope increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
 
 # Clinical Outcomes 
 
@@ -1308,7 +1422,19 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Visualizing bhs scores (hopelessness) pre vs. post project rise 
+Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`. However, this test is currently run in a very small sample size (n = `r (t_rise_bhs$df) + 1`).
+
+```{r t test results rise bhs}
+
+t_rise_bhs
+
+```
+
+```{r t test effect size rise bhs}
+
+rise_bhs_dz_value
+
+```
 
 ```{r running custom plot function on rise bhs data, include=FALSE}
 
@@ -1347,7 +1473,19 @@ plot_rise_bhs
 
 ```
 
-Visualizing shs scores (hope-pathways subscale) pre vs. post project rise
+Conducting a paired t-test to evaluate pre vs post-rise changes in hope (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that hope increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (n = `r (t_rise_shs$df) + 1`).
+
+```{r t test results rise shs}
+
+t_rise_shs
+
+```
+
+```{r t test effect size rise shs}
+
+rise_shs_dz_value
+
+```
 
 ```{r running custom plot function on rise shs data, include=FALSE}
 
@@ -1386,7 +1524,19 @@ plot_rise_shs
 
 ```
 
-Visualizing self-hate scores pre vs. post project rise
+Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, we should probably not pay attention to the results of this test for now, given the very small sample size (n = `r (t_rise_hate$df) + 1`). 
+
+```{r t test results rise hate}
+
+t_rise_hate
+
+```
+
+```{r t test effect size rise hate}
+
+rise_hate_dz_value
+
+```
 
 ```{r running custom plot function on rise hate data, include=FALSE}
 
