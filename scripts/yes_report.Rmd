@@ -1891,7 +1891,7 @@ perc_gender_differs_from_sex
 
 ## Sexual Orientation
 
-`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_sex_minority`% of survey responses endorsed a sexual minority identity. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r calculating sex orientation tallies, include=FALSE}
 
