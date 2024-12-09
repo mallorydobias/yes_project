@@ -722,7 +722,7 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 # Questionnaire Completion
 
-More than half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill out optional questionnaires.
+More than half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`), youth agreed to fill out optional questionnaires.
 
 ```{r perc agreed questionnaires}
 
