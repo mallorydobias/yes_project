@@ -597,7 +597,15 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). 
 
 + Our YES survey was started `r n_started_survey` times
++ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
 + `r perc_chose_any_ssi`% of cases chose an SSI after starting the survey (n = `r n_chose_any_ssi`) 
+
+Of cases with data at both time points:
+
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
++ Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 Of the cases where someone chose an SSI:
 
@@ -614,21 +622,12 @@ Of cases where someone started an SSI:
 + `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
 + `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
 
-More than half of the time (`r perc_agreed_questionnaires`% of cases), youth agreed to complete optional questionnaires. 
-
 Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` out of 5:
 
 + ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
 + CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
 + Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
 + RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
-
-Of cases with data at both time points:
-
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
-+ Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
-+ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 # Questionnaire Completion
 
