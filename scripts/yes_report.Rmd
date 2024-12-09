@@ -68,6 +68,9 @@ library(stats)
 if(!require(MOTE)){install.packages('MOTE')}
 library(MOTE)
 
+if(!require(rempsyc)){install.packages('rempsyc')}
+library(rempsyc)
+
 ```
 
 ```{r note, include=FALSE}
@@ -1806,7 +1809,8 @@ count_yes_responses <- function(data) {
                  names_to = "variable", 
                  values_to = "count") %>%
     rowwise() %>%
-    mutate(percentage = round((count / n_agreed_questionnaires) * 100, 2)) %>% # Correct rounding
+    mutate(percentage = count / n_agreed_questionnaires * 100) %>% 
+    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
     unnest(cols = c(percentage))  # Ensure percentage column is not nested
 }
 
@@ -1826,7 +1830,7 @@ gender_tallies <- count_yes_responses(data_youth_gender) %>%
 
 ```{r printing gender tally, include=TRUE}
 
-gender_tallies
+rempsyc::nice_table(gender_tallies)
 
 ```
 
