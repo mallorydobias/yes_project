@@ -949,7 +949,7 @@ plot_abc_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in hope (shs pathways scores). For those who chose the abc intervention with data at both time points, hope increased from pre to post abc, dz = `r abc_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, agencyincreased from pre to post abc, dz = `r abc_shs_dz_value`.
 
 ```{r t test results abc shs}
 
@@ -988,11 +988,11 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hope (Pathways)", y = " ")
+  labs(x = "Agency", y = " ")
 
 ```
 
-Plotting hope pre and post abc
+Plotting agency pre and post abc
 
 ```{r plotting shs pre and post abc, warning=FALSE, message=FALSE}
 
@@ -1124,7 +1124,7 @@ plot_care_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-care changes in hope (shs pathways scores). For those who chose the care intervention with data at both time points, we detect no significant change in hope from pre to post care, dz = `r care_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in agency (shs pathways scores). For those who chose the care intervention with data at both time points, we detect no significant change in agency from pre to post care, dz = `r care_shs_dz_value`.
 
 ```{r t test results care shs}
 
@@ -1163,11 +1163,11 @@ plot_care_shs <- plot_data_shs_care_function %>%
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hope (Pathways)", y = " ")
+  labs(x = "Agency", y = " ")
 
 ```
 
-Plotting hope pre and post care
+Plotting agency pre and post care
 
 ```{r plotting shs pre and post care, warning=FALSE, message=FALSE}
 
@@ -1299,7 +1299,7 @@ plot_pp_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in hope (shs pathways scores). For those who chose the project personality intervention with data at both time points, hope increased from pre to post project personality, dz = `r pp_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in agency (shs pathways scores). For those who chose the project personality intervention with data at both time points, agency increased from pre to post project personality, dz = `r pp_shs_dz_value`.
 
 ```{r t test results pp shs}
 
@@ -1338,11 +1338,11 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hope (Pathways)", y = " ")
+  labs(x = "Agency", y = " ")
 
 ```
 
-Plotting hope pre and post project personality
+Plotting agency pre and post project personality
 
 ```{r plotting shs pre and post pp, warning=FALSE, message=FALSE}
 
@@ -1474,7 +1474,7 @@ plot_rise_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in hope (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that hope increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+Conducting a paired t-test to evaluate pre vs post-rise changes in agency (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that agency increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
 ```{r t test results rise shs}
 
@@ -1513,11 +1513,11 @@ plot_rise_shs <- plot_data_shs_rise_function %>%
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hope (Pathways)", y = " ")
+  labs(x = "Agency", y = " ")
 
 ```
 
-Plotting hope pre and post project rise
+Plotting agency pre and post project rise
 
 ```{r plotting shs pre and post rise, warning=FALSE, message=FALSE}
 
