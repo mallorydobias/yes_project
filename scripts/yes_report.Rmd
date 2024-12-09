@@ -603,6 +603,23 @@ perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_sur
 
 ```
 
+```{r perc sexual minority, include=FALSE}
+
+## Tallying number of cases where gender identity is different from sex assigned at birth
+
+n_sex_minority <- data_youth %>%
+  select(dem_sex_orientation) %>%
+  filter(!is.na(dem_sex_orientation) & 
+           dem_sex_orientation != "Heterosexual/Straight" &
+           dem_sex_orientation != "I do not want to respond") %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who started the survey
+
+perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -650,6 +667,7 @@ Across all survey cases:
 
 + Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
++ `r perc_sex_minority`% identify as a sexual minority
 
 # Questionnaire Completion
 
@@ -1801,7 +1819,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1871,3 +1889,40 @@ perc_gender_differs_from_sex
 
 ```
 
+## Sexual Orientation
+
+`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+
+```{r calculating sex orientation tallies, include=FALSE}
+
+## Prepping dataframe with sexual orientation tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+sex_orientation_tallies <- data_youth %>%
+  select(sex_orientation = dem_sex_orientation) %>%
+  mutate(sex_orientation = case_when(is.na(sex_orientation) ~ "Missing",
+                                     TRUE ~ sex_orientation)) %>%
+  group_by(sex_orientation) %>%
+  tally() %>%
+  ungroup() %>%
+  arrange(-n) %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+```
+
+```{r printing age tally, include=TRUE}
+
+rempsyc::nice_table(sex_orientation_tallies)
+
+```
+
+```{r perc sexual minority, include=TRUE}
+
+perc_sex_minority
+
+```
