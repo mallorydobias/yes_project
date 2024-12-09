@@ -2031,6 +2031,8 @@ summary_pfs_rise
 
 ## ABC
 
+Plotting number of page submissions by page number. This is a way to illustrate drop-off.
+
 ```{r selecting abc pages for plot, include=FALSE}
 
 ## Selecting only abc pages
@@ -2091,6 +2093,8 @@ plot_abc_drop
 ```
 
 ## Project CARE
+
+Plotting number of page submissions by page number. This is a way to illustrate drop-off.
 
 ```{r selecting care pages for plot, include=FALSE}
 
@@ -2220,6 +2224,8 @@ plot_pp_drop
 Project RISE plot is unavailable, as we do not have timing variables on the pages of this intervention.
 
 ## All
+
+Plorring dropoff for all ssis.
 
 ```{r combining all drop plots, warning=FALSE, message=FALSE}
 
