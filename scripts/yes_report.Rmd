@@ -1915,7 +1915,7 @@ sex_orientation_tallies <- data_youth %>%
 
 ```
 
-```{r printing age tally, include=TRUE}
+```{r printing sex orientation tally, include=TRUE}
 
 rempsyc::nice_table(sex_orientation_tallies)
 
