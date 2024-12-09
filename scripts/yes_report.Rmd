@@ -620,6 +620,21 @@ perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
 
 ```
 
+```{r perc racial minority, include=FALSE}
+
+## Tallying number of cases where gender identity is different from sex assigned at birth
+
+n_racial_minority <- data_youth %>%
+  select(contains("dem_race"), -contains("white"), -contains("hisp")) %>%
+  filter(if_any(c(dem_race_asian, dem_race_black, dem_race_other), ~ . == "yes")) %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who started the survey
+
+perc_racial_minority <- round((n_racial_minority / n_started_survey)*100,2)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -634,11 +649,13 @@ This report uses youth data (under 18) from the largest English-speaking survey 
 + In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
 + `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
-Across all survey starts:
+Across all survey starts (n = `r n_started_survey`):
 
++ There's lots of missing demographic data, given optional questionnaires
 + Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
 + `r perc_sex_minority`% identify as a sexual minority
++ `r perc_racial_minority`% identify as a racial minority
 
 Of cases with data at both time points:
 
@@ -683,7 +700,7 @@ perc_agreed_questionnaires
 
 ## Age
 
-N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). Age is one of the first questions asked.
+N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r calculating age tally, include=FALSE}
 
