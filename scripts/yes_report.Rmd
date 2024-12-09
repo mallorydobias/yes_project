@@ -1823,17 +1823,15 @@ count_yes_responses <- function(data) {
 gender_tallies <- count_yes_responses(data_youth_gender) %>%
   mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
   rename(gender_identity = variable) %>%
-  rename(percent = n) %>%
-  arrange(-count)
+  rename("%" = n) %>%
+  rename(n = count) %>%
+  arrange(-n)
 
 ```
 
 ```{r printing gender tally, include=TRUE}
 
 rempsyc::nice_table(gender_tallies)
-
-data %>%
-  filter(dem_gender_mtf)
 
 ```
 
