@@ -1799,7 +1799,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (n = `r n_agreed_questionnaires`). 
+Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1838,7 +1838,7 @@ count_yes_responses <- function(data) {
                  names_to = "variable", 
                  values_to = "count") %>%
     rowwise() %>%
-    mutate(percentage = count / n_agreed_questionnaires * 100) %>% 
+    mutate(percentage = count / n_started_survey * 100) %>% 
     mutate(percentage = round(percentage, 2)) %>% # Correct rounding
     unnest(cols = c(percentage))  # Ensure percentage column is not nested
 }
