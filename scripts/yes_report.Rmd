@@ -1921,7 +1921,7 @@ rempsyc::nice_table(sex_orientation_tallies)
 
 ```
 
-```{r perc sexual minority, include=TRUE}
+```{r printing perc sexual minority, include=TRUE}
 
 perc_sex_minority
 
