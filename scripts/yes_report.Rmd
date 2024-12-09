@@ -898,13 +898,13 @@ race_tallies <- count_yes_responses(data_youth_race) %>%
   rename("%" = n) %>%
   rename(n = count) %>%
   arrange(-n) %>%
-  mutate(racial_identity = case_when(racial_identity == "missing" ~ "Missing",
-                                     racial_identity == "white" ~ "White",
-                                     racial_identity == "latin_hisp" ~ "Latine/Hispanic",
-                                     racial_identity == "asian" ~ "Asian",
-                                     racial_identity == "black" ~ "Black",
-                                     racial_identity == "other" ~ "Another racial/ethnic identity not listed",
-                                     TRUE ~ racial_identity))
+  mutate(racial_ethnic_identity = case_when(racial_ethnic_identity == "missing" ~ "Missing",
+                                     racial_ethnic_identity == "white" ~ "White",
+                                     racial_ethnic_identity == "latin_hisp" ~ "Latine/Hispanic",
+                                     racial_ethnic_identity == "asian" ~ "Asian",
+                                     racial_ethnic_identity == "black" ~ "Black",
+                                     racial_ethnic_identity == "other" ~ "Another racial/ethnic identity not listed",
+                                     TRUE ~ racial_ethnic_identity))
 
 ```
 
