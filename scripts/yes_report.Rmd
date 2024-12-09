@@ -275,7 +275,7 @@ n_agreed_questionnaires <- data_youth %>%
   tally()
 
 n_answered_questionnaires_item <- data_youth %>%
-  filter(!is.na(volunteer_questionnaires_yn)) %>% # filtering to those who started an ssi
+  filter(!is.na(volunteer_questionnaires_yn)) %>% # filtering to those who answered the question
   select(volunteer_questionnaires_yn) %>%
   tally()
 
@@ -586,6 +586,20 @@ print(rise_dz_values)
 
 ```
 
+```{r gender identity differs from sex, include=FALSE}
+
+## Tallying number of cases where gender identity is different from sex assigned at birth
+
+n_gender_differs_from_sex <- data_youth %>%
+  filter(dem_gender_diff_sex == "Yes") %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who agreed to questionnaires
+
+perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_agreed_questionnaires)*100,2)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -598,7 +612,7 @@ This report uses youth data (under 18) from the largest English-speaking survey 
 
 + Our YES survey was started `r n_started_survey` times
 + In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
-+ `r perc_chose_any_ssi`% of cases chose an SSI after starting the survey (n = `r n_chose_any_ssi`) 
++ `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
 Of cases with data at both time points:
 
@@ -622,12 +636,15 @@ Of cases where someone started an SSI:
 + `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
 + `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
 
-Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` out of 5:
+Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 + ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
 + CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
 + Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
 + RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
+
+Across all survey cases:
++ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
 
 # Questionnaire Completion
 
@@ -1745,3 +1762,77 @@ summary_pfs_rise <- calculate_pfs_item_means(data_youth_rise)
 summary_pfs_rise
 
 ```
+
+# Demographics
+
+## Gender
+
+Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (`r n_agreed_questionnaires`). 
+
+```{r combining sex and gender data, include=FALSE}
+
+## Imputing gender identity data for folks who answered gender does not differ from sex
+## Only folks who reported gender differs from sex were asked gender identity item
+
+data_youth_gender <- data_youth %>%
+  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
+         TRUE ~ dem_gender_girl_woman)) %>%
+  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
+         TRUE ~ dem_gender_boy_man)) %>%
+  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
+         TRUE ~ dem_gender_intersex)) %>%
+  filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed to questionnaires
+  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
+  mutate(dem_gender_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r custom demographic count function, include=FALSE}
+
+# Custom function to tally yeses in each demographic column 
+
+count_yes_responses <- function(data) {
+  # Ensure n_agreed_questionnaires exists in the global environment
+  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
+    stop("n_agreed_questionnaires is not defined in the global environment")
+  }
+  
+  data %>%
+    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rowwise() %>%
+    mutate(percentage = round((count / n_agreed_questionnaires) * 100, 2)) %>% # Correct rounding
+    unnest(cols = c(percentage))  # Ensure percentage column is not nested
+}
+
+```
+
+```{r calculating gender tally, include=FALSE}
+
+# Using custom function to print gender variable counts
+
+gender_tallies <- count_yes_responses(data_youth_gender) %>%
+  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
+  rename(gender_identity = variable) %>%
+  rename(percent = n) %>%
+  arrange(-count)
+
+```
+
+```{r printing gender tally, include=TRUE}
+
+gender_tallies
+
+```
+
+```{r perc gender differs from sex, include=TRUE}
+
+perc_gender_differs_from_sex
+
+```
+
