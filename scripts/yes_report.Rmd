@@ -634,6 +634,12 @@ This report uses youth data (under 18) from the largest English-speaking survey 
 + In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
 + `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
+Across all survey starts:
+
++ Ages range from <10 to 17 (categorical data only)
++ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
++ `r perc_sex_minority`% identify as a sexual minority
+
 Of cases with data at both time points:
 
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
@@ -663,12 +669,6 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 + Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
 + RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
 
-Across all survey cases:
-
-+ Ages range from <10 to 17 (categorical data only)
-+ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
-+ `r perc_sex_minority`% identify as a sexual minority
-
 # Questionnaire Completion
 
 More than half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill out optional questionnaires.
@@ -676,6 +676,147 @@ More than half of the time (`r perc_agreed_questionnaires` %), youth agreed to f
 ```{r perc agreed questionnaires}
 
 perc_agreed_questionnaires
+
+```
+
+# Demographics
+
+## Age
+
+N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). Age is one of the first questions asked.
+
+```{r calculating age tally, include=FALSE}
+
+## Prepping dataframe with age tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+age_tallies <- data_youth %>%
+  select(age = dem_age) %>%
+  group_by(age) %>%
+  tally() %>%
+  ungroup() %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+```
+
+```{r printing age tally, include=TRUE}
+
+rempsyc::nice_table(age_tallies)
+
+```
+
+## Gender
+
+`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+
+```{r combining sex and gender data, include=FALSE}
+
+## Imputing gender identity data for folks who answered gender does not differ from sex
+## Only folks who reported gender differs from sex were asked gender identity item
+
+data_youth_gender <- data_youth %>%
+  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
+         TRUE ~ dem_gender_girl_woman)) %>%
+  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
+         TRUE ~ dem_gender_boy_man)) %>%
+  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
+         TRUE ~ dem_gender_intersex)) %>%
+  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
+  mutate(dem_gender_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r custom demographic count function, include=FALSE}
+
+# Custom function to tally yeses in each demographic column 
+
+count_yes_responses <- function(data) {
+  # Ensure n_agreed_questionnaires exists in the global environment
+  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
+    stop("n_agreed_questionnaires is not defined in the global environment")
+  }
+  
+  data %>%
+    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rowwise() %>%
+    mutate(percentage = count / n_started_survey * 100) %>% 
+    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+    unnest(cols = c(percentage))  # Ensure percentage column is not nested
+}
+
+```
+
+```{r calculating gender tally, include=FALSE}
+
+# Using custom function to print gender variable counts
+
+gender_tallies <- count_yes_responses(data_youth_gender) %>%
+  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
+  rename(gender_identity = variable) %>%
+  rename("%" = n) %>%
+  rename(n = count) %>%
+  arrange(-n)
+
+```
+
+```{r printing gender tally, include=TRUE}
+
+rempsyc::nice_table(gender_tallies)
+
+```
+
+```{r perc gender differs from sex, include=TRUE}
+
+perc_gender_differs_from_sex
+
+```
+
+## Sexual Orientation
+
+`r perc_sex_minority`% of survey responses endorsed a sexual minority identity. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+
+```{r calculating sex orientation tallies, include=FALSE}
+
+## Prepping dataframe with sexual orientation tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+sex_orientation_tallies <- data_youth %>%
+  select(sex_orientation = dem_sex_orientation) %>%
+  mutate(sex_orientation = case_when(is.na(sex_orientation) ~ "Missing",
+                                     TRUE ~ sex_orientation)) %>%
+  group_by(sex_orientation) %>%
+  tally() %>%
+  ungroup() %>%
+  arrange(-n) %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+```
+
+```{r printing sex orientation tally, include=TRUE}
+
+rempsyc::nice_table(sex_orientation_tallies)
+
+```
+
+```{r printing perc sexual minority, include=TRUE}
+
+perc_sex_minority
 
 ```
 
@@ -1783,146 +1924,5 @@ summary_pfs_rise <- calculate_pfs_item_means(data_youth_rise)
 ## Print descriptives
 
 summary_pfs_rise
-
-```
-
-# Demographics
-
-## Age
-
-N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). Age is one of the first questions asked.
-
-```{r calculating age tally, include=FALSE}
-
-## Prepping dataframe with age tallies; renaming is a bit weird here once % is calculated
-## No need to add missing values here, since only one variable
-
-age_tallies <- data_youth %>%
-  select(age = dem_age) %>%
-  group_by(age) %>%
-  tally() %>%
-  ungroup() %>%
-  rename(count = n) %>%
-  rowwise() %>%
-  mutate(percentage = count / n_started_survey * 100) %>%
-  mutate(percentage = round(percentage, 2)) %>%
-  unnest(cols = c(percentage)) %>%
-  rename(n = count, "%" = n)
-
-```
-
-```{r printing age tally, include=TRUE}
-
-rempsyc::nice_table(age_tallies)
-
-```
-
-## Gender
-
-`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
-
-```{r combining sex and gender data, include=FALSE}
-
-## Imputing gender identity data for folks who answered gender does not differ from sex
-## Only folks who reported gender differs from sex were asked gender identity item
-
-data_youth_gender <- data_youth %>%
-  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
-         TRUE ~ dem_gender_girl_woman)) %>%
-  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
-         TRUE ~ dem_gender_boy_man)) %>%
-  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
-         TRUE ~ dem_gender_intersex)) %>%
-  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
-  mutate(dem_gender_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
-
-```
-
-```{r custom demographic count function, include=FALSE}
-
-# Custom function to tally yeses in each demographic column 
-
-count_yes_responses <- function(data) {
-  # Ensure n_agreed_questionnaires exists in the global environment
-  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
-    stop("n_agreed_questionnaires is not defined in the global environment")
-  }
-  
-  data %>%
-    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rowwise() %>%
-    mutate(percentage = count / n_started_survey * 100) %>% 
-    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
-    unnest(cols = c(percentage))  # Ensure percentage column is not nested
-}
-
-```
-
-```{r calculating gender tally, include=FALSE}
-
-# Using custom function to print gender variable counts
-
-gender_tallies <- count_yes_responses(data_youth_gender) %>%
-  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
-  rename(gender_identity = variable) %>%
-  rename("%" = n) %>%
-  rename(n = count) %>%
-  arrange(-n)
-
-```
-
-```{r printing gender tally, include=TRUE}
-
-rempsyc::nice_table(gender_tallies)
-
-```
-
-```{r perc gender differs from sex, include=TRUE}
-
-perc_gender_differs_from_sex
-
-```
-
-## Sexual Orientation
-
-`r perc_sex_minority`% of survey responses endorsed a sexual minority identity. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
-
-```{r calculating sex orientation tallies, include=FALSE}
-
-## Prepping dataframe with sexual orientation tallies; renaming is a bit weird here once % is calculated
-## No need to add missing values here, since only one variable
-
-sex_orientation_tallies <- data_youth %>%
-  select(sex_orientation = dem_sex_orientation) %>%
-  mutate(sex_orientation = case_when(is.na(sex_orientation) ~ "Missing",
-                                     TRUE ~ sex_orientation)) %>%
-  group_by(sex_orientation) %>%
-  tally() %>%
-  ungroup() %>%
-  arrange(-n) %>%
-  rename(count = n) %>%
-  rowwise() %>%
-  mutate(percentage = count / n_started_survey * 100) %>%
-  mutate(percentage = round(percentage, 2)) %>%
-  unnest(cols = c(percentage)) %>%
-  rename(n = count, "%" = n)
-
-```
-
-```{r printing sex orientation tally, include=TRUE}
-
-rempsyc::nice_table(sex_orientation_tallies)
-
-```
-
-```{r printing perc sexual minority, include=TRUE}
-
-perc_sex_minority
 
 ```
