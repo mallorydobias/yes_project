@@ -806,9 +806,9 @@ Youth reported SSIs as acceptable, with an overall rating of `r m_pfs_overall` o
 
 Of cases with data at both time points:
 
-+ Hopelessness decreased, hope increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
 + Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Hopelessness decreased, hope increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
 + Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 # Clinical Outcomes 
