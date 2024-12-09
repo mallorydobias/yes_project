@@ -169,57 +169,84 @@ perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
 
 ```
 
-```{r calculating perc complete of those who started for care, include=FALSE}
+```{r writing custom function for perc completed ssi, include=FALSE}
 
-n_started_care <- data_youth %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_care <- data_youth %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_care <- round((n_completed_care / n_started_care) * 100, 2)
-
-```
-
-```{r calculating perc complete of those who started for pp, include=FALSE}
-
-n_started_pp <- data_youth %>%
-  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
-
-n_completed_pp <- data_youth %>%
-  filter(str_detect(ssi_choice, "Personality")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
-
-perc_completed_pp <- round((n_completed_pp / n_started_pp) * 100, 2)
+# Define the custom function
+filter_and_summarize_ssi <- function(data, filter_string, started_var_name, completed_var_name) {
+  # Filter for those who started the SSI and assign globally
+  assign(started_var_name, data %>%
+           filter(str_detect(ssi_choice, filter_string)) %>%
+           filter(!is.na(ssi_started)) %>%
+           tally(), envir = .GlobalEnv)
+  
+  # Filter for those who completed the SSI and assign globally
+  assign(completed_var_name, data %>%
+           filter(str_detect(ssi_choice, filter_string)) %>%
+           filter(!is.na(ssi_completed)) %>%
+           tally(), envir = .GlobalEnv)
+  
+  # Calculate percentage completed and assign globally
+  perc_completed_name <- paste0("perc_completed_", tolower(gsub("\\.", "", filter_string)))
+  assign(perc_completed_name, round((get(completed_var_name, envir = .GlobalEnv) / get(started_var_name, envir = .GlobalEnv)) * 100, 2), envir = .GlobalEnv)
+  
+  # Return the results as a list
+  list(
+    started = get(started_var_name, envir = .GlobalEnv),
+    completed = get(completed_var_name, envir = .GlobalEnv),
+    perc_completed = get(perc_completed_name, envir = .GlobalEnv)
+  )
+}
 
 ```
 
-```{r calculating perc complete of those who started for rise, include=FALSE}
+```{r using custom function for perc completed abc, include=FALSE}
 
-n_started_rise <- data_youth %>%
-  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_started) %>%
-  tally()
+# Testing custom function for perc completion on abc
+results <- filter_and_summarize_ssi(data_youth, "A.B.C", "n_started_abc", "n_completed_abc")
+print(results)
 
-n_completed_rise <- data_youth %>%
-  filter(str_detect(ssi_choice, "RISE")) %>% # filtering to those who chose this ssi
-  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
-  select(ssi_choice, ssi_completed) %>%
-  tally()
+# Later, you can access n_started_abc, n_completed_abc, and perc_completed_abc from the global environment:
+print(n_started_abc)
+print(n_completed_abc)
+print(perc_completed_abc)
 
-perc_completed_rise <- round((n_completed_rise / n_started_rise) * 100, 2)
+```
+
+```{r using custom function for perc completed care, include=FALSE}
+
+# Testing custom function for perc completion on care
+results <- filter_and_summarize_ssi(data_youth, "C.A.R.E", "n_started_care", "n_completed_care")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_care)
+print(n_completed_care)
+print(perc_completed_care)
+
+```
+
+```{r using custom function for perc completed pp, include=FALSE}
+
+# Testing custom function for perc completion on pp
+results <- filter_and_summarize_ssi(data_youth, "Personality", "n_started_pp", "n_completed_pp")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_pp)
+print(n_completed_pp)
+print(perc_completed_personality)
+
+```
+```{r using custom function for perc completed rise, include=FALSE}
+
+# Testing custom function for perc completion on rise
+results <- filter_and_summarize_ssi(data_youth, "RISE", "n_started_rise", "n_completed_rise")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_rise)
+print(n_completed_rise)
+print(perc_completed_rise)
 
 ```
 
@@ -792,7 +819,7 @@ Of cases where someone started an SSI:
 + `r perc_completed_any_ssi`% of cases completed an SSI (n = `r n_completed_any_ssi`) after starting one (n = `r n_started_any_ssi`)
 + `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
 + `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
-+ `r perc_completed_pp`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
++ `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
 + `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
 
 More than half of the time (`r perc_agreed_questionnaires`% of cases), youth agreed to complete optional questionnaires. 
@@ -1656,7 +1683,7 @@ perc_completed_care
 
 ## Project Personality
 
-Of `r n_started_pp` cases where someone started project personality, `r n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `r perc_completed_pp`%.
+Of `r n_started_pp` cases where someone started project personality, `r n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `r perc_completed_personality`%.
 
 ```{r n started pp}
 
@@ -1672,7 +1699,7 @@ n_completed_pp
 
 ```{r perc completed pp}
 
-perc_completed_pp
+perc_completed_personality
 
 ```
 
