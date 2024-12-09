@@ -1768,6 +1768,35 @@ summary_pfs_rise
 
 # Demographics
 
+## Age
+
+N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (n = `r n_agreed_questionnaires`).
+
+```{r calculating age tally, include=FALSE}
+
+## Prepping dataframe with age tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+age_tallies <- data_youth %>%
+  select(age = dem_age) %>%
+  group_by(age) %>%
+  tally() %>%
+  ungroup() %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_agreed_questionnaires * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+```
+
+```{r printing age tally, include=TRUE}
+
+rempsyc::nice_table(age_tallies)
+
+```
+
 ## Gender
 
 Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (n = `r n_agreed_questionnaires`). 
