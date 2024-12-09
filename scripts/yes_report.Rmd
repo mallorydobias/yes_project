@@ -597,7 +597,7 @@ n_gender_differs_from_sex <- data_youth %>%
   filter(dem_gender_diff_sex == "Yes") %>%
   tally()
 
-## Calculating percentage of these cases, of everyone who agreed to questionnaires
+## Calculating percentage of these cases, of everyone who started the survey
 
 perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_survey)*100,2)
 
@@ -647,6 +647,8 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 + RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
 
 Across all survey cases:
+
++ Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
 
 # Questionnaire Completion
