@@ -1767,7 +1767,7 @@ summary_pfs_rise
 
 ## Gender
 
-Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (`r n_agreed_questionnaires`). 
+Of responses where youth agreed to complete questionnaires, `r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (n = `r n_agreed_questionnaires`). 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1784,7 +1784,7 @@ data_youth_gender <- data_youth %>%
   filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed to questionnaires
   select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
   mutate(dem_gender_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
     TRUE ~ "no"  # Otherwise, mark as "no"
   ))
 
