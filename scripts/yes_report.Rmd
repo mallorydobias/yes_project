@@ -179,13 +179,13 @@ filter_and_summarize_ssi <- function(data, filter_string, started_var_name, comp
            filter(!is.na(ssi_started)) %>%
            tally(), envir = .GlobalEnv)
   
-  # Filter for those who completed the SSI and assign globally
+  # Filter for those who completed the SSI and save variables to global environment
   assign(completed_var_name, data %>%
            filter(str_detect(ssi_choice, filter_string)) %>%
            filter(!is.na(ssi_completed)) %>%
            tally(), envir = .GlobalEnv)
   
-  # Calculate percentage completed and assign globally
+  # Calculate percentage completed and save variables to global environment
   perc_completed_name <- paste0("perc_completed_", tolower(gsub("\\.", "", filter_string)))
   assign(perc_completed_name, round((get(completed_var_name, envir = .GlobalEnv) / get(started_var_name, envir = .GlobalEnv)) * 100, 2), envir = .GlobalEnv)
   
@@ -237,6 +237,7 @@ print(n_completed_pp)
 print(perc_completed_personality)
 
 ```
+
 ```{r using custom function for perc completed rise, include=FALSE}
 
 # Testing custom function for perc completion on rise
@@ -344,6 +345,8 @@ m_pfs_rise <- round(mean(data_youth_rise$pfs_mean, na.rm = TRUE), 2)
 
 ```{r t test bhs abc, include=FALSE}
 
+## Trying this once before writing a function
+
 library(stats)
 
 ## Computing paired t-test
@@ -358,7 +361,7 @@ abc_bhs_p_value <- t_abc_bhs$p.value
 
 abc_bhs_t_value <- t_abc_bhs$statistic
 
-## Saving n pairs for effect size calc 
+## Saving n pairs for effect size calc
 
 abc_bhs_n_pairs <- data_youth_abc %>%
   filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
@@ -455,342 +458,131 @@ abc_dz_values <- c(abc_bhs_dz_value, abc_shs_dz_value, abc_hate_dz_value)
 
 ```
 
-```{r t test bhs care, include=FALSE}
+```{r writing custom paired t-test function, include=FALSE}
 
+library(tidyverse)
+library(MOTE)
 library(stats)
 
-## Computing paired t-test
-
-t_care_bhs <- t.test(data_youth_care$post_bhs_mean, data_youth_care$pre_bhs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-care_bhs_p_value <- t_care_bhs$p.value
-
-## Saving t-value for effect size calc
-
-care_bhs_t_value <- t_care_bhs$statistic
-
-## Saving n pairs for effect size calc 
-
-care_bhs_n_pairs <- data_youth_care %>%
-  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
-  select(post_bhs_mean, pre_bhs_mean) %>%
-  nrow()
-
-```
-
-```{r t test effect size bhs care, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-care_bhs_dz_value <- round(d.dep.t.diff.t(care_bhs_t_value, care_bhs_n_pairs, a = 0.05)$d, 2)
-
-```
-
-```{r t test shs care, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_care_shs <- t.test(data_youth_care$post_shs_mean, data_youth_care$pre_shs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-care_shs_p_value <- t_care_shs$p.value
-
-## Saving t-value for effect size calc
-
-care_shs_t_value <- t_care_shs$statistic
-
-## Saving n pairs for effect size calc 
-
-care_shs_n_pairs <- data_youth_care %>%
-  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
-  select(post_shs_mean, pre_shs_mean) %>%
-  nrow()
+# Define the custom function
+run_paired_t_test <- function(data, pre_col, post_col, prefix) {
+  
+  # Construct variable names dynamically for storage in global environment
+  t_test_name <- paste0("t_", prefix)
+  p_value_name <- paste0(prefix, "_p_value")
+  t_value_name <- paste0(prefix, "_t_value")
+  n_pairs_name <- paste0(prefix, "_n_pairs")
+  dz_value_name <- paste0(prefix, "_dz_value")
+  
+  # Conduct the paired t-test
+  t_test_result <- t.test(data[[post_col]], data[[pre_col]], paired = TRUE)
+  
+  # Save t-test results globally
+  assign(t_test_name, t_test_result, envir = .GlobalEnv)
+  
+  # Save p-value and t-value globally
+  assign(p_value_name, t_test_result$p.value, envir = .GlobalEnv)
+  assign(t_value_name, t_test_result$statistic, envir = .GlobalEnv)
+  
+  # Calculate number of valid pairs (non-NA values in both columns)
+  n_pairs <- data %>%
+    filter(!is.na(.[[post_col]]) & !is.na(.[[pre_col]])) %>%
+    nrow()
+  assign(n_pairs_name, n_pairs, envir = .GlobalEnv)
+  
+  # Calculate the effect size (dz) and save it globally
+  dz_value <- round(d.dep.t.diff.t(t_test_result$statistic, n_pairs, a = 0.05)$d, 2)
+  assign(dz_value_name, dz_value, envir = .GlobalEnv)
+  
+  # Return a list of the calculated values
+  return(list(
+    t_test_result = get(t_test_name),
+    p_value = get(p_value_name),
+    t_value = get(t_value_name),
+    n_pairs = get(n_pairs_name),
+    dz_value = get(dz_value_name)
+  ))
+}
 
 ```
 
-```{r t test effect size shs care, include=FALSE}
+```{r running t tests for abc using custom function, include=FALSE}
 
-library(MOTE)
+# BHS
+results_bhs <- run_paired_t_test(data_youth_abc, "pre_bhs_mean", "post_bhs_mean", "abc_bhs")
+print(results_bhs)
 
-##  Calculating dz effect size, paired t-test
+# SHS
+results_shs <- run_paired_t_test(data_youth_abc, "pre_shs_mean", "post_shs_mean", "abc_shs")
+print(results_shs)
 
-care_shs_dz_value <- round(d.dep.t.diff.t(care_shs_t_value, care_shs_n_pairs, a = 0.05)$d, 2)
+# Self-hate
+results_hate <- run_paired_t_test(data_youth_abc, "pre_self_hate_mean", "post_self_hate_mean", "abc_hate")
+print(results_hate)
 
-```
-
-```{r t test hate care, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_care_hate <- t.test(data_youth_care$post_self_hate_mean, data_youth_care$pre_self_hate_mean, paired = TRUE)
-
-## Saving p-value for report
-
-care_hate_p_value <- t_care_hate$p.value
-
-## Saving t-value for effect size calc
-
-care_hate_t_value <- t_care_hate$statistic
-
-## Saving n pairs for effect size calc 
-
-care_hate_n_pairs <- data_youth_care %>%
-  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
-  select(post_self_hate_mean, pre_self_hate_mean) %>%
-  nrow()
+# Combine all dz values into a single vector for reporting
+abc_dz_values <- c(abc_bhs_dz_value, abc_shs_dz_value, abc_hate_dz_value)
+print(abc_dz_values)
 
 ```
 
-```{r t test effect size hate care, include=FALSE}
+```{r running t tests for care using custom function, include=FALSE}
 
-library(MOTE)
+# BHS
+results_bhs <- run_paired_t_test(data_youth_care, "pre_bhs_mean", "post_bhs_mean", "care_bhs")
+print(results_bhs)
 
-##  Calculating dz effect size, paired t-test
+# SHS
+results_shs <- run_paired_t_test(data_youth_care, "pre_shs_mean", "post_shs_mean", "care_shs")
+print(results_shs)
 
-care_hate_dz_value <- round(d.dep.t.diff.t(care_hate_t_value, care_hate_n_pairs, a = 0.05)$d, 2)
+# Self-hate
+results_hate <- run_paired_t_test(data_youth_care, "pre_self_hate_mean", "post_self_hate_mean", "care_hate")
+print(results_hate)
 
-```
-
-```{r care effect sizes list, include=FALSE}
-
-## Saving abc dz values for report
-
-care_dz_values <- c(care_bhs_dz_value, care_hate_dz_value)
-
-```
-
-```{r t test bhs pp, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_pp_bhs <- t.test(data_youth_pp$post_bhs_mean, data_youth_pp$pre_bhs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-pp_bhs_p_value <- t_pp_bhs$p.value
-
-## Saving t-value for effect size calc
-
-pp_bhs_t_value <- t_pp_bhs$statistic
-
-## Saving n pairs for effect size calc 
-
-pp_bhs_n_pairs <- data_youth_pp %>%
-  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
-  select(post_bhs_mean, pre_bhs_mean) %>%
-  nrow()
+# Combine all dz values into a single vector for reporting
+care_dz_values <- c(care_bhs_dz_value, care_hate_dz_value) # not including non-significant shs results
+print(care_dz_values)
 
 ```
 
-```{r t test effect size bhs pp, include=FALSE}
+```{r running t tests for pp using custom function, include=FALSE}
 
-library(MOTE)
+# BHS
+results_bhs <- run_paired_t_test(data_youth_pp, "pre_bhs_mean", "post_bhs_mean", "pp_bhs")
+print(results_bhs)
 
-##  Calculating dz effect size, paired t-test
+# SHS
+results_shs <- run_paired_t_test(data_youth_pp, "pre_shs_mean", "post_shs_mean", "pp_shs")
+print(results_shs)
 
-pp_bhs_dz_value <- round(d.dep.t.diff.t(pp_bhs_t_value, pp_bhs_n_pairs, a = 0.05)$d, 2)
+# Self-hate
+results_hate <- run_paired_t_test(data_youth_pp, "pre_self_hate_mean", "post_self_hate_mean", "pp_hate")
+print(results_hate)
 
-```
-
-```{r t test shs pp, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_pp_shs <- t.test(data_youth_pp$post_shs_mean, data_youth_pp$pre_shs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-pp_shs_p_value <- t_pp_shs$p.value
-
-## Saving t-value for effect size calc
-
-pp_shs_t_value <- t_pp_shs$statistic
-
-## Saving n pairs for effect size calc 
-
-pp_shs_n_pairs <- data_youth_pp %>%
-  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
-  select(post_shs_mean, pre_shs_mean) %>%
-  nrow()
+# Combine all dz values into a single vector for reporting
+pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) # not including non-significant shs results
+print(pp_dz_values)
 
 ```
 
-```{r t test effect size shs pp, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-pp_shs_dz_value <- round(d.dep.t.diff.t(pp_shs_t_value, pp_shs_n_pairs, a = 0.05)$d, 2)
-
-```
-
-```{r t test hate pp, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_pp_hate <- t.test(data_youth_pp$post_self_hate_mean, data_youth_pp$pre_self_hate_mean, paired = TRUE)
-
-## Saving p-value for report
-
-pp_hate_p_value <- t_pp_hate$p.value
-
-## Saving t-value for effect size calc
-
-pp_hate_t_value <- t_pp_hate$statistic
-
-## Saving n pairs for effect size calc 
-
-pp_hate_n_pairs <- data_youth_pp %>%
-  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
-  select(post_self_hate_mean, pre_self_hate_mean) %>%
-  nrow()
-
-```
-
-```{r t test effect size hate pp, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-pp_hate_dz_value <- round(d.dep.t.diff.t(pp_hate_t_value, pp_hate_n_pairs, a = 0.05)$d, 2)
-
-```
-
-```{r pp effect sizes list, include=FALSE}
-
-## Saving dz values for report
-
-pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value)
-
-```
-
-```{r t test bhs rise, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_rise_bhs <- t.test(data_youth_rise$post_bhs_mean, data_youth_rise$pre_bhs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-rise_bhs_p_value <- t_rise_bhs$p.value
-
-## Saving t-value for effect size calc
-
-rise_bhs_t_value <- t_rise_bhs$statistic
-
-## Saving n pairs for effect size calc 
-
-rise_bhs_n_pairs <- data_youth_rise %>%
-  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
-  select(post_bhs_mean, pre_bhs_mean) %>%
-  nrow()
-
-```
-
-```{r t test effect size bhs rise, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-rise_bhs_dz_value <- round(d.dep.t.diff.t(rise_bhs_t_value, rise_bhs_n_pairs, a = 0.05)$d, 2)
-
-```
-
-```{r t test shs rise, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_rise_shs <- t.test(data_youth_rise$post_shs_mean, data_youth_rise$pre_shs_mean, paired = TRUE)
-
-## Saving p-value for report
-
-rise_shs_p_value <- t_rise_shs$p.value
-
-## Saving t-value for effect size calc
-
-rise_shs_t_value <- t_rise_shs$statistic
-
-## Saving n pairs for effect size calc 
-
-rise_shs_n_pairs <- data_youth_rise %>%
-  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
-  select(post_shs_mean, pre_shs_mean) %>%
-  nrow()
-
-```
-
-```{r t test effect size shs rise, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-rise_shs_dz_value <- round(d.dep.t.diff.t(rise_shs_t_value, rise_shs_n_pairs, a = 0.05)$d, 2)
-
-```
-
-```{r t test hate rise, include=FALSE}
-
-library(stats)
-
-## Computing paired t-test
-
-t_rise_hate <- t.test(data_youth_rise$post_self_hate_mean, data_youth_rise$pre_self_hate_mean, paired = TRUE)
-
-## Saving p-value for report
-
-rise_hate_p_value <- t_rise_hate$p.value
-
-## Saving t-value for effect size calc
-
-rise_hate_t_value <- t_rise_hate$statistic
-
-## Saving n pairs for effect size calc 
-
-rise_hate_n_pairs <- data_youth_rise %>%
-  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
-  select(post_self_hate_mean, pre_self_hate_mean) %>%
-  nrow()
-
-```
-
-```{r t test effect size hate rise, include=FALSE}
-
-library(MOTE)
-
-##  Calculating dz effect size, paired t-test
-
-rise_hate_dz_value <- round(d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$d, 3)
-
-```
-
-```{r rise effect sizes list, include=FALSE}
-
-## Saving dz values for report
-
-rise_dz_values <- c(rise_hate_dz_value)
+```{r running t tests for rise using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data_youth_rise, "pre_bhs_mean", "post_bhs_mean", "rise_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data_youth_rise, "pre_shs_mean", "post_shs_mean", "rise_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data_youth_rise, "pre_self_hate_mean", "post_self_hate_mean", "rise_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+rise_dz_values <- c(rise_bhs_dz_value, rise_shs_dz_value, rise_hate_dz_value) # not including non-significant shs results
+print(rise_dz_values)
 
 ```
 
@@ -837,6 +629,16 @@ Of cases with data at both time points:
 + Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
 + Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
+
+# Questionnaire Completion
+
+More than half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill out optional questionnaires.
+
+```{r perc agreed questionnaires}
+
+perc_agreed_questionnaires
+
+```
 
 # Clinical Outcomes 
 
@@ -1744,16 +1546,6 @@ n_completed_any_ssi
 ```{r perc completed any ssi}
 
 perc_completed_any_ssi
-
-```
-
-# Questionnaire Completion
-
-Around half of the time (`r perc_agreed_questionnaires` %), youth agreed to fill out optional questionnaires.
-
-```{r perc agreed questionnaires}
-
-perc_agreed_questionnaires
 
 ```
 
