@@ -1770,7 +1770,7 @@ summary_pfs_rise
 
 ## Age
 
-N's and percentages are all calculated out of the number of responses where youth agreed to complete questionnaires (n = `r n_agreed_questionnaires`).
+N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). Age is one of the first questions asked.
 
 ```{r calculating age tally, include=FALSE}
 
@@ -1784,7 +1784,7 @@ age_tallies <- data_youth %>%
   ungroup() %>%
   rename(count = n) %>%
   rowwise() %>%
-  mutate(percentage = count / n_agreed_questionnaires * 100) %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
   mutate(percentage = round(percentage, 2)) %>%
   unnest(cols = c(percentage)) %>%
   rename(n = count, "%" = n)
