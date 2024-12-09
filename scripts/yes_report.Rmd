@@ -1813,7 +1813,6 @@ data_youth_gender <- data_youth %>%
          TRUE ~ dem_gender_boy_man)) %>%
   mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
          TRUE ~ dem_gender_intersex)) %>%
-  filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed to questionnaires
   select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
   mutate(dem_gender_missing = case_when(
     if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
