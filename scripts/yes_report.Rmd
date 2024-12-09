@@ -599,7 +599,7 @@ n_gender_differs_from_sex <- data_youth %>%
 
 ## Calculating percentage of these cases, of everyone who agreed to questionnaires
 
-perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_agreed_questionnaires)*100,2)
+perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_survey)*100,2)
 
 ```
 
