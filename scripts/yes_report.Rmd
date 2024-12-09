@@ -597,9 +597,17 @@ n_gender_differs_from_sex <- data_youth %>%
   filter(dem_gender_diff_sex == "Yes") %>%
   tally()
 
+## Tallying number of cases where gender identity aligns with assigned sex
+
+n_gender_same_as_sex <- data_youth %>%
+  filter(dem_gender_diff_sex == "No") %>%
+  tally()
+
 ## Calculating percentage of these cases, of everyone who started the survey
 
 perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_survey)*100,2)
+
+perc_gender_same_as_sex <- round((n_gender_same_as_sex / n_started_survey)*100,2)
 
 ```
 
@@ -614,24 +622,49 @@ n_sex_minority <- data_youth %>%
            dem_sex_orientation != "I do not want to respond") %>%
   tally()
 
+## Tallying n straight folks
+
+n_sex_straight <- data_youth %>%
+  select(dem_sex_orientation) %>%
+  filter(dem_sex_orientation == "Heterosexual/Straight") %>%
+  tally()
+
 ## Calculating percentage of these cases, of everyone who started the survey
 
 perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
+
+perc_sex_straight <- round((n_sex_straight / n_started_survey)*100,2)
 
 ```
 
 ```{r perc racial minority, include=FALSE}
 
-## Tallying number of cases where gender identity is different from sex assigned at birth
+## Tallying number of cases where racial identity is not white or missing
 
 n_racial_minority <- data_youth %>%
   select(contains("dem_race"), -contains("white"), -contains("hisp")) %>%
   filter(if_any(c(dem_race_asian, dem_race_black, dem_race_other), ~ . == "yes")) %>%
   tally()
 
+## Tallying number of cases where ethnic identity is latine/hispanic
+
+n_racial_latine_hisp <- data_youth %>%
+  filter(dem_race_latin_hisp == "yes") %>%
+  tally()
+
+## Tallying number of cases where racial identity is white
+
+n_racial_white <- data_youth %>%
+  filter(dem_race_white == "yes") %>%
+  tally()
+
 ## Calculating percentage of these cases, of everyone who started the survey
 
 perc_racial_minority <- round((n_racial_minority / n_started_survey)*100,2)
+
+perc_racial_latine_hisp <- round((n_racial_latine_hisp / n_started_survey)*100,2)
+
+perc_racial_white <- round((n_racial_white / n_started_survey)*100,2)
 
 ```
 
@@ -651,11 +684,12 @@ This report uses youth data (under 18) from the largest English-speaking survey 
 
 Across all survey starts (n = `r n_started_survey`):
 
-+ There's lots of missing demographic data, given optional questionnaires
++ There's lots of missing demographic data (>50%), given optional questionnaires and drop-offs
 + Ages range from <10 to 17 (categorical data only)
-+ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth
-+ `r perc_sex_minority`% identify as a sexual minority
-+ `r perc_racial_minority`% identify as a racial minority
++ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
++ `r perc_sex_minority`% identify as a sexual minority (`r perc_sex_straight`% heterosexual)
++ `r perc_racial_minority`% identify as a racial minority (`r perc_racial_white`% white)
++ `r perc_racial_latine_hisp`% identify as Latine/Hispanic
 
 Of cases with data at both time points:
 
@@ -834,6 +868,55 @@ rempsyc::nice_table(sex_orientation_tallies)
 ```{r printing perc sexual minority, include=TRUE}
 
 perc_sex_minority
+
+```
+
+## Race/Ethnicity
+
+`r perc_racial_minority`% of survey responses endorsed a racial minority identity (Asian, Black, or another racial identity not listed).`r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+
+```{r adding missing values to race vars, include=FALSE}
+
+## Accounting for missing values across all race variables
+
+data_youth_race <- data_youth %>%
+  select(contains("race")) %>%
+  mutate(dem_race_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r calculating race tally, include=FALSE}
+
+# Using custom function to print race variable counts
+
+race_tallies <- count_yes_responses(data_youth_race) %>%
+  mutate(variable = str_replace(variable, "dem_race_", "")) %>%
+  rename(racial_identity = variable) %>%
+  rename("%" = n) %>%
+  rename(n = count) %>%
+  arrange(-n) %>%
+  mutate(racial_identity = case_when(racial_identity == "missing" ~ "Missing",
+                                     racial_identity == "white" ~ "White",
+                                     racial_identity == "latin_hisp" ~ "Latine/Hispanic",
+                                     racial_identity == "asian" ~ "Asian",
+                                     racial_identity == "black" ~ "Black",
+                                     racial_identity == "other" ~ "Another racial/ethnic identity not listed",
+                                     TRUE ~ racial_identity))
+
+```
+
+```{r printing race tally, include=TRUE}
+
+rempsyc::nice_table(race_tallies)
+
+```
+
+```{r printing perc racial minority, include=TRUE}
+
+perc_racial_minority
 
 ```
 
