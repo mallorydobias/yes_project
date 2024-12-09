@@ -575,7 +575,7 @@ data_gender_mtf_cleaned <- data_gender_ftm_cleaned %>%
 
 ## Trans masc folks
 
-data_gender_trans_masc_cleaned <- data_gender_ftm_cleaned %>%
+data_gender_trans_masc_cleaned <- data_gender_mtf_cleaned %>%
   mutate(dem_gender_trans_masc = case_when(str_detect(dem_gender_identity, "masculine") ~ "yes",
     !str_detect(dem_gender_identity, "masculine") & !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) 
@@ -619,7 +619,7 @@ data_gender_expansive_cleaned <- data_gender_genderqueer_cleaned %>%
 
 ## Intersex folks
 
-data_gender_intersex_cleaned <- data_gender_genderqueer_cleaned %>%
+data_gender_intersex_cleaned <- data_gender_expansive_cleaned %>%
   mutate(dem_gender_intersex = case_when(str_detect(dem_gender_identity, "Intersex") ~ "yes",
     !str_detect(dem_gender_identity, "Intersex") & !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) 

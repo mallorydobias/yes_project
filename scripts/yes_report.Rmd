@@ -1832,6 +1832,9 @@ gender_tallies <- count_yes_responses(data_youth_gender) %>%
 
 rempsyc::nice_table(gender_tallies)
 
+data %>%
+  filter(dem_gender_mtf)
+
 ```
 
 ```{r perc gender differs from sex, include=TRUE}
