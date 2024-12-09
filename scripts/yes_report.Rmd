@@ -873,7 +873,7 @@ perc_sex_minority
 
 ## Race/Ethnicity
 
-`r perc_racial_minority`% of survey responses endorsed a racial minority identity (Asian, Black, or another racial identity not listed).`r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_racial_minority`% of survey responses endorsed a racial minority identity (Asian, Black, or another racial identity not listed). `r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r adding missing values to race vars, include=FALSE}
 
@@ -894,7 +894,7 @@ data_youth_race <- data_youth %>%
 
 race_tallies <- count_yes_responses(data_youth_race) %>%
   mutate(variable = str_replace(variable, "dem_race_", "")) %>%
-  rename(racial_identity = variable) %>%
+  rename(racial_ethnic_identity = variable) %>%
   rename("%" = n) %>%
   rename(n = count) %>%
   arrange(-n) %>%
