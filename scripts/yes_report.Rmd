@@ -2239,10 +2239,29 @@ page_after_drop <- largest_drop$page       # Page after the drop
 
 ## Printing the pages associated with the largest drop
 
-cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, ", which is a writing exercise", "\n")
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
 
 ```
 
+```{r perc largest drop off pp, echo=FALSE}
+
+## Calculating largest drop off percentage
+
+# Page submissions before and after drop
+
+submissions_before_drop <- data_pp_clicks_plot %>%
+  filter(page == page_before_drop) %>%
+  pull(page_submissions)
+
+# Percentage calculation
+
+perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
+
+## Printing the percent drop associated with the largest drop
+
+cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
+
+```
 
 ```{r plotting pp page data, include=FALSE}
 
@@ -2288,7 +2307,7 @@ library(patchwork)
 plot_all_drop <- plot_abc_drop + plot_care_drop + plot_pp_drop + 
   plot_annotation(
     title = "Number of Page Submissions by Page of Each SSI",
-    caption = "ABC (green), CARE (red), Project Personality (Blue)"
+    caption = "ABC (green), CARE (red), Project Personality (Blue); vertical lines are pages with writing exercises"
   )
 
 ```
