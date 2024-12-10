@@ -712,7 +712,10 @@ Of cases where someone started an SSI:
 + `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
 + `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
 + `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
-+ Drop-off is consistently highest on pages with writing exercises.
+
+Drop-off is highest on pages with writing exercises:
+
++ Nearly 1 in 5 people drop from one page to the next during Project Personality's first writing exercise
 
 Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
