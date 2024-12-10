@@ -2067,7 +2067,7 @@ data_abc_clicks_plot <- data_abc_clicks_mutated %>%
     mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
                   map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
     mutate(page = as.numeric(page)) %>% # Converting to numeric class
-    arrange(page) %>% # Arrange in sequential page order
+    arrange(page) # Arrange in sequential page order
     
   
   ## MD left off here - would like to filter out the pages that are based on logic
@@ -2239,12 +2239,18 @@ page_after_drop <- largest_drop$page       # Page after the drop
 
 ## Printing the pages associated with the largest drop
 
-cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, ", which is a writing exercise", "\n")
 
 ```
 
 
 ```{r plotting pp page data, include=FALSE}
+
+## Saving value for plot arrow
+
+pp_plot_arrow <- data_pp_clicks_plot %>%
+  filter(page == 16) %>%
+  pull(page_submissions)
 
 ## Plot Project Personality page submissions by page
 
@@ -2255,7 +2261,8 @@ plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
   ylim(0, 400) +
   ggtitle("") +
   labs(x = "page number",
-       y = "n page submissions")
+       y = "n page submissions") +
+  geom_vline(xintercept = 16, color = "darkgrey")
 
 ```
 
