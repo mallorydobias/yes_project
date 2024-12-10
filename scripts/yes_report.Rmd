@@ -2068,11 +2068,6 @@ data_abc_clicks_plot <- data_abc_clicks_mutated %>%
                   map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
     mutate(page = as.numeric(page)) %>% # Converting to numeric class
     arrange(page) # Arrange in sequential page order
-    
-  
-  ## MD left off here - would like to filter out the pages that are based on logic
-  
-  # 7 - 9; 11 - 17; 28 - 31; 39 - 41
 
 ```
 
@@ -2087,7 +2082,11 @@ plot_abc_drop <- ggplot(data_abc_clicks_plot, aes(x=page, y=page_submissions)) +
   ylim(0, 400) +
   ggtitle("") +
   labs(x = "page number",
-       y = "n page submissions")
+       y = "n page submissions") +
+  geom_vline(xintercept = 16, color = "darkgrey") +
+  geom_vline(xintercept = 22, color = "darkgrey") +
+  geom_vline(xintercept = 43, color = "darkgrey") +
+  geom_vline(xintercept = 45, color = "darkgrey")
 
 ```
 
@@ -2159,6 +2158,26 @@ cat("The largest drop in page_submissions occurred between page", page_before_dr
 
 ```
 
+```{r perc largest drop off care, echo=FALSE}
+
+## Calculating largest drop off percentage
+
+# Page submissions before and after drop
+
+submissions_before_drop <- data_care_clicks_plot %>%
+  filter(page == page_before_drop) %>%
+  pull(page_submissions)
+
+# Percentage calculation
+
+perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
+
+## Printing the percent drop associated with the largest drop
+
+cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
+
+```
+
 ```{r plotting care page data, include=FALSE}
 
 ## Plot page submissions by page
@@ -2170,7 +2189,12 @@ plot_care_drop <- ggplot(data_care_clicks_plot, aes(x=page, y=page_submissions))
   ylim(0, 400) +
   ggtitle("") +
   labs(x = "page number",
-       y = "n page submissions")
+       y = "n page submissions") +
+  geom_vline(xintercept = 4, color = "darkgrey") +
+  geom_vline(xintercept = 28, color = "darkgrey") +
+  geom_vline(xintercept = 40, color = "darkgrey") +
+  geom_vline(xintercept = 42, color = "darkgrey") +
+  geom_vline(xintercept = 43, color = "darkgrey")
 
 ```
 
@@ -2281,7 +2305,9 @@ plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
-  geom_vline(xintercept = 16, color = "darkgrey")
+  geom_vline(xintercept = 16, color = "darkgrey") + 
+  geom_vline(xintercept = 30, color = "darkgrey") +
+  geom_vline(xintercept = 31, color = "darkgrey")
 
 ```
 
