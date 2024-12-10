@@ -71,6 +71,9 @@ library(MOTE)
 if(!require(rempsyc)){install.packages('rempsyc')}
 library(rempsyc)
 
+if(!require(rmarkdown)){install.packages('rmarkdown')}
+library(rmarkdown)
+
 ```
 
 ```{r note, include=FALSE}
@@ -89,6 +92,12 @@ library(here) # places working directory at root of project folder
 data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # directing to data from project folder root
 
 # head(data) # looks good
+
+## Setting output directory for knit html reports and knitting
+
+render(as.character(here("scripts", "yes_report.Rmd")),
+       output_file = "yes_english_report.html",
+       output_dir = as.character(here("output")))
 
 ```
 
