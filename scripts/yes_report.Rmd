@@ -2067,7 +2067,12 @@ data_abc_clicks_plot <- data_abc_clicks_mutated %>%
     mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
                   map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
     mutate(page = as.numeric(page)) %>% # Converting to numeric class
-    arrange(page) # Arrange in sequential page order
+    arrange(page) %>% # Arrange in sequential page order
+    
+  
+  ## MD left off here - would like to filter out the pages that are based on logic
+  
+  # 7 - 9; 11 - 17; 28 - 31; 39 - 41
 
 ```
 
@@ -2134,6 +2139,26 @@ data_care_clicks_plot <- data_care_clicks_mutated %>%
 
 ```
 
+```{r largest drop in submissions care, echo=FALSE}
+
+## Finding the largest drop in page submissions between two pages
+
+largest_drop <- data_care_clicks_plot %>%
+  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
+  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
+  slice_max(drop)                                              # Find the row with the largest drop
+
+## Extracting the associated page values
+
+page_before_drop <- largest_drop$page - 1  # Page before the drop
+page_after_drop <- largest_drop$page       # Page after the drop
+
+## Printing the pages associated with the largest drop
+
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
+
+```
+
 ```{r plotting care page data, include=FALSE}
 
 ## Plot page submissions by page
@@ -2197,6 +2222,27 @@ data_pp_clicks_plot <- data_pp_clicks_mutated %>%
     arrange(page) # Arrange in sequential page order
 
 ```
+
+```{r largest drop in submissions pp, echo=FALSE}
+
+## Finding the largest drop in page submissions between two pages
+
+largest_drop <- data_pp_clicks_plot %>%
+  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
+  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
+  slice_max(drop)                                              # Find the row with the largest drop
+
+## Extracting the associated page values
+
+page_before_drop <- largest_drop$page - 1  # Page before the drop
+page_after_drop <- largest_drop$page       # Page after the drop
+
+## Printing the pages associated with the largest drop
+
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
+
+```
+
 
 ```{r plotting pp page data, include=FALSE}
 
