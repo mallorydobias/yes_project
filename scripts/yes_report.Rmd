@@ -2029,7 +2029,7 @@ summary_pfs_rise
 
 # Drop-Offs
 
-## ABC
+## ABC Project
 
 Plotting number of page submissions by page number. This is a way to illustrate drop-off.
 
@@ -2083,10 +2083,10 @@ plot_abc_drop <- ggplot(data_abc_clicks_plot, aes(x=page, y=page_submissions)) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
-  geom_vline(xintercept = 16, color = "darkgrey") +
-  geom_vline(xintercept = 22, color = "darkgrey") +
-  geom_vline(xintercept = 43, color = "darkgrey") +
-  geom_vline(xintercept = 45, color = "darkgrey")
+  geom_vline(xintercept = 16, color = "black") +
+  geom_vline(xintercept = 22, color = "black") +
+  geom_vline(xintercept = 43, color = "black") +
+  geom_vline(xintercept = 45, color = "black")
 
 ```
 
@@ -2190,11 +2190,11 @@ plot_care_drop <- ggplot(data_care_clicks_plot, aes(x=page, y=page_submissions))
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
-  geom_vline(xintercept = 4, color = "darkgrey") +
-  geom_vline(xintercept = 28, color = "darkgrey") +
-  geom_vline(xintercept = 40, color = "darkgrey") +
-  geom_vline(xintercept = 42, color = "darkgrey") +
-  geom_vline(xintercept = 43, color = "darkgrey")
+  geom_vline(xintercept = 4, color = "black") +
+  geom_vline(xintercept = 28, color = "black") +
+  geom_vline(xintercept = 40, color = "black") +
+  geom_vline(xintercept = 42, color = "black") +
+  geom_vline(xintercept = 43, color = "black")
 
 ```
 
@@ -2305,9 +2305,9 @@ plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
-  geom_vline(xintercept = 16, color = "darkgrey") + 
-  geom_vline(xintercept = 30, color = "darkgrey") +
-  geom_vline(xintercept = 31, color = "darkgrey")
+  geom_vline(xintercept = 16, color = "black") + 
+  geom_vline(xintercept = 30, color = "black") +
+  geom_vline(xintercept = 31, color = "black")
 
 ```
 
