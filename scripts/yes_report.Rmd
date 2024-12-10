@@ -2323,7 +2323,7 @@ Project RISE plot is unavailable, as we do not have timing variables on the page
 
 ## All
 
-Plorring dropoff for all ssis.
+Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater.
 
 ```{r combining all drop plots, warning=FALSE, message=FALSE, include=FALSE}
 
