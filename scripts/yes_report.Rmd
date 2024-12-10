@@ -95,9 +95,9 @@ data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # direct
 
 ## Setting output directory for knit html reports and knitting
 
-render(as.character(here("scripts", "yes_report.Rmd")),
-       output_file = "yes_english_report.html",
-       output_dir = as.character(here("output")))
+# render(as.character(here("scripts", "yes_report.Rmd")),
+#        output_file = "yes_english_report.html",
+#        output_dir = as.character(here("output")))
 
 ```
 
