@@ -2031,7 +2031,7 @@ summary_pfs_rise
 
 ## ABC Project
 
-Plotting number of page submissions by page number. This is a way to illustrate drop-off.
+Plotting number of page submissions by page number. This is a way to illustrate drop-off. Vertical lines are pages with writing exercises.
 
 ```{r selecting abc pages for plot, include=FALSE}
 
@@ -2098,7 +2098,7 @@ plot_abc_drop
 
 ## Project CARE
 
-Plotting number of page submissions by page number. This is a way to illustrate drop-off.
+Plotting number of page submissions by page number. This is a way to illustrate drop-off. Vertical lines are pages with writing exercises.
 
 ```{r selecting care pages for plot, include=FALSE}
 
@@ -2206,7 +2206,7 @@ plot_care_drop
 
 ## Project Personality
 
-Plotting number of page submissions by page number. This is a way to illustrate drop-off.
+Plotting number of page submissions by page number. This is a way to illustrate drop-off. Vertical lines are pages with writing exercises.
 
 ```{r selecting pp pages for plot, include=FALSE}
 
@@ -2323,7 +2323,7 @@ Project RISE plot is unavailable, as we do not have timing variables on the page
 
 ## All
 
-Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater.
+Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater. Vertical lines are pages with writing exercises.
 
 ```{r combining all drop plots, warning=FALSE, message=FALSE, include=FALSE}
 
