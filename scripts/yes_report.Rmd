@@ -89,7 +89,7 @@ library(rmarkdown)
 
 library(here) # places working directory at root of project folder
 
-data <- readRDS(here("data", "clean", "yes_data_nu_english_clean.Rds")) # directing to data from project folder root
+data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # directing to data from project folder root
 
 # head(data) # looks good
 
@@ -553,7 +553,7 @@ results_hate <- run_paired_t_test(data_youth_care, "pre_self_hate_mean", "post_s
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-care_dz_values <- c(care_bhs_dz_value, care_hate_dz_value) # not including non-significant shs results
+care_dz_values <- c(care_bhs_dz_value) # not including non-significant outcome results
 print(care_dz_values)
 
 ```
@@ -573,7 +573,7 @@ results_hate <- run_paired_t_test(data_youth_pp, "pre_self_hate_mean", "post_sel
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) # not including non-significant shs results
+pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) 
 print(pp_dz_values)
 
 ```
@@ -593,7 +593,7 @@ results_hate <- run_paired_t_test(data_youth_rise, "pre_self_hate_mean", "post_s
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-rise_dz_values <- c(rise_bhs_dz_value, rise_shs_dz_value, rise_hate_dz_value) # not including non-significant shs results
+rise_dz_values <- c(rise_bhs_dz_value, rise_shs_dz_value, rise_hate_dz_value) 
 print(rise_dz_values)
 
 ```
@@ -707,8 +707,8 @@ Across all survey starts (n = `r n_started_survey`):
 Of cases with data at both time points:
 
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
-+ Hopelessness decreased and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Hopelessness decreased pre to post CARE (dzs = `r care_dz_values`)
++ Agency increased pre to post Project Personality (dzs = `r pp_dz_values`)
 + Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 Of the cases where someone chose an SSI:
@@ -1301,7 +1301,7 @@ plot_care_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, self-hate decreased from pre to post care, dz = `r abc_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, we detect no significant change in self-hate from pre to post care, dz = `r abc_hate_dz_value`.
 
 ```{r t test results care hate}
 
@@ -1374,7 +1374,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, hopelessness decreased from pre to post project personality, dz = `r pp_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, we detect no significant change in hopelessness from pre to post project personality, dz = `r pp_bhs_dz_value`.
 
 ```{r t test results pp bhs}
 
@@ -1476,7 +1476,7 @@ plot_pp_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, self-hate decreased from pre to post project personality, dz = `r pp_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, we detect no significant change in self-hate from pre to post project personality, dz = `r pp_hate_dz_value`.
 
 ```{r t test results pp hate}
 
@@ -1651,7 +1651,7 @@ plot_rise_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, we should probably not pay attention to the results of this test for now, given the very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
+Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, we find no evidence that self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
 
 ```{r t test results rise hate}
 
