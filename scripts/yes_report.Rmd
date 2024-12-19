@@ -122,11 +122,11 @@ n_chose_any_ssi <- data_youth %>%
   tally() # chose any ssi
 
 n_chose_abc <- data_youth %>%
-  filter(str_detect(ssi_choice, "A.B.C")) %>%
+  filter(str_detect(ssi_choice, "ABC")) %>%
   tally() # chose abc
 
 n_chose_care <- data_youth %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) %>%
+  filter(str_detect(ssi_choice, "CARE")) %>%
   tally() # chose care
   
 n_chose_pp <- data_youth %>%
@@ -166,13 +166,13 @@ perc_chose_rise <- round((n_chose_rise/n_chose_any_ssi)*100, 2)
 ```{r calculating perc complete of those who started for abc, include=FALSE}
 
 n_started_abc <- data_youth %>%
-  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
+  filter(str_detect(ssi_choice, "ABC")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_started) %>%
   tally()
 
 n_completed_abc <- data_youth %>%
-  filter(str_detect(ssi_choice, "A.B.C")) %>% # filtering to those who chose this ssi
+  filter(str_detect(ssi_choice, "ABC")) %>% # filtering to those who chose this ssi
   filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
   select(ssi_choice, ssi_completed) %>%
   tally()
@@ -214,7 +214,7 @@ filter_and_summarize_ssi <- function(data, filter_string, started_var_name, comp
 ```{r using custom function for perc completed abc, include=FALSE}
 
 # Testing custom function for perc completion on abc
-results <- filter_and_summarize_ssi(data_youth, "A.B.C", "n_started_abc", "n_completed_abc")
+results <- filter_and_summarize_ssi(data_youth, "ABC", "n_started_abc", "n_completed_abc")
 print(results)
 
 # Later, you can access n_started_abc, n_completed_abc, and perc_completed_abc from the global environment:
@@ -308,7 +308,7 @@ m_pfs_overall <- round(mean(data_youth$pfs_mean, na.rm = TRUE), 2)
 ## Pulling only abc responses
 
 data_youth_abc <- data_youth %>%
-  filter(str_detect(ssi_choice, "A.B.C")) # filtering to those who chose abc
+  filter(str_detect(ssi_choice, "ABC")) # filtering to those who chose abc
 
 ## Calculating overall pfs mean for abc
 
@@ -321,7 +321,7 @@ m_pfs_abc <- round(mean(data_youth_abc$pfs_mean, na.rm = TRUE), 2)
 ## Pulling only care responses
 
 data_youth_care <- data_youth %>%
-  filter(str_detect(ssi_choice, "C.A.R.E")) # filtering to those who chose care
+  filter(str_detect(ssi_choice, "CARE")) # filtering to those who chose care
 
 ## Calculating overall pfs mean for care
 
