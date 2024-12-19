@@ -93,12 +93,6 @@ data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # direc
 
 # head(data) # looks good
 
-## Setting output directory for knit html reports and knitting
-
-# render(as.character(here("scripts", "yes_report.Rmd")),
-#        output_file = "yes_english_report.html",
-#        output_dir = as.character(here("output")))
-
 ```
 
 ```{r filtering to youth only data for analysis, include=FALSE}
@@ -2361,4 +2355,30 @@ plot_all_drop
 
 ```
 
+# Knitting
 
+Knitting the report to the outputs folder.
+
+```{r knitting report, include=FALSE}
+
+### This doesn't work
+
+## Setting output directory for knit html reports and knitting
+
+# render(as.character(here("scripts", "yes_report.Rmd")),
+#        output_file = "yes_english_report.html",
+#        output_dir = as.character(here("output")))
+
+### This doesn't work either
+
+# ## Defining the folder and file path
+# 
+# folder_path <- here("outputs")  # Path to my desired folder
+# file_name <- "yes_english_report.html"
+# full_path <- file.path(folder_path, file_name)
+# 
+# ## Kniting to .html report
+# 
+# render(input = "yes_report.Rmd", output_file = file_name, output_dir = full_path)
+
+```
