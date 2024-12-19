@@ -64,7 +64,7 @@ library(readr)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_October 31, 2024_14.42.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_December 19, 2024_09.48.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
@@ -1462,7 +1462,7 @@ test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
 
 Checking that reorganizing happened correctly (i.e., no columns dropped) 
 
-```{r checking reorg did not lose cols}
+```{r checking reorg did not lose cols 2}
 
 ## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
 
