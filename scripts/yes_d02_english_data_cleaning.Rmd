@@ -64,7 +64,7 @@ library(readr)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_December 19, 2024_09.48.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH_December 19, 2024_10.38.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
@@ -142,55 +142,13 @@ test_var_names %>%
 
 ```
 
-Renaming unlabeled project rise vars
-
-```{r naming rise vars}
-
-## Naming RISE vars
-
-# first insert an underscore, then replace q vars with rise var name labels
-
-data_rise_named <- data_named %>%
-  rename_with(~str_replace(., "^q([0-9]+)", "q_\\1"), starts_with("q")) %>%
-  rename_with(~ str_replace(., "^q_", "proj_rise_q_"), starts_with("q_"))
-
-```
-
-```{r checking rise var naming setup, include = FALSE}
-
-## checking rise vars are named correctly
-
-test_rise_pre <- data_named %>%
-  select(starts_with("q"), -questionnaires, -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names pre cleaning
-  colnames() # create df of pre-named var names for comparison
-
-test_rise_post <- data_rise_named %>%
-  select(starts_with("proj_rise_"), -contains("commit"), -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names post cleaning
-  colnames() # create df of post-named var names for comparison
-
-test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating df for validation
-
-```
-
-Checking columns renamed correctly
-
-```{r checking var naming, validate = TRUE}
-
-test_rise_naming_df %>%
-  pointblank::col_vals_equal(vars(test_rise_pre), 
-                             vars(test_rise_post)) # passes if renamed columns are identical to original cols
-
-```
-
 Renaming "pi_" (post-intervention) variable prefixes to "post_" prefixes, for clarity
 
 ```{r renaming pi vars with post label}
 
 ## Renaming "pi_" (post-intervention) vars with "post_" prefix for clarity
 
-data_post_named <- data_rise_named %>%
+data_post_named <- data_named %>%
   rename_with(~ str_replace(., "^pi_", "post_"))
 
 ```
@@ -201,7 +159,7 @@ data_post_named <- data_rise_named %>%
 
 # extracting characters following "pre_" in column names before renaming
 
-test_pre_rename <- tibble(var_names = names(data_rise_named)) %>%
+test_pre_rename <- tibble(var_names = names(data_named)) %>%
   filter(str_detect(var_names, "^pre_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pre_" prefix
   mutate(pre_renamed = str_extract(var_names, "(?<=pre_).*")) %>% # extract characters following "pre_"
   select(-var_names)
@@ -285,19 +243,22 @@ data_items_named <- data_prog_named %>%
   rename(dem_sex_orientation_other_text = dem_sex_orientation_9_text,
          pre_perceived_control = pre_control_1, 
          post_perceived_control = post_control_1,
-         perc_progress = progress, 
-         volunteer_questionnaires_yn = volunteer,
+         perc_progress = progress,
          ssi_started = project_started,
          ssi_completed = project_completed,
          ssi_choice = ssi_which_activity,
-         ssi_prev_completed = ssi_prev_activity,
-         ssi_prev_completed_name = ssi_prev_activity_2,
+         ssi_prev_completed_name = ssi_prev_activity,
          ssi_times_completed_personality = ssi_proj_personal,
          ssi_times_completed_care = ssi_proj_care,
-         ssi_times_completed_abc = ssi_proj_abc,
-         ssi_times_completed_rise = ssi_proj_rise)
+         ssi_times_completed_abc = ssi_proj_abc)
 
 ```
+
+###############################################################################################
+
+MD LEFT OFF HERE
+
+###############################################################################################
 
 ## Cleaning Values
 
