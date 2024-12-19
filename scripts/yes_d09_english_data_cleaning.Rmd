@@ -803,24 +803,13 @@ test_mutate_count %>%
 
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
-```{r pulling mfq values, include=FALSE}
-
-## Pulling mfq variables
-
-# vars_mfq <- data_gender_other_cleaned %>%
-#   select(contains("mfq")) %>%
-#   head() %>%
-#   print()
-
-```
-
 Mutating mfq character values to numeric values
 
 ```{r mutating mfq values}
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_gender_other_cleaned %>%
+data_mfq_mutated <- data_ssi_choice_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,

@@ -708,9 +708,55 @@ test_mutate_count %>%
 
 ```
 
-MD to do:
+Combining the ssi_choice and ssi_choose vars
 
-- create combined ssi_choose and ssi_choice col
+```{r combining ssi_choice and ssi_chose}
+
+## Cleaning ssi_choice variable
+
+data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
+  mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
+                                str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
+                                str_detect(ssi_choice, "Personality") ~ "Project Personality",
+                                str_detect(ssi_choice, "RISE") ~ "Project RISE",
+                                TRUE ~ ssi_choice)) %>%
+  mutate(ssi_choice = case_when(ssi_choose == "abc" ~ "ABC Project",
+                                ssi_choose == "care" ~ "Project CARE",
+                                ssi_choose == "pp" ~ "Project Personality",
+                                ssi_choose == "rise" ~ "Project RISE",
+                                TRUE ~ ssi_choice))
+
+```
+
+```{r checking ssi_choice setup, include=FALSE}
+
+## Creating data frames of ids of folks who chose an ssi
+
+test_pre_mutate_count <- data_prev_completed_cleaned %>%
+  filter(!is.na(ssi_choice) | !is.na(ssi_choose)) %>%
+  select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
+
+test_post_mutate_count <- data_ssi_choice_cleaned %>%
+  filter(!is.na(ssi_choice)) %>%
+  select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_pre_mutate_count, test_post_mutate_count)
+
+```
+
+Checking ssi_choice variables cleaned correctly
+
+```{r checking ssi_choice cleaning, validate = TRUE}
+
+## checking counts align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if ids are identical pre to post cleaning
+
+```
 
 ## Calculating Composites
 
@@ -718,24 +764,13 @@ MD to do:
 
 Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
 
-```{r pulling mfq values, include=FALSE}
-
-## Pulling mfq variables
-
-# vars_mfq <- data_gender_other_cleaned %>%
-#   select(contains("mfq")) %>%
-#   head() %>%
-#   print()
-
-```
-
 Mutating mfq character values to numeric values
 
 ```{r mutating mfq values}
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_gender_other_cleaned %>%
+data_mfq_mutated <- data_ssi_choice_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
