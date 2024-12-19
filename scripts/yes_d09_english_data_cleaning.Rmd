@@ -57,6 +57,9 @@ library(readr)
 if(!require(datadictionary)){install.packages('datadictionary')}
 library(datadictionary)
 
+if(!require(codebook)){install.packages('codebook')}
+library(codebook)
+
 ```
 
 # Data Reading
@@ -1627,4 +1630,3 @@ full_path <- file.path(folder_path, file_name)
 write.csv(data_dictionary, full_path)
 
 ```
-
