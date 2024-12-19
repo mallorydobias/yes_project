@@ -573,7 +573,7 @@ results_hate <- run_paired_t_test(data_youth_pp, "pre_self_hate_mean", "post_sel
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) 
+pp_dz_values <- c(pp_shs_dz_value) # not including non-significant outcome results
 print(pp_dz_values)
 
 ```
