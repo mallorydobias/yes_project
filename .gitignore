@@ -4,8 +4,9 @@ data/
 .DS_Store
 *.html
 
-## Prevenging GitHub from viewing png files
+## Prevenging GitHub from viewing png and csv files
 *.png
+*.csv
 
 # History files
 .Rhistory

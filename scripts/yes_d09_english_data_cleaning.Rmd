@@ -1607,11 +1607,11 @@ saveRDS(data, full_path)
 
 # Data Dictionary
 
-```{r creating data dictionary}
+```{r creating data dictionary, warning=FALSE}
 
-glimpse(data)
+data_dictionary <- datadictionary::create_dictionary(data)
 
-datadictionary::create_dictionary(data)
+write.csv(data_dictionary, "yes_d09_data_dictionary.csv")
 
 ```
 
