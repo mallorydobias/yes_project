@@ -1572,6 +1572,8 @@ data_classes_mutated <- data_reorged %>%
          finished = as.factor(finished),
          volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
          pre_perceived_control = as.numeric(pre_perceived_control),
+         ssi_source = as.factor(ssi_source),
+         ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
          ssi_completed = as.factor(ssi_completed),
          advice_permission = as.factor(advice_permission)) %>%
