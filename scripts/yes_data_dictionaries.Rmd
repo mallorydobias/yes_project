@@ -1,5 +1,5 @@
 ---
-title: "YES English D09 Data Dictionary"
+title: "YES Data Dictionaries"
 author: "Mallory Dobias"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -23,11 +23,6 @@ geometry: margin=0.50in
 ## Setting up R
 
 knitr::opts_chunk$set(echo = TRUE)
-
-if(!require(pointblank)){install.packages('pointblank')}
-library(pointblank) # installing and calling pointblank package early in Markdown
-
-validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
 
 ```
 
