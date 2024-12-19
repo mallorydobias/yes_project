@@ -221,7 +221,7 @@ print(perc_completed_abc)
 ```{r using custom function for perc completed care, include=FALSE}
 
 # Testing custom function for perc completion on care
-results <- filter_and_summarize_ssi(data_youth, "C.A.R.E", "n_started_care", "n_completed_care")
+results <- filter_and_summarize_ssi(data_youth, "CARE", "n_started_care", "n_completed_care")
 print(results)
 
 # Later, you can access these vars from the global environment:
