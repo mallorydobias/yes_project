@@ -301,12 +301,6 @@ data_items_named <- data_prog_named %>%
 
 ## Cleaning Values
 
-MD to do:
-
-- clean up ssi_prev_completed_name responses into shorter character strings
-- create combined ssi_choose and ssi_choice col
-- convert var classes in ssi slides only (the rest are ready)
-
 Replacing empty cells with NAs
 
 ```{r replacing empty cells with nas}
@@ -701,6 +695,105 @@ data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
     !str_detect(dem_gender_identity, "Other") & !is.na(dem_gender_identity) ~ "no",
     TRUE ~ NA_character_)) %>%
   rename(dem_gender_other_text = dem_gender_identity_17_text)
+
+```
+
+Creating separate prev_completed variables for easier counting
+
+```{r cleaning prev_completed values}
+
+## Creating separate prev_completed variables for easier counting
+
+data_prev_completed_cleaned <- data_gender_other_cleaned %>%
+  mutate(ssi_prev_completed_abc = case_when(str_detect(ssi_prev_completed_name, "A.B.C.") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "C.A.R.E.") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
+                                            TRUE ~ NA_character_)) %>%
+  select(-ssi_prev_completed_name)
+  
+```
+
+```{r checking prev_completed var cleaning setup, include=FALSE}
+
+## Creating data frames of ids of folks who previously completed ABC
+
+test_pre_mutate_count <- data_gender_other_cleaned %>%
+  filter(str_detect(ssi_prev_completed_name, "A.B.C.")) %>%
+  select(pre_response_id = response_id) # ids of ABC participants pre mutation
+
+test_post_mutate_count <- data_prev_completed_cleaned %>%
+  filter(ssi_prev_completed_abc == "yes") %>%
+  select(post_response_id = response_id) # ids of ABC participants post mutation
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_pre_mutate_count, test_post_mutate_count)
+
+```
+
+Checking ssi_prev_completed variables cleaned correctly
+
+```{r checking prev_completed cleaning, validate = TRUE}
+
+## checking prev_completed counts align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if yeses are identical pre to post cleaning
+
+```
+
+Combining the ssi_choice and ssi_choose vars
+
+```{r combining ssi_choice and ssi_chose}
+
+## Cleaning ssi_choice variable
+
+data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
+  mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
+                                str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
+                                str_detect(ssi_choice, "Personality") ~ "Project Personality",
+                                str_detect(ssi_choice, "RISE") ~ "Project RISE",
+                                TRUE ~ ssi_choice)) %>%
+  mutate(ssi_choice = case_when(ssi_choose == "abc" ~ "ABC Project",
+                                ssi_choose == "care" ~ "Project CARE",
+                                ssi_choose == "pp" ~ "Project Personality",
+                                ssi_choose == "rise" ~ "Project RISE",
+                                TRUE ~ ssi_choice))
+
+```
+
+```{r checking ssi_choice setup, include=FALSE}
+
+## Creating data frames of ids of folks who chose an ssi
+
+test_pre_mutate_count <- data_prev_completed_cleaned %>%
+  filter(!is.na(ssi_choice) | !is.na(ssi_choose)) %>%
+  select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
+
+test_post_mutate_count <- data_ssi_choice_cleaned %>%
+  filter(!is.na(ssi_choice)) %>%
+  select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_pre_mutate_count, test_post_mutate_count)
+
+```
+
+Checking ssi_choice variables cleaned correctly
+
+```{r checking ssi_choice cleaning, validate = TRUE}
+
+## checking counts align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if ids are identical pre to post cleaning
 
 ```
 
@@ -1485,7 +1578,6 @@ data_classes_mutated <- data_reorged %>%
          perc_progress = as.numeric(perc_progress),
          finished = as.factor(finished),
          volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
-         ssi_prev_completed = as.factor(ssi_prev_completed),
          pre_perceived_control = as.numeric(pre_perceived_control),
          ssi_started = as.factor(ssi_started),
          ssi_completed = as.factor(ssi_completed),
@@ -1493,6 +1585,7 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(contains("date"), as.Date)) %>%
   mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
   mutate(across(contains("times_completed"), as.numeric)) %>%
+  mutate(across(contains("ssi_prev_completed"), as.factor)) %>%
   mutate(across(contains("commit"), as.factor)) %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))

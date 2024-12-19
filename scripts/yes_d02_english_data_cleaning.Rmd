@@ -254,19 +254,7 @@ data_items_named <- data_prog_named %>%
 
 ```
 
-###############################################################################################
-
-MD LEFT OFF HERE
-
-###############################################################################################
-
 ## Cleaning Values
-
-MD to do:
-
-- clean up ssi_prev_completed_name responses into shorter character strings
-- create combined ssi_choose and ssi_choice col
-- convert var classes in ssi slides only (the rest are ready)
 
 Replacing empty cells with NAs
 
@@ -664,6 +652,65 @@ data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
   rename(dem_gender_other_text = dem_gender_identity_17_text)
 
 ```
+
+###############################################################################################
+
+MD LEFT OFF HERE
+
+###############################################################################################
+
+Creating separate prev_completed variables for easier counting
+
+```{r cleaning prev_completed values}
+
+## Creating separate prev_completed variables for easier counting
+
+data_prev_completed_cleaned <- data_gender_other_cleaned %>%
+  mutate(ssi_prev_completed_abc = case_when(str_detect(ssi_prev_completed_name, "A.B.C.") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "C.A.R.E.") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
+                                            TRUE ~ NA_character_),
+         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
+                                            TRUE ~ NA_character_)) %>%
+  select(-ssi_prev_completed_name)
+  
+```
+
+```{r checking prev_completed var cleaning setup, include=FALSE}
+
+## Creating data frames of ids of folks who previously completed ABC
+
+test_pre_mutuate_count <- data_gender_other_cleaned %>%
+  filter(str_detect(ssi_prev_completed_name, "A.B.C.")) %>%
+  select(pre_response_id = response_id) # ids of ABC participants pre mutation
+
+test_post_mutate_count <- data_prev_completed_cleaned %>%
+  filter(ssi_prev_completed_abc == "yes") %>%
+  select(post_response_id = response_id) # ids of ABC participants post mutation
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_pre_mutuate_count, test_post_mutate_count)
+
+```
+
+Checking ssi_prev_completed variables cleaned correctly
+
+```{r checking prev_completed cleaning, validate = TRUE}
+
+## checking prev_completed counts align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if yeses are identical pre to post cleaning
+
+```
+
+MD to do:
+
+- create combined ssi_choose and ssi_choice col
 
 ## Calculating Composites
 
