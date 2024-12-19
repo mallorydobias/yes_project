@@ -700,8 +700,8 @@ Across all survey starts (n = `r n_started_survey`):
 + There's lots of missing demographic data (>50%), given optional questionnaires and drop-offs
 + Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
-+ `r perc_sex_minority`% identify as a sexual minority (`r perc_sex_straight`% heterosexual)
-+ `r perc_racial_minority`% identify as a racial minority (`r perc_racial_white`% white)
++ `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
++ `r perc_racial_minority`% identify as Asian, Black, or another racial identity not listed (`r perc_racial_white`% white)
 + `r perc_racial_latine_hisp`% identify as Latine/Hispanic
 
 Of cases with data at both time points:
@@ -852,7 +852,7 @@ perc_gender_differs_from_sex
 
 ## Sexual Orientation
 
-`r perc_sex_minority`% of survey responses endorsed a sexual minority identity. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_sex_minority`% of survey responses endorsed a sexual orientation other than heterosexual. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r calculating sex orientation tallies, include=FALSE}
 
@@ -890,7 +890,7 @@ perc_sex_minority
 
 ## Race/Ethnicity
 
-`r perc_racial_minority`% of survey responses endorsed a racial minority identity (Asian, Black, or another racial identity not listed). `r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_racial_minority`% of survey responses identified as Asian, Black, or another racial identity not listed. `r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
 ```{r adding missing values to race vars, include=FALSE}
 
