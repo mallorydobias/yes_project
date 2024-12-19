@@ -1607,26 +1607,3 @@ full_path <- file.path(folder_path, file_name)
 saveRDS(data, full_path)
 
 ```
-
-# Data Dictionary
-
-```{r creating data dictionary, warning=FALSE}
-
-## Dropping qualtrics timing variables to make data dictionary more manageable
-
-data_for_dictionary <- data %>%
-  select(-contains("_tim_") & -contains("page_submit"))
-
-## Creating data dictionary
-
-data_dictionary <- datadictionary::create_dictionary(data_for_dictionary)
-
-## Defining the folder and file path
-
-folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_d09_data_dictionary.csv"
-full_path <- file.path(folder_path, file_name)
-
-write.csv(data_dictionary, full_path)
-
-```

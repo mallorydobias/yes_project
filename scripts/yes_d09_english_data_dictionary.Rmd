@@ -1,0 +1,95 @@
+---
+title: "YES English D09 Data Dictionary"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
+```
+
+```{r packages, include=FALSE}
+
+## Loading packages
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+if(!require(tidyverse)){install.packages('tidyverse')}
+library(tidyverse)
+
+if(!require(rmarkdown)){install.packages('rmarkdown')}
+library(rmarkdown)
+
+if(!require(datadictionary)){install.packages('datadictionary')}
+library(datadictionary)
+
+```
+
+```{r reading in data, include=FALSE}
+
+## Reading in cleaned survey data
+
+library(here) # places working directory at root of project folder
+
+data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # directing to data from project folder root
+
+```
+
+# Data Dictionary
+
+```{r creating data dictionary, warning=FALSE}
+
+## Dropping qualtrics timing variables to make data dictionary more manageable
+
+data_for_dictionary <- data %>%
+  select(-contains("_tim_") & -contains("page_submit"))
+
+## Creating data dictionary
+
+data_dictionary <- datadictionary::create_dictionary(data_for_dictionary)
+
+## Defining the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_d09_data_dictionary.csv"
+full_path <- file.path(folder_path, file_name)
+
+write.csv(data_dictionary, full_path)
+
+```
