@@ -724,7 +724,8 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
                                 ssi_choose == "care" ~ "Project CARE",
                                 ssi_choose == "pp" ~ "Project Personality",
                                 ssi_choose == "rise" ~ "Project RISE",
-                                TRUE ~ ssi_choice))
+                                TRUE ~ ssi_choice)) %>%
+  select(-ssi_choose)
 
 ```
 
@@ -1438,7 +1439,7 @@ Reorganizing column order to place important columns first, and then to follow c
 
 data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
-         perc_progress, finished, ssi_source, ssi_choice, ssi_choose,
+         perc_progress, finished, ssi_source, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
          dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
