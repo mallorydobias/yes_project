@@ -190,6 +190,10 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 abc_q_17_0_5_rank = "day of week to do activity",
                 abc_q_17_0_6_rank = "day of week to do activity",
                 abc_q_17_0_7_rank = "day of week to do activity",
+                abc_q_18_0_group = "",
+                
+                
+                
                 
                 )
 
@@ -201,7 +205,7 @@ var_labels <- c(response_id = "id, qualtrics-generated",
 
 ## Creating data dictionary
 
-data_dictionary <- datadictionary::create_dictionary(data_for_dictionary, var_labels = var_labels)
+data_dictionary <- datadictionary::create_dictionary(data_for_dictionary)
 
 ## Defining the folder and file path
 
@@ -209,6 +213,6 @@ folder_path <- here("data", "clean")  # Path to my desired folder
 file_name <- "yes_d09_data_dictionary.csv"
 full_path <- file.path(folder_path, file_name)
 
-write.csv(data_dictionary, full_path)
+write.csv(data_dictionary, full_path, row.names = FALSE)
 
 ```
