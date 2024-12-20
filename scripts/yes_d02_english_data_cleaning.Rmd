@@ -1524,6 +1524,7 @@ Converting variable classes
 ```{r mutating var classes}
 
 data_classes_mutated <- data_reorged %>%
+  select(-ip_address, -starts_with("location")) %>%
   mutate(language = as.factor(language),
          data_id = as.factor(data_id),
          perc_progress = as.numeric(perc_progress),
