@@ -262,8 +262,6 @@ data_items_named <- data_prog_named %>%
          proj_pers_q_1_text = proj_pers_q_1,
          proj_pers_q_2_text = proj_pers_q_2,
          proj_pers_q_3_text = proj_pers_q_3,
-         proj_rise_q_4_text = proj_rise_q_4,
-         proj_rise_q_58_text = proj_rise_q_58,
          abc_q_1_1_num = abc_q_1_1, # adding _num to numeric vars in ssis
          abc_q_3_1_num = abc_q_3_1)
 
@@ -375,28 +373,25 @@ Creating separate race and ethnicity columns, given participants could select mu
 
 data_race_cleaned <- data_dated %>%
   mutate(dem_race_asian = case_when(
-    str_detect(dem_race_ethnicity, "Asian") ~ "yes",
-    !str_detect(dem_race_ethnicity, "Asian") & !is.na(dem_race_ethnicity) ~ "no",
+    str_detect(dem_ethnicity, "Asian") ~ "yes",
+    !str_detect(dem_ethnicity, "Asian") & !is.na(dem_ethnicity) ~ "no",
     TRUE ~ NA_character_)) %>%
   mutate(dem_race_black = case_when(
-    str_detect(dem_race_ethnicity, "African American") ~ "yes",
-    !str_detect(dem_race_ethnicity, "African American") & !is.na(dem_race_ethnicity) ~ "no",
+    str_detect(dem_ethnicity, "African American") ~ "yes",
+    !str_detect(dem_ethnicity, "African American") & !is.na(dem_ethnicity) ~ "no",
     TRUE ~ NA_character_)) %>%
   mutate(dem_race_latin_hisp = case_when(
-    str_detect(dem_race_ethnicity, "Latino/Hispanic") ~ "yes",
-    !str_detect(dem_race_ethnicity, "Latino/Hispanic") & !is.na(dem_race_ethnicity) ~ "no",
+    str_detect(dem_ethnicity, "Latino/Hispanic") ~ "yes",
+    !str_detect(dem_ethnicity, "Latino/Hispanic") & !is.na(dem_ethnicity) ~ "no",
     TRUE ~ NA_character_)) %>%
   mutate(dem_race_white = case_when(
-    str_detect(dem_race_ethnicity, "Caucasian") ~ "yes",
-    !str_detect(dem_race_ethnicity, "Caucasian") & !is.na(dem_race_ethnicity) ~ "no",
+    str_detect(dem_ethnicity, "Caucasian") ~ "yes",
+    !str_detect(dem_ethnicity, "Caucasian") & !is.na(dem_ethnicity) ~ "no",
     TRUE ~ NA_character_)) %>%
   mutate(dem_race_other = case_when(
-    str_detect(dem_race_ethnicity, "Other") ~ "yes",
-    !str_detect(dem_race_ethnicity, "Other") & !is.na(dem_race_ethnicity) ~ "no",
+    str_detect(dem_ethnicity, "Other") ~ "yes",
+    !str_detect(dem_ethnicity, "Other") & !is.na(dem_ethnicity) ~ "no",
     TRUE ~ NA_character_))
-
-# data_race_cleaned %>%
-#   select(contains("race")) # looks good
 
 ```
 
@@ -405,7 +400,7 @@ data_race_cleaned <- data_dated %>%
 ## Creating data frames of ids of folks endorsing Asian racial identity
 
 test_pre_mutuate_count <- data_dated %>%
-  filter(str_detect(dem_race_ethnicity, "Asian")) %>%
+  filter(str_detect(dem_ethnicity, "Asian")) %>%
   select(pre_response_id = response_id) # ids of Asian participants pre mutation
 
 test_post_mutate_count <- data_race_cleaned %>%
@@ -415,7 +410,7 @@ test_post_mutate_count <- data_race_cleaned %>%
 ## Creating data frames of ids of folks with missing data for race and ethnicity
 
 test_pre_mutate_nas <- data_race_cleaned %>%
-  filter(is.na(dem_race_ethnicity)) %>%
+  filter(is.na(dem_ethnicity)) %>%
   select(pre_response_id = response_id)
 
 test_post_mutate_nas <- data_race_cleaned %>%
@@ -668,12 +663,6 @@ data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
 
 ```
 
-###############################################################################################
-
-MD LEFT OFF HERE
-
-###############################################################################################
-
 Creating separate prev_completed variables for easier counting
 
 ```{r cleaning prev_completed values}
@@ -733,14 +722,7 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
   mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
                                 str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
                                 str_detect(ssi_choice, "Personality") ~ "Project Personality",
-                                str_detect(ssi_choice, "RISE") ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  mutate(ssi_choice = case_when(ssi_choose == "abc" ~ "ABC Project",
-                                ssi_choose == "care" ~ "Project CARE",
-                                ssi_choose == "pp" ~ "Project Personality",
-                                ssi_choose == "rise" ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  select(-ssi_choose)
+                                TRUE ~ ssi_choice))
 
 ```
 
@@ -749,11 +731,11 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
 ## Creating data frames of ids of folks who chose an ssi
 
 test_pre_mutate_count <- data_prev_completed_cleaned %>%
-  filter(!is.na(ssi_choice) | !is.na(ssi_choose)) %>%
+  filter(str_detect(ssi_choice, "A.B.C")) %>%
   select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
 
 test_post_mutate_count <- data_ssi_choice_cleaned %>%
-  filter(!is.na(ssi_choice)) %>%
+  filter(str_detect(ssi_choice, "ABC Project")) %>%
   select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
 
 # combining data frames for comparison
@@ -774,6 +756,54 @@ test_mutate_count %>%
 
 ```
 
+## Subsetting to English
+
+```{r subsetting to english responses and vars}
+
+data_english <- data_ssi_choice_cleaned %>%
+  filter(language == "english")
+
+```
+
+```{r checking language subset, include=FALSE}
+
+## Creating data frames of ids of folks with English embedded data and responses to language item
+
+test_embedded_count <- data_ssi_choice_cleaned %>%
+  filter(language == "english") %>%
+  select(pre_response_id = response_id) # ids of embedded data set to english
+
+test_item_count <- data_ssi_choice_cleaned %>%
+  filter(select_language == "English (Inglés)") %>%
+  select(pre_response_id = response_id) # ids of responses who selected english
+
+# combining data frames for comparison
+
+test_mutate_count <- cbind(test_embedded_count, test_item_count)
+
+```
+
+Checking ssi_choice variables cleaned correctly
+
+```{r checking ssi_choice cleaning, validate = TRUE}
+
+## checking counts align pre to post cleaning
+
+test_mutate_count %>%
+  pointblank::col_vals_equal(vars(pre_response_id), 
+                             vars(post_response_id)) # passes if ids are identical pre to post cleaning
+
+```
+
+```{r selecting english vars}
+
+## Selecting only english vars
+
+data_english_vars_only <- data_english %>%
+  select(-starts_with("s_"))
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -786,7 +816,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_ssi_choice_cleaned %>%
+data_mfq_mutated <- data_english_vars_only %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -1428,7 +1458,7 @@ data_col_dropped <- data_pfs_scored %>%
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
   select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
   select(-questionnaires) %>% # dropping col redundant with volunteer col
-  select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
+  select(-dem_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
 
 # data_pfs_scored %>%
 #   select(ssi_choice, ssi_choose) %>%
