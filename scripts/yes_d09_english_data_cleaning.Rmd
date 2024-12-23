@@ -301,7 +301,8 @@ data_items_named <- data_prog_named %>%
          ssi_times_completed_personality = ssi_proj_personal,
          ssi_times_completed_care = ssi_proj_care,
          ssi_times_completed_abc = ssi_proj_abc,
-         ssi_times_completed_rise = ssi_proj_rise)
+         ssi_times_completed_rise = ssi_proj_rise,
+         abc_q_37 = abc_slide_37)
 
 ```
 
