@@ -302,7 +302,6 @@ var_labels <- c(response_id = "id, qualtrics-generated",
 # Printing list of vars to label
 
 # var_labels_check <- tibble(item = colnames(data_for_dictionary))
-# 
 # var_labels_check
 
 # Checking if length of character vector is same as number of df columns
