@@ -79,8 +79,6 @@ data_for_dictionary <- data %>%
 
 ```{r creating var labels for dictionary, warning=FALSE}
 
-var_labels <- tibble(item = colnames(data_for_dictionary))
-
 # Create labels as a named vector. 
 var_labels <- c(response_id = "id, qualtrics-generated",
                 language = "response language",
@@ -129,6 +127,10 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 ssi_prev_completed_care = "yes/no, previously completed care",
                 ssi_prev_completed_pp = "yes/no, previously completed project personality",
                 ssi_prev_completed_rise = "yes/no, previously completed rise",
+                ssi_times_completed_abc = "n times previously completed abc",
+                ssi_times_completed_care = "n times previously completed care",
+                ssi_times_completed_personality = "n times previously completed project personality",
+                ssi_times_completed_rise = "n times previously completed rise",
                 mfq_1 = "mfq item 1 score",
                 mfq_2 = "mfq item 2 score",
                 mfq_3 = "mfq item 3 score",
@@ -228,15 +230,95 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 abc_q_24_7_text = "qual, person to ask for support",
                 abc_q_24_8_text = "qual, way to practice self-compassion",
                 abc_q_24_9_text = "qual, one small positive action",
-                abc_q_37 = "",
-                
-                
-                
-                
-                
-                )
+                abc_q_37 = "qual, what would they tell another teen",
+                proj_care_commit = "yes/no, commitment to finishing care",
+                proj_care_q_1 = "qual, personal goal",
+                proj_care_q_2 = "qual, how person could practice self-kindness",
+                proj_care_q_3 = "chosen roadblock",
+                proj_care_q_4 = "qual, way to overcome roadblock",
+                proj_care_q_5 = "qual, time when they were mean to themselves",
+                proj_care_q_6 = "qual, what would they tell another teen",
+                proj_pers_commit = "yes/no, commitment to finishing project personality",
+                proj_pers_q_1 = "qual, how did person change",
+                proj_pers_q_2 = "qual, how would you feel if this happened",
+                proj_pers_q_3 = "qual, what would they tell another teen",
+                proj_rise_commit = "yes/no, commitment to finishing project rise",
+                proj_rise_q_4 = "qual, most important identities",
+                proj_rise_q_5 = "yes, do they need help answering",
+                proj_rise_q_8 = "yes, do they still need help answering",
+                proj_rise_q_13 = "yes, do they need help answering",
+                proj_rise_q_17 = "yes/no, optional deep breathing exercise",
+                proj_rise_q_25 = "yes/no, optional stories from others",
+                proj_rise_q_28 = "chosen situations to relate to",
+                proj_rise_q_29 = "chosen thoughts in response to oppression",
+                proj_rise_q_29_5_text = "qual, self-described thoughts in response to oppression",
+                proj_rise_q_31 = "chosen emotion in response to oppression",
+                proj_rise_q_31_9_text = "qual, self-described emotion in response to oppression",
+                proj_rise_q_32 = "yes/no, urge to self-harm",
+                proj_rise_q_34 = "chosen action in response to oppression",
+                proj_rise_q_34_7_text = "qual, self-described action in response to oppression",
+                proj_rise_q_37 = "chosen action in response to oppression",
+                proj_rise_q_37_7_text = "qual, self-described action in response to oppression",
+                proj_rise_q_39 = "chosen story that resonates most",
+                proj_rise_q_52 = "yes/no, read optional story",
+                proj_rise_q_54 = "chosen coping statement",
+                proj_rise_q_58 = "qual, what would they tell another teen",
+                proj_rise_q_59 = "chosen story to read",
+                ssi_completed = "ssi completed",
+                advice = "advice for others",
+                advice_permission = "yes/no, permission to post anon advice",
+                pfs_1 = "enjoyed activity",
+                pfs_2 = "understood activity",
+                pfs_3 = "activity was easy to use",
+                pfs_4 = "tried their hardest during activity",
+                pfs_5 = "activity helpful for others",
+                pfs_6 = "recommend activity to a friend",
+                pfs_7 = "agreed with activity",
+                pfs_like = "qual, what they liked about activity",
+                pfs_change = "qual, what they would change about activity",
+                pfs_more_feedback = "qual, additional feedback",
+                pfs_mean = "program feedback scale, mean score",
+                perc_change_hope = "hopelessness compared to pre-ssi",
+                perc_change_prob = "problem solving compared to pre-ssi",
+                post_bhs_1 = "post-ssi, beck hopelessness item 1",
+                post_bhs_2 = "post-ssi, beck hopelessness item 2",
+                post_bhs_3 = "post-ssi, beck hopelessness item 3",
+                post_bhs_4 = "post-ssi, beck hopelessness item 4",
+                post_bhs_mean = "post-ssi, beck hopelessness mean score",
+                post_shs_1 = "post-ssi, state hope agency (pathways subscale) item 1",
+                post_shs_2 = "post-ssi, state hope agency (pathways subscale) item 2",
+                post_shs_3 = "post-ssi, state hope agency (pathways subscale) item 3",
+                post_shs_mean = "post-ssi, state hope agency (pathways subscale) mean score",
+                post_self_hate_1 = "post-ssi, self-hate item 1",
+                post_self_hate_2 = "post-ssi, self-hate item 2",
+                post_self_hate_3 = "post-ssi, self-hate item 3",
+                post_self_hate_mean = "post-ssi, self-hate item 3",
+                post_perceived_control = "post-ssi, perceived (lack of) control")
 
-### MD LEFT OFF HERE ###
+```
+
+```{r checking vector length}
+
+# Printing list of vars to label
+
+# var_labels_check <- tibble(item = colnames(data_for_dictionary))
+# 
+# var_labels_check
+
+# Checking if length of character vector is same as number of df columns
+
+ncol(data_for_dictionary) == length(var_labels)
+
+# Comparing the column names in the data frame with var_labels
+colnames_data <- colnames(data_for_dictionary)
+
+# Find missing and extra columns
+missing_from_var_labels <- setdiff(colnames_data, names(var_labels))
+extra_in_var_labels <- setdiff(names(var_labels), colnames_data)
+
+# Print results
+cat("Missing columns from var_labels:", missing_from_var_labels, "\n")
+cat("Extra columns in var_labels:", extra_in_var_labels, "\n")
 
 ```
 
@@ -244,7 +326,7 @@ var_labels <- c(response_id = "id, qualtrics-generated",
 
 ## Creating data dictionary
 
-data_dictionary <- datadictionary::create_dictionary(data_for_dictionary)
+data_dictionary <- datadictionary::create_dictionary(data_for_dictionary, var_labels = var_labels)
 
 ## Defining the folder and file path
 

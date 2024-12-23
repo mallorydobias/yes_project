@@ -673,7 +673,7 @@ data_prev_completed_cleaned <- data_gender_other_cleaned %>%
                                             TRUE ~ NA_character_),
          ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
                                             TRUE ~ NA_character_),
-         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
+         ssi_prev_completed_rise = case_when(str_detect(ssi_prev_completed_name, "RISE") ~ "yes",
                                             TRUE ~ NA_character_)) %>%
   select(-ssi_prev_completed_name)
   
