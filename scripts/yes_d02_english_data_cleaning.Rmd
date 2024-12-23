@@ -800,7 +800,7 @@ test_mutate_count %>%
 ## Selecting only english vars
 
 data_english_vars_only <- data_english %>%
-  select(-starts_with("s_"))
+  select(-starts_with("s_"), -ends_with("_s"))
 
 ```
 
@@ -1428,7 +1428,8 @@ data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
   select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
-  select(-dem_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
+  select(-dem_ethnicity, -dem_gender_identity) %>% # dropping outdated cols cleaned above
+  select(-select_language) # dropping redundant language column
 
 ```
 
@@ -1438,7 +1439,9 @@ Adding cols to document language and data source
 
 data_col_added <- data_col_dropped %>%
   mutate(language = "english",
-         data_id = "d09")
+         data_id = "d02")
+
+glimpse(data_col_added)
 
 ```
 
