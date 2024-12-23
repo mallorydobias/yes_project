@@ -817,7 +817,7 @@ Mutating mfq character values to numeric values
 ## Mutating character values to numeric across multiple mfq columns 
 
 data_mfq_mutated <- data_english_vars_only %>%
-  mutate(across(starts_with("mfq_") & -contains("tim"), 
+  mutate(across(starts_with("mfq_") & -contains("tim") & -starts_with("e_"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
                     . == "Sometimes" ~ 1,
@@ -834,7 +834,7 @@ Checking mfq variables are now numeric class
 ## Checking that all mfq vars are numeric class
 
 data_mfq_mutated %>%
-  select(contains("mfq") & -contains("tim")) %>%
+  select(contains("mfq") & -contains("tim") & -starts_with("e_")) %>%
   summarise(across(everything(), ~ class(.x)[1])) %>%
   tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
 
@@ -847,7 +847,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_post_named %>%
+test_mfq_pre <- data_english_vars_only %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -906,7 +906,7 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_post_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_english_vars_only, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
@@ -929,7 +929,8 @@ Calculating mfq composite scores
 ## Calculating composite mfq scores
 
 data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE))
+  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
+  select(-e_mfq_total) # replacing the var calculated within qualtrics
 
 ```
 
@@ -962,17 +963,6 @@ test_mfq_calc %>%
 ### Hopelessness
 
 Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Row mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
-
-```{r pulling bhs values, include=FALSE}
-
-## Pulling mfq variables
-
-# vars_bhs <- data_mfq_scored %>%
-#   select(contains("bhs")) %>%
-#   head() %>%
-#   print()
-
-```
 
 Mutating bhs character values to numeric values
 
