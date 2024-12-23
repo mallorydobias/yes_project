@@ -302,7 +302,21 @@ data_items_named <- data_prog_named %>%
          ssi_times_completed_care = ssi_proj_care,
          ssi_times_completed_abc = ssi_proj_abc,
          ssi_times_completed_rise = ssi_proj_rise,
-         abc_q_37 = abc_slide_37)
+         abc_q_6_text = abc_q_6, # adding _text to qual entry vars in ssis
+         abc_q_8_text = abc_q_8,
+         abc_q_37_text = abc_slide_37,
+         proj_care_q_1_text = proj_care_q_1,
+         proj_care_q_2_text = proj_care_q_2,
+         proj_care_q_4_text = proj_care_q_4,
+         proj_care_q_5_text = proj_care_q_5,
+         proj_care_q_6_text = proj_care_q_6,
+         proj_pers_q_1_text = proj_pers_q_1,
+         proj_pers_q_2_text = proj_pers_q_2,
+         proj_pers_q_3_text = proj_pers_q_3,
+         proj_rise_q_4_text = proj_rise_q_4,
+         proj_rise_q_58_text = proj_rise_q_58,
+         abc_q_1_1_num = abc_q_1_1, # adding _num to numeric vars in ssis
+         abc_q_3_1_num = abc_q_3_1)
 
 ```
 
@@ -1586,6 +1600,9 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
   mutate(across(contains("times_completed"), as.numeric)) %>%
   mutate(across(contains("ssi_prev_completed"), as.factor)) %>%
+  mutate(across(contains("_q_") & ends_with("_num"), as.numeric)) %>% # ssi qual questions
+  mutate(across(contains("_q_") & -ends_with("_text") & -ends_with("_num") &
+                -ends_with("_rank") & -ends_with("_group"), as.factor)) %>% # ssi qual questions
   mutate(across(contains("commit"), as.factor)) %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))
