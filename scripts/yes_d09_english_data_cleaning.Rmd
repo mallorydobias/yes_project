@@ -208,8 +208,8 @@ data_post_named <- data_rise_named %>%
 # extracting characters following "pre_" in column names before renaming
 
 test_pre_rename <- tibble(var_names = names(data_rise_named)) %>%
-  filter(str_detect(var_names, "^pre_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pre_" prefix
-  mutate(pre_renamed = str_extract(var_names, "(?<=pre_).*")) %>% # extract characters following "pre_"
+  filter(str_detect(var_names, "^pi_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pi_" prefix
+  mutate(pre_renamed = str_extract(var_names, "(?<=pi_).*")) %>% # extract characters following "pi_"
   select(-var_names)
 
 # extracting characters following "post_" in column names after renaming
