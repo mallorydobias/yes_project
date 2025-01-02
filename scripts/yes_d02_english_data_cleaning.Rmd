@@ -857,7 +857,7 @@ data_english_vars_only <- data_english %>%
 ## that it's a testing row
 
 data_testing_rows_dropped <- data_english_vars_only %>% 
-  filter(is.na(dem_hear_proj) | !str_detect(dem_hear_proj, "testing - UTTH"))
+  filter(is.na(dem_hear_proj) | !str_detect(dem_hear_proj, "testing - UTTH") & !str_detect(dem_hear_proj, "testing-UTTH"))
 
 ```
 
@@ -868,7 +868,7 @@ Checking data has expected number of rows
 ## Calculating number of testing rows
 
 n_testing_rows <- data_english_vars_only %>% 
-  filter(str_detect(dem_hear_proj, "testing - UTTH")) %>%
+  filter(str_detect(dem_hear_proj, "testing - UTTH") | str_detect(dem_hear_proj, "testing-UTTH")) %>%
   select(dem_hear_proj) %>%
   nrow()
 
