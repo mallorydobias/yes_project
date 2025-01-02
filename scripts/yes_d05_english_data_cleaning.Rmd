@@ -337,12 +337,15 @@ data_items_named <- data_mfq_named %>%
          ssi_started = project_started,
          ssi_completed = project_completed,
          ssi_choice = ssi_which_activity,
+         ssi_source = source,
          ssi_prev_completed = ssi_prev_activity,
          ssi_prev_completed_name = a_prog_prev_activi_2,
          ssi_times_completed_personality = ssi_proj_personal,
          ssi_times_completed_care = ssi_proj_care,
          ssi_times_completed_abc = ssi_proj_abc,
          ssi_times_completed_rise = ssi_proj_rise,
+         dem_hear_proj_text = dem_hear_proj_10_text,
+         dem_ethnicity_text = dem_race_ethnicity_8_text,
          abc_q_6_text = abc_q_6, # adding _text to qual entry vars in ssis
          abc_q_8_text = abc_q_8,
          abc_q_37_text = abc_slide_37,
@@ -1523,13 +1526,9 @@ Dropping unnecessary columns
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
-  select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
+  select(-sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
   select(-questionnaires) %>% # dropping col redundant with volunteer col
   select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
-
-# data_pfs_scored %>%
-#   select(ssi_choice, ssi_choose) %>%
-#   filter(ssi_choose != "") # handful of cases folks came in with a decision; need to retain both columns and combine info into one MD
 
 ```
 
@@ -1539,7 +1538,7 @@ Adding cols to document language and data source
 
 data_col_added <- data_col_dropped %>%
   mutate(language = "english",
-         data_id = "d09")
+         data_id = "d05")
 
 ```
 
@@ -1553,10 +1552,12 @@ data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
          perc_progress, finished, ssi_source, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
-         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
+         dem_location,
+         starts_with("dem_hear_proj"), dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
          starts_with("dem_sex_orientation") & !contains("tim"), 
-         starts_with("dem_race") & !contains("tim"),
+         starts_with("dem_race_") & !contains("tim"),
+         starts_with("dem_ethnicity_") & !contains("tim"),
          starts_with("ssi_prev"), starts_with("ssi_times"), 
          starts_with("mfq_") & !contains("tim"), 
          starts_with("pre_bhs_") & !contains("tim"), 
@@ -1642,8 +1643,6 @@ data_classes_mutated <- data_reorged %>%
          perc_progress = as.numeric(perc_progress),
          finished = as.factor(finished),
          volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
-         pre_perceived_control = as.numeric(pre_perceived_control),
-         post_perceived_control = as.numeric(post_perceived_control),
          ssi_source = as.factor(ssi_source),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
@@ -1671,7 +1670,7 @@ data <- data_classes_mutated
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_d09_english_clean.Rds"
+file_name <- "yes_data_d05_english_clean.Rds"
 full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
