@@ -944,7 +944,14 @@ Calculating mfq composite scores
 ## Calculating composite mfq scores
 
 data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE))
+  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(mfq_total = case_when(
+    is.na(mfq_1) & is.na(mfq_2) & is.na(mfq_3) & is.na(mfq_4) & is.na(mfq_5) &
+    is.na(mfq_6) & is.na(mfq_7) & is.na(mfq_8) & is.na(mfq_9) & is.na(mfq_10) &
+    is.na(mfq_11) & is.na(mfq_12) & is.na(mfq_13)
+     ~ NA_real_,
+    TRUE ~ mfq_total
+  ))
 
 ```
 

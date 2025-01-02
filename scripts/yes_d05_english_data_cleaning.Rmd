@@ -278,13 +278,59 @@ test_rename %>%
 
 ```
 
+Renaming "pre_smfq_" variable prefixes to "mfq_" prefixes, for consistency
+
+```{r renaming mfq vars}
+
+## Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for consistency
+
+data_mfq_named <- data_prog_named %>%
+  rename_with(~ str_replace(., "^pre_smfq_", "mfq_"))
+
+```
+
+```{r checking mfq var naming setup, include = FALSE}
+
+## checking vars are renamed correctly
+
+# extracting characters following "pre_smfq_" in column names before renaming
+
+test_pre_rename <- tibble(var_names = names(data_prog_named)) %>%
+  filter(str_detect(var_names, "^pre_smfq_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pre_smfq_" prefix
+  mutate(pre_renamed = str_extract(var_names, "(?<=pre_smfq_).*")) %>% # extract characters following "pre_smfq_"
+  select(-var_names)
+
+# extracting characters following "mfq_" in column names after renaming
+
+test_post_rename <- tibble(var_names = names(data_mfq_named)) %>%
+  filter(str_detect(var_names, "^mfq_") & !str_detect(var_names, "tim") & !str_detect(var_names, "choose")
+         & !str_detect(var_names, "source")) %>% # keep non-time rows with "mfq_" prefix
+  mutate(post_renamed = str_extract(var_names, "(?<=mfq_).*")) %>% # extract characters following "mfq_"
+  select(-var_names)
+
+# combining to one data frame for comparison
+
+test_rename <- cbind(test_pre_rename, test_post_rename)
+
+```
+
+Checking columns renamed correctly
+
+```{r checking mfq var renaming, validate = TRUE}
+
+test_rename %>%
+  pointblank::col_vals_equal(vars(pre_renamed), 
+                             vars(post_renamed)) # passes if renamed columns are identical to original cols
+
+```
+
 Renaming individual items for clarity
 
 ```{r renaming individual vars}
 
 ## Renaming individual vars for clarity
 
-data_items_named <- data_prog_named %>%
+data_items_named <- data_mfq_named %>%
   rename(dem_sex_orientation_other_text = dem_sex_orientation_9_text,
          perc_progress = progress, 
          volunteer_questionnaires_yn = volunteer,
@@ -772,7 +818,7 @@ test_mutate_count %>%
 
 ```
 
-Combining the ssi_choice and ssi_choose vars
+Combining the ssi_choice var
 
 ```{r combining ssi_choice and ssi_chose}
 
@@ -783,13 +829,7 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
                                 str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
                                 str_detect(ssi_choice, "Personality") ~ "Project Personality",
                                 str_detect(ssi_choice, "RISE") ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  mutate(ssi_choice = case_when(ssi_choose == "abc" ~ "ABC Project",
-                                ssi_choose == "care" ~ "Project CARE",
-                                ssi_choose == "pp" ~ "Project Personality",
-                                ssi_choose == "rise" ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  select(-ssi_choose)
+                                TRUE ~ ssi_choice))
 
 ```
 
@@ -798,7 +838,7 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
 ## Creating data frames of ids of folks who chose an ssi
 
 test_pre_mutate_count <- data_prev_completed_cleaned %>%
-  filter(!is.na(ssi_choice) | !is.na(ssi_choose)) %>%
+  filter(!is.na(ssi_choice)) %>%
   select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
 
 test_post_mutate_count <- data_ssi_choice_cleaned %>%
@@ -866,7 +906,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_post_named %>%
+test_mfq_pre <- data_ssi_choice_cleaned %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -925,7 +965,7 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_post_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_ssi_choice_cleaned, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
@@ -948,7 +988,14 @@ Calculating mfq composite scores
 ## Calculating composite mfq scores
 
 data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE))
+  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(mfq_total = case_when(
+    is.na(mfq_1) & is.na(mfq_2) & is.na(mfq_3) & is.na(mfq_4) & is.na(mfq_5) &
+    is.na(mfq_6) & is.na(mfq_7) & is.na(mfq_8) & is.na(mfq_9) & is.na(mfq_10) &
+    is.na(mfq_11) & is.na(mfq_12) & is.na(mfq_13)
+     ~ NA_real_,
+    TRUE ~ mfq_total
+  ))
 
 ```
 
@@ -1119,7 +1166,7 @@ Calculating hope using the 3-item pathways subscale from the State Hope Scale (m
 
 ```
 
-Mutating shs character values to numeric values
+Mutating shs character values to numeric values; this data frame does not export labels on this scale, only values. This is because it is presented as a slider and not a matrix question in qualtrics.
 
 ```{r mutating shs values}
 
@@ -1128,14 +1175,14 @@ Mutating shs character values to numeric values
 data_shs_mutated <- data_bhs_scored %>%
   mutate(across(contains("shs_") & -contains("tim"), 
                 ~ case_when(
-                    . == "Definitely False" ~ 1,
-                    . == "Mostly False" ~ 2,
-                    . == "Somewhat False" ~ 3,
-                    . == "Slightly False" ~ 4,
-                    . == "Slightly True" ~ 5,
-                    . == "Somewhat True" ~ 6,
-                    . == "Mostly True" ~ 7,
-                    . == "Definitely True" ~ 8,
+                    . == 1 ~ 1,
+                    . == 2 ~ 2,
+                    . == 3 ~ 3,
+                    . == 4 ~ 4,
+                    . == 5 ~ 5,
+                    . == 6 ~ 6,
+                    . == 7 ~ 7,
+                    . == 8 ~ 8,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
  
@@ -1174,6 +1221,7 @@ test_mutate %>%
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
+
 Calculating shs row means
 
 ```{r calculating shs scores}
