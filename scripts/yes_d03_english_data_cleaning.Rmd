@@ -189,8 +189,6 @@ test_rename %>%
 
 Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
 
-### MD LEFT OFF HERE ###
-
 ```{r renaming prog vars with ssi label}
 
 ## Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
@@ -280,24 +278,43 @@ test_rename %>%
 
 ```
 
+```{r removing ao string from var names}
+
+## Removing '_ao' from all column names, regardless of where it appears
+
+data_ao_removed <- data_intro_named %>%
+  rename_with(~ str_replace_all(., "_ao", ""))
+
+```
+
+Checking columns renamed correctly
+
+```{r checking ao string removed, validate = TRUE}
+
+## Checking if the _ao string was removed from all vars correctly
+
+validation_result <- 
+  data_ao_removed %>%
+  select(contains("_ao")) %>%
+  expect_col_count_match(0)
+
+## Printing the validation result - runs if passes
+
+validation_result
+
+```
+
 Renaming individual items for clarity
 
 ```{r renaming individual vars}
 
 ## Renaming individual vars for clarity
 
-data_items_named <- data_intro_named %>%
-  rename(dem_sex_orientation_other_text = dem_sex_orientation_9_text,
-         pre_perceived_control = pre_control_1, 
-         post_perceived_control = post_control_1,
-         perc_progress = progress,
+data_items_named <- data_ao_removed %>%
+  rename(perc_progress = progress,
          ssi_started = project_started,
          ssi_completed = project_completed,
-         ssi_choice = ssi_which_activity,
-         ssi_prev_completed_name = ssi_prev_activity,
-         ssi_times_completed_personality = ssi_proj_personal,
-         ssi_times_completed_care = ssi_proj_care,
-         ssi_times_completed_abc = ssi_proj_abc,
+         ssi_choice = ssi_which_activi,
          abc_q_6_text = abc_q_6, # adding _text to qual entry vars in ssis
          abc_q_8_text = abc_q_8,
          abc_q_37_text = abc_slide_37,
