@@ -1,5 +1,5 @@
 ---
-title: "yes_english_data_joining"
+title: "yes_english_data_binding"
 author: "Mallory Dobias"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
