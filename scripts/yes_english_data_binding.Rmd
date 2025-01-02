@@ -111,7 +111,7 @@ n_shared_cols <- d02_cols %>%
   inner_join(d09_cols) %>%
   nrow()
 
-# Pulling n cols unique to each df and total
+# Pulling n cols unique to each df and total unique cols across dfs
 
 n_unique_cols_d02 <- d02_cols %>%
   anti_join(d09_cols) %>%
@@ -127,7 +127,7 @@ n_unique_cols <- n_unique_cols_d02 + n_unique_cols_d09
 
 ```{r calc expected n cols}
 
-# Calculating expected n cols
+# Calculating expected n cols (shared plus unique cols)
 
 n_expected_cols <- n_shared_cols + n_unique_cols
 
@@ -144,5 +144,21 @@ validation_result <-
 ## Printing the validation result - runs if passes
 
 validation_result
+
+```
+
+# Saving Data
+
+```{r saving cleaned bound data}
+
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_english_clean.Rds"
+full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .csv file
+
+saveRDS(data, full_path)
 
 ```
