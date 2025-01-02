@@ -927,7 +927,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_english_vars_only %>%
+test_mfq_pre <- data_testing_rows_dropped %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -986,7 +986,7 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_english_vars_only, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_testing_rows_dropped, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
