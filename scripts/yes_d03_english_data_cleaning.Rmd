@@ -346,14 +346,14 @@ data_w_nas <- data_items_named %>%
 
 ```{r checking nas setup, include=FALSE}
 
-## Creating data frames of ids of folks with missing data for age pre and post nas
+## Creating data frames of ids of folks with missing data for ssi_started pre and post nas
 
 test_pre_nas <- data_items_named %>%
-  filter(dem_age == "") %>%
+  filter(ssi_started == "") %>%
   select(response_id) # ids with missing data pre nas ("")
 
 test_post_nas <- data_w_nas %>%
-  filter(is.na(dem_age)) %>%
+  filter(is.na(ssi_started)) %>%
   select(response_id) # ids with missing data post nas (NA)
 
 # Get the unique names (names not in both data frames)
@@ -425,364 +425,13 @@ test_dates %>%
 
 ```
 
-Creating separate race and ethnicity columns, given participants could select multiple options. This will make it easier to quantify group totals later
-
-```{r cleaning race and ethnicity}
-
-## Cleaning race and ethnicity variable for easier totals
-
-# creating one column per race/ethnicity response option
-# adding no's in cases where participants responded to the question
-# but did not endorse a particular racial or ethnic identity
-
-data_race_cleaned <- data_dated %>%
-  mutate(dem_race_asian = case_when(
-    str_detect(dem_ethnicity, "Asian") ~ "yes",
-    !str_detect(dem_ethnicity, "Asian") & !is.na(dem_ethnicity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  mutate(dem_race_black = case_when(
-    str_detect(dem_ethnicity, "African American") ~ "yes",
-    !str_detect(dem_ethnicity, "African American") & !is.na(dem_ethnicity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  mutate(dem_race_latin_hisp = case_when(
-    str_detect(dem_ethnicity, "Latino/Hispanic") ~ "yes",
-    !str_detect(dem_ethnicity, "Latino/Hispanic") & !is.na(dem_ethnicity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  mutate(dem_race_white = case_when(
-    str_detect(dem_ethnicity, "Caucasian") ~ "yes",
-    !str_detect(dem_ethnicity, "Caucasian") & !is.na(dem_ethnicity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  mutate(dem_race_other = case_when(
-    str_detect(dem_ethnicity, "Other") ~ "yes",
-    !str_detect(dem_ethnicity, "Other") & !is.na(dem_ethnicity) ~ "no",
-    TRUE ~ NA_character_))
-
-```
-
-```{r checking race var cleaning setup, include=FALSE}
-
-## Creating data frames of ids of folks endorsing Asian racial identity
-
-test_pre_mutuate_count <- data_dated %>%
-  filter(str_detect(dem_ethnicity, "Asian")) %>%
-  select(pre_response_id = response_id) # ids of Asian participants pre mutation
-
-test_post_mutate_count <- data_race_cleaned %>%
-  filter(dem_race_asian == "yes") %>%
-  select(post_response_id = response_id) # ids of Asian participants post mutation
-
-## Creating data frames of ids of folks with missing data for race and ethnicity
-
-test_pre_mutate_nas <- data_race_cleaned %>%
-  filter(is.na(dem_ethnicity)) %>%
-  select(pre_response_id = response_id)
-
-test_post_mutate_nas <- data_race_cleaned %>%
-  filter(is.na(dem_race_asian)) %>%
-  select(post_response_id = response_id)
-
-# combining data frames for comparison
-
-test_mutate_count <- cbind(test_pre_mutuate_count, test_post_mutate_count)
-
-test_mutate_nas <- cbind(test_pre_mutate_nas, test_post_mutate_nas)
-
-```
-
-Checking race variable cleaned correctly
-
-```{r checking race cleaning, validate = TRUE}
-
-## checking dem_race_asian and dem_race_ethnicity align pre to post cleaning
-
-test_mutate_count %>%
-  pointblank::col_vals_equal(vars(pre_response_id), 
-                             vars(post_response_id)) # passes if yeses are identical pre to post cleaning
-
-test_mutate_nas %>%
-  pointblank::col_vals_equal(vars(pre_response_id), 
-                             vars(post_response_id)) # passes if nas are identical pre to post cleaning
-
-```
-
-Creating separate gender identity columns, given participants could select multiple options. This will make it easier to quantify group totals later
-
-```{r cleaning gender identity boys}
-
-## Cleaning gender identity variable for easier totals
-
-# creating one column per gender response option
-# adding no's in cases where participants responded to the question
-# but did not endorse a particular gender identity
-
-# this is a little harder because the same character string
-# appears in multiple answer choices;
-# carefully selecting responses that have exact string only
-# or exact string followed or preceded by a comma
-
-## Boys and men
-
-data_gender_boys_cleaned <- data_race_cleaned %>%
-  rename(dem_gender_diff_sex = dem_sex_and_gender) %>%
-  mutate(dem_gender_boy_man = case_when(
-    str_detect(dem_gender_identity, "^Male$") | 
-      str_detect(dem_gender_identity, "Male,") ~ "yes",
-    !str_detect(dem_gender_identity, "^Male$") & 
-      !str_detect(dem_gender_identity, "Male,") &
-      !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-# checking this worked
-
-# data_gender_boys_cleaned %>%
-#   filter(str_detect(dem_gender_identity, "Male")) %>%
-#   select(dem_gender_identity, dem_gender_boy_man) # looks good
-
-```
-
-```{r cleaning gender identity girls}
-
-## Girls and women
-
-data_gender_girls_cleaned <- data_gender_boys_cleaned %>%
-  mutate(dem_gender_girl_woman = case_when(
-    str_detect(dem_gender_identity, "^Female$") | 
-      str_detect(dem_gender_identity, "Female,") ~ "yes",
-    !str_detect(dem_gender_identity, "^Female$") & 
-      !str_detect(dem_gender_identity, "Female,") &
-      !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity trans}
-
-## Trans folks
-
-data_gender_trans_cleaned <- data_gender_girls_cleaned %>%
-  mutate(dem_gender_trans = case_when(
-    str_detect(dem_gender_identity, "^Transgender$") | 
-      str_detect(dem_gender_identity, "Transgender,") |
-      str_detect(dem_gender_identity, ",Transgender") ~ "yes",
-    !str_detect(dem_gender_identity, "^Transgender$") & 
-      !str_detect(dem_gender_identity, "Transgender,") &
-      !str_detect(dem_gender_identity, ",Transgender") &
-      !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity ftm}
-
-## FTM trans folks
-
-data_gender_ftm_cleaned <- data_gender_trans_cleaned %>%
-  mutate(dem_gender_ftm_trans = case_when(str_detect(dem_gender_identity, "FTM") ~ "yes",
-    !str_detect(dem_gender_identity, "FTM") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity mtf}
-
-## MTF trans folks
-
-data_gender_mtf_cleaned <- data_gender_ftm_cleaned %>%
-  mutate(dem_gender_mtf_trans = case_when(str_detect(dem_gender_identity, "MTF") ~ "yes",
-    !str_detect(dem_gender_identity, "MTF") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity trans masc}
-
-## Trans masc folks
-
-data_gender_trans_masc_cleaned <- data_gender_mtf_cleaned %>%
-  mutate(dem_gender_trans_masc = case_when(str_detect(dem_gender_identity, "masculine") ~ "yes",
-    !str_detect(dem_gender_identity, "masculine") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity trans fem}
-
-## Trans fem folks
-
-data_gender_trans_fem_cleaned <- data_gender_trans_masc_cleaned %>%
-  mutate(dem_gender_trans_fem = case_when(str_detect(dem_gender_identity, "feminine") ~ "yes",
-    !str_detect(dem_gender_identity, "feminine") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity genderqueer}
-
-## Genderqueer folks
-
-data_gender_genderqueer_cleaned <- data_gender_trans_fem_cleaned %>%
-  mutate(dem_gender_genderqueer = case_when(str_detect(dem_gender_identity, "Genderqueer") ~ "yes",
-    !str_detect(dem_gender_identity, "Genderqueer") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity gender expansive}
-
-## Gender expansive folks
-
-data_gender_expansive_cleaned <- data_gender_genderqueer_cleaned %>%
-  mutate(dem_gender_expansive = case_when(str_detect(dem_gender_identity, "expansive") ~ "yes",
-    !str_detect(dem_gender_identity, "expansive") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender identity intersex}
-
-## Intersex folks
-
-data_gender_intersex_cleaned <- data_gender_expansive_cleaned %>%
-  mutate(dem_gender_intersex = case_when(str_detect(dem_gender_identity, "Intersex") ~ "yes",
-    !str_detect(dem_gender_identity, "Intersex") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender androgynous}
-
-## Androgynous folks
-
-data_gender_androgynous_cleaned <- data_gender_intersex_cleaned %>%
-  mutate(dem_gender_androgynous = case_when(str_detect(dem_gender_identity, "Androgynous") ~ "yes",
-    !str_detect(dem_gender_identity, "Androgynous") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender nonbinary}
-
-## Nonbinary folks
-
-data_gender_nonbinary_cleaned <- data_gender_androgynous_cleaned %>%
-  mutate(dem_gender_nonbinary = case_when(str_detect(dem_gender_identity, "Nonbinary") ~ "yes",
-    !str_detect(dem_gender_identity, "Nonbinary") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender two spirited}
-
-## Two-spirited folks
-
-data_gender_two_spirited_cleaned <- data_gender_nonbinary_cleaned %>%
-  mutate(dem_gender_two_spirited = case_when(str_detect(dem_gender_identity, "Two-spirited") ~ "yes",
-    !str_detect(dem_gender_identity, "Two-spirited") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender third gender}
-
-## Third gender folks
-
-data_gender_third_gender_cleaned <- data_gender_two_spirited_cleaned %>%
-  mutate(dem_gender_third_gender = case_when(str_detect(dem_gender_identity, "Third") ~ "yes",
-    !str_detect(dem_gender_identity, "Third") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender agender}
-
-## Agender folks
-
-data_gender_agender_cleaned <- data_gender_third_gender_cleaned %>%
-  mutate(dem_gender_agender = case_when(str_detect(dem_gender_identity, "Agender") ~ "yes",
-    !str_detect(dem_gender_identity, "Agender") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender unsure}
-
-## Folks who endorse "unsure"
-
-data_gender_unsure_cleaned <- data_gender_agender_cleaned %>%
-  mutate(dem_gender_unsure = case_when(str_detect(dem_gender_identity, "Not sure") ~ "yes",
-    !str_detect(dem_gender_identity, "Not sure") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) 
-
-```
-
-```{r cleaning gender other}
-
-## Folks who endorse "other"
-
-data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
-  mutate(dem_gender_other = case_when(str_detect(dem_gender_identity, "Other") ~ "yes",
-    !str_detect(dem_gender_identity, "Other") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  rename(dem_gender_other_text = dem_gender_identity_17_text)
-
-```
-
-Creating separate prev_completed variables for easier counting
-
-```{r cleaning prev_completed values}
-
-## Creating separate prev_completed variables for easier counting
-
-data_prev_completed_cleaned <- data_gender_other_cleaned %>%
-  mutate(ssi_prev_completed_abc = case_when(str_detect(ssi_prev_completed_name, "A.B.C.") ~ "yes",
-                                            TRUE ~ NA_character_),
-         ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "C.A.R.E.") ~ "yes",
-                                            TRUE ~ NA_character_),
-         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
-                                            TRUE ~ NA_character_),
-         ssi_prev_completed_rise = case_when(str_detect(ssi_prev_completed_name, "RISE") ~ "yes",
-                                            TRUE ~ NA_character_)) %>%
-  select(-ssi_prev_completed_name)
-  
-```
-
-```{r checking prev_completed var cleaning setup, include=FALSE}
-
-## Creating data frames of ids of folks who previously completed ABC
-
-test_pre_mutuate_count <- data_gender_other_cleaned %>%
-  filter(str_detect(ssi_prev_completed_name, "A.B.C.")) %>%
-  select(pre_response_id = response_id) # ids of ABC participants pre mutation
-
-test_post_mutate_count <- data_prev_completed_cleaned %>%
-  filter(ssi_prev_completed_abc == "yes") %>%
-  select(post_response_id = response_id) # ids of ABC participants post mutation
-
-# combining data frames for comparison
-
-test_mutate_count <- cbind(test_pre_mutuate_count, test_post_mutate_count)
-
-```
-
-Checking ssi_prev_completed variables cleaned correctly
-
-```{r checking prev_completed cleaning, validate = TRUE}
-
-## checking prev_completed counts align pre to post cleaning
-
-test_mutate_count %>%
-  pointblank::col_vals_equal(vars(pre_response_id), 
-                             vars(post_response_id)) # passes if yeses are identical pre to post cleaning
-
-```
-
 Combining the ssi_choice and ssi_choose vars
 
 ```{r combining ssi_choice and ssi_chose}
 
 ## Cleaning ssi_choice variable
 
-data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
+data_ssi_choice_cleaned <- data_dated %>%
   mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
                                 str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
                                 str_detect(ssi_choice, "Personality") ~ "Project Personality",
@@ -794,7 +443,7 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
 
 ## Creating data frames of ids of folks who chose an ssi
 
-test_pre_mutate_count <- data_prev_completed_cleaned %>%
+test_pre_mutate_count <- data_dated %>%
   filter(str_detect(ssi_choice, "A.B.C")) %>%
   select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
 
@@ -868,540 +517,11 @@ data_english_vars_only <- data_english %>%
 
 ```
 
-## Dropping Testing Rows
-
-```{r dropping testing rows}
-
-## Filtering to rows that are na for dem_hear_proj, or that contain text that don't specify
-## that it's a testing row
-
-data_testing_rows_dropped <- data_english_vars_only %>% 
-  filter(is.na(dem_hear_proj) | !str_detect(dem_hear_proj, "testing - UTTH") & !str_detect(dem_hear_proj, "testing-UTTH"))
-
-```
-
-Checking data has expected number of rows
-
-```{r checking n rows after dropping testing rows, validate = TRUE}
-
-## Calculating number of testing rows
-
-n_testing_rows <- data_english_vars_only %>% 
-  filter(str_detect(dem_hear_proj, "testing - UTTH") | str_detect(dem_hear_proj, "testing-UTTH")) %>%
-  select(dem_hear_proj) %>%
-  nrow()
-
-## Checking if the row count of data equals expected count
-
-validation_result <- 
-  data_testing_rows_dropped %>%
-  expect_row_count_match(nrow(data_english_vars_only) - n_testing_rows)
-
-## Printing the validation result - runs if passes
-
-validation_result
-
-```
-
 ## Calculating Composites
-
-### Depression
-
-Calculating depressive symptoms using the Short Form Mood and Feelings Questionnaire (only measured pre-SSI). Scores range from 0 to 26, where 0 = not true, 1 = sometimes, 2 = true. Scores of 12 or higher suggest depression. Source: https://doi.org/10.1002/mpr.1610
-
-Mutating mfq character values to numeric values
-
-```{r mutating mfq values}
-
-## Mutating character values to numeric across multiple mfq columns 
-
-data_mfq_mutated <- data_testing_rows_dropped %>%
-  mutate(across(starts_with("mfq_") & -contains("tim") & -starts_with("e_"), 
-                ~ case_when(
-                    . == "Not True" ~ 0,
-                    . == "Sometimes" ~ 1,
-                    . == "True" ~ 2,
-                    TRUE ~ NA_real_ # Handle other cases with NA
-                )))
-
-```
-
-Checking mfq variables are now numeric class
-
-```{r mfq numeric class check}
-
-## Checking that all mfq vars are numeric class
-
-data_mfq_mutated %>%
-  select(contains("mfq") & -contains("tim") & -starts_with("e_")) %>%
-  summarise(across(everything(), ~ class(.x)[1])) %>%
-  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
-
-
-```
-
-```{r checking mfq mutation setup, include=FALSE}
-
-## checking mutation happened correctly - setting up for pointblank tests
-
-# creating df of count for each response, pre mutation
-
-test_mfq_pre <- data_testing_rows_dropped %>%
-  group_by(mfq_1) %>% # grouping by response
-  summarize(count = n()) %>% # counting responses pre-mutation
-  arrange(desc(count)) %>% # arranged in descending count order
-  rename(mfq_1_pre = mfq_1, count_pre = count) # renaming before combining to one df
-
-# creating df of count for each response, post mutation
-
-test_mfq_post <- data_mfq_mutated %>%
-  mutate(across(starts_with("mfq_"), 
-                ~ factor(., levels = unique(.)))) %>% # converting to factor class so we can count
-  group_by(mfq_1) %>% # grouping by response
-  summarize(count = n()) %>% # counting responses post-mutation
-  arrange(desc(count)) %>% # arranged in descending count order
-  rename(mfq_1_post = mfq_1, count_post = count) # renaming before combining to one df
-
-# creating overall df for comparison
-
-test_mfq_mutate <- cbind(test_mfq_pre, test_mfq_post)
-
-```
-
-```{r writing a function to setup future mutation checks, include=FALSE}
-
-# Custom function to compare value counts before and after mutation
-prep_mutation_check <- function(data_pre, data_post, var) {
-  
-  # Step 1: Create pre-mutation counts
-  test_pre <- data_pre %>%
-    select(var) %>%
-    group_by(across(all_of(var))) %>%  # Group by the specified variable
-    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
-    arrange(desc(count)) %>%  # Arrange in descending order
-    rename_with(~ paste0(., "_pre"), everything())  # Rename columns for pre-mutation
-  
-  # Step 2: Create post-mutation counts
-  test_post <- data_post %>%
-    select(var) %>%
-    mutate(across(all_of(var), ~ factor(., levels = unique(.)))) %>%  # Convert to factor
-    group_by(across(all_of(var))) %>%  # Group by the specified variable
-    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
-    arrange(desc(count)) %>%  # Arrange in descending order
-    rename_with(~ paste0(., "_post"), everything())  # Rename columns for post-mutation
-  
-  # Step 3: Combine pre and post counts into one dataframe for comparison
-  test_comparison <- bind_cols(test_pre, test_post)
-  
-  return(test_comparison)
-}
-
-```
-
-```{r testing function to setup future mutation checks, include=FALSE}
-
-# Example usage:
-# Assuming `data_post_named` is the pre-mutation dataframe
-# and `data_mfq_mutated` is the post-mutation dataframe,
-# and you want to compare the value counts of "mfq_1":
-
-test_mutate <- prep_mutation_check(data_testing_rows_dropped, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
-
-## will use the prep_mutation_check() function to set up mutation checks moving forward
-
-```
-
-Checking mfq response counts are identical from pre to post mutation
-
-```{r mfq response counts validation, validate = TRUE}
-
-test_mutate %>%
-  pointblank::col_vals_equal(vars(count_pre), 
-                             vars(count_post)) # passes if response counts are identical pre to post mutation
-
-```
-
-Calculating mfq composite scores
-
-```{r calculating mfq scores}
-
-## Calculating composite mfq scores
-
-data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
-  select(-e_mfq_total) # replacing the var calculated within qualtrics
-
-```
-
-```{r checking mfq score setup, include = FALSE}
-
-## checking composite calculation was correct
-
-# manually calculating mfq totals to compare sum methods
-
-test_mfq_calc <- data_mfq_scored %>%
-  select(response_id, starts_with("mfq_") & -contains("tim")) %>%
-  mutate(manual_mfq_total = mfq_1 + mfq_2 + mfq_3 + mfq_4 + mfq_5 +
-                            mfq_6 + mfq_7 + mfq_8 + mfq_9 + mfq_10 +
-                            mfq_11 + mfq_12 + mfq_13) %>%
-  select(mfq_total, manual_mfq_total)
-
-```
-
-Checking mfq totals are identical across sum methods
-
-```{r mfq scoring validation, validate = TRUE}
-
-test_mfq_calc %>%
-  pointblank::col_vals_equal(vars(mfq_total), 
-                             vars(manual_mfq_total), 
-                             na_pass = TRUE) # passes if mfq totals are identical across sum methods
-
-```
-
-### Hopelessness
-
-Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pre and post SSI). Row mean scores range from 0 to 3, where 0 = absolutely disagree, 1 = somewhat disagree, 2 = somewhat agree, 3 = absolutely agree on each item. Source: https://doi.org/10.1007/s10597-013-9619-1
-
-Mutating bhs character values to numeric values
-
-```{r mutating bhs values}
-
-## Mutating character values to numeric across multiple bhs columns 
-
-data_bhs_mutated <- data_mfq_scored %>%
-  mutate(across(contains("bhs_") & -contains("tim"), 
-                ~ case_when(
-                    . == "Absolutely disagree" ~ 0,
-                    . == "Somewhat disagree" ~ 1,
-                    . == "Somewhat agree" ~ 2,
-                    . == "Absolutely agree" ~ 3,
-                    TRUE ~ NA_real_ # Handle other cases with NA
-                )))
-
-```
-
-Checking bhs variables are now numeric class
-
-```{r bhs numeric class check}
-
-## Checking that all bhs vars are numeric class
-
-data_bhs_mutated %>%
-  select(contains("bhs")) %>%
-  summarise(across(everything(), ~ class(.x)[1])) %>%
-  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
-
-
-```
-
-```{r using function to setup bhs mutation check, include=FALSE}
-
-# `data_mfq_scored` is the pre-mutation dataframe
-# and `data_bhs_mutated` is the post-mutation dataframe,
-# and we want to compare the value counts of "pre_bhs_1":
-
-test_mutate <- prep_mutation_check(data_mfq_scored, data_bhs_mutated, "pre_bhs_1")
-
-```
-
-Checking bhs response counts are identical from pre to post mutation
-
-```{r bhs response counts validation, validate = TRUE}
-
-test_mutate %>%
-  pointblank::col_vals_equal(vars(count_pre), 
-                             vars(count_post)) # passes if response counts are identical pre to post mutation
-
-```
-
-Calculating bhs row means
-
-```{r calculating bhs scores}
-
-## Calculating composite scores
-
-data_bhs_scored <- data_bhs_mutated %>%
-  mutate(pre_bhs_mean = rowMeans(across(starts_with("pre_bhs_") & -contains("tim")), na.rm = TRUE),
-         post_bhs_mean = rowMeans(across(starts_with("post_bhs_") & -contains("tim")), na.rm = TRUE)) %>%
-  mutate(across(contains("bhs_"), ~ case_when(
-                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                  TRUE ~ .))) # Keep other values unchanged
-
-```
-
-```{r checking bhs score setup, include = FALSE}
-
-## checking composite calculation was correct
-
-# manually calculating pre means to compare methods
-
-test_pre_bhs_calc <- data_bhs_scored %>%
-  select(response_id, starts_with("pre_bhs_") & -contains("tim")) %>%
-  mutate(pre_manual_mean = rowMeans(select(., pre_bhs_1, pre_bhs_2, pre_bhs_3, pre_bhs_4), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(pre_bhs_mean, pre_manual_mean)
-
-# manually calculating post means to compare methods
-
-test_post_bhs_calc <- data_bhs_scored %>%
-  select(response_id, starts_with("post_bhs_") & -contains("tim")) %>%
-  mutate(post_manual_mean = rowMeans(select(., post_bhs_1, post_bhs_2, post_bhs_3, post_bhs_4), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(post_bhs_mean, post_manual_mean)
-
-```
-
-Checking pre and post bhs means are identical across averaging methods
-
-```{r pre bhs scoring validation, validate = TRUE}
-
-test_pre_bhs_calc %>%
-  pointblank::col_vals_equal(vars(pre_bhs_mean), 
-                             vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
-
-```{r post bhs scoring validation, validate = TRUE}
-
-test_post_bhs_calc %>%
-  pointblank::col_vals_equal(vars(post_bhs_mean), 
-                             vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
-
-### Hope (Pathways)
-
-Calculating hope using the 3-item pathways subscale from the State Hope Scale (measured pre and post SSI). Row mean scores range from 1 to 8, where 1 = definitely false, and 8 = definitely true. Source: https://doi.org/10.1037/0022-3514.70.2.321
-
-Mutating shs character values to numeric values
-
-```{r mutating shs values}
-
-## Mutating character values to numeric across multiple shs columns 
-
-data_shs_mutated <- data_bhs_scored %>%
-  mutate(across(contains("shs_") & -contains("tim"), 
-                ~ case_when(
-                    . == "Definitely False" ~ 1,
-                    . == "Mostly False" ~ 2,
-                    . == "Somewhat False" ~ 3,
-                    . == "Slightly False" ~ 4,
-                    . == "Slightly True" ~ 5,
-                    . == "Somewhat True" ~ 6,
-                    . == "Mostly True" ~ 7,
-                    . == "Definitely True" ~ 8,
-                    TRUE ~ NA_real_ # Handle other cases with NA
-                )))
- 
-```
-
-Checking shs variables are now numeric class
-
-```{r shs numeric class check}
-
-## Checking that all shs vars are numeric class
-
-data_shs_mutated %>%
-  select(contains("shs")) %>%
-  summarise(across(everything(), ~ class(.x)[1])) %>%
-  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
-
-
-```
-
-```{r using function to setup shs mutation check, include=FALSE}
-
-# `data_bhs_scored` is the pre-mutation dataframe
-# and `data_shs_mutated` is the post-mutation dataframe,
-# and we want to compare the value counts of "pre_shs_1":
-
-test_mutate <- prep_mutation_check(data_bhs_scored, data_shs_mutated, "pre_shs_1")
-
-```
-
-Checking shs response counts are identical from pre to post mutation
-
-```{r shs response counts validation, validate = TRUE}
-
-test_mutate %>%
-  pointblank::col_vals_equal(vars(count_pre), 
-                             vars(count_post)) # passes if response counts are identical pre to post mutation
-
-```
-
-Calculating shs row means
-
-```{r calculating shs scores}
-
-## Calculating composite scores
-
-data_shs_scored <- data_shs_mutated %>%
-  mutate(pre_shs_mean = rowMeans(across(starts_with("pre_shs_") & -contains("tim")), na.rm = TRUE),
-         post_shs_mean = rowMeans(across(starts_with("post_shs_") & -contains("tim")), na.rm = TRUE)) %>%
-  mutate(across(contains("shs_"), ~ case_when(
-                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                  TRUE ~ .))) # Keep other values unchanged
-
-```
-
-```{r checking shs score setup, include = FALSE}
-
-## checking composite calculation was correct
-
-# manually calculating pre means to compare methods
-
-test_pre_shs_calc <- data_shs_scored %>%
-  select(response_id, starts_with("pre_shs_") & -contains("tim")) %>%
-  mutate(pre_manual_mean = rowMeans(select(., pre_shs_1, pre_shs_2, pre_shs_3), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(pre_shs_mean, pre_manual_mean)
-
-# manually calculating post means to compare methods
-
-test_post_shs_calc <- data_shs_scored %>%
-  select(response_id, starts_with("post_shs_") & -contains("tim")) %>%
-  mutate(post_manual_mean = rowMeans(select(., post_shs_1, post_shs_2, post_shs_3), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(post_shs_mean, post_manual_mean)
-
-```
-
-Checking pre and post shs means are identical across averaging methods
-
-```{r pre shs scoring validation, validate = TRUE}
-
-test_pre_shs_calc %>%
-  pointblank::col_vals_equal(vars(pre_shs_mean), 
-                             vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
-
-```{r post shs scoring validation, validate = TRUE}
-
-test_post_shs_calc %>%
-  pointblank::col_vals_equal(vars(post_shs_mean), 
-                             vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
-
-### Self-Hate
-
-Calculating self-hate using a 3-item version of the Self-Hate Scale (measured pre and post SSI). Row mean scores range from 1 to 6, where 1 = not at all true for me, and 6 = very true for me. Source (abbreviated scale): https://mental.jmir.org/2020/6/e20513. Source (full scale): https://doi.org/10.1016/j.jad.2018.11.047 
-
-NOTE: The original scale is a 7-point Likert scale, we've used 6-point Likert scales for items in this data and in the original YES data. 
-
-NOTE 2: While this measure can be seen in the survey flow, it looks like no self-hate data have been collected for this survey. (Possibly a "publish" button error.)
-
-Mutating hate character values to numeric values
-
-```{r mutating hate values}
-
-## Converting number character values from sliding scale to numeric values
-
-data_hate_mutated <- data_shs_scored %>%
-  mutate(across(contains("self_hate") & where(is.character), as.numeric))
-
-```
-
-Checking hate variables are now numeric class
-
-```{r hate numeric class check}
-
-## Checking that all self-hate vars are numeric class
-
-data_hate_mutated %>%
-  select(contains("self_hate")) %>%
-  summarise(across(everything(), ~ class(.x)[1])) %>%
-  tidyr::pivot_longer(cols = everything(), names_to = "variable", values_to = "class")
-
-
-```
-
-Calculating hate row means
-
-```{r calculating hate scores}
-
-## Calculating composite scores
-
-data_hate_scored <- data_hate_mutated %>%
-  mutate(pre_self_hate_mean = rowMeans(across(starts_with("pre_self_hate_") & -contains("tim")), na.rm = TRUE),
-         post_self_hate_mean = rowMeans(across(starts_with("post_self_hate_") & -contains("tim")), na.rm = TRUE)) %>%
-  mutate(across(contains("self_hate_"), ~ case_when(
-                                  is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                  TRUE ~ .))) # Keep other values unchanged
-
-```
-
-```{r checking hate score setup, include = FALSE}
-
-## checking composite calculation was correct
-
-# manually calculating pre means to compare methods
-
-test_pre_hate_calc <- data_hate_scored %>%
-  select(response_id, starts_with("pre_self_hate_") & -contains("tim")) %>%
-  mutate(pre_manual_mean = rowMeans(select(., pre_self_hate_1, pre_self_hate_2, pre_self_hate_3), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(pre_self_hate_mean, pre_manual_mean)
-
-# manually calculating post means to compare methods
-
-test_post_hate_calc <- data_hate_scored %>%
-  select(response_id, starts_with("post_self_hate_") & -contains("tim")) %>%
-  mutate(post_manual_mean = rowMeans(select(., post_self_hate_1, post_self_hate_2, post_self_hate_3), na.rm = TRUE)) %>%
-  mutate(across(contains("manual"), ~ case_when(is.nan(.) ~ NA_real_, # Replace NaN with NA
-                                        TRUE ~ .))) %>% # Keep other values unchanged
-  select(post_self_hate_mean, post_manual_mean)
-
-```
-
-Checking pre and post hate means are identical across averaging methods
-
-```{r pre hate scoring validation, validate = TRUE}
-
-test_pre_hate_calc %>%
-  pointblank::col_vals_equal(vars(pre_self_hate_mean), 
-                             vars(pre_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
-
-```{r post hate scoring validation, validate = TRUE}
-
-test_post_hate_calc %>%
-  pointblank::col_vals_equal(vars(post_self_hate_mean), 
-                             vars(post_manual_mean), 
-                             na_pass = TRUE) # passes if means are identical across methods
-
-```
 
 ### PFS
 
 Calculating program feedback scores using the Program feedback scale (measured post SSI). Row mean scores range from 1 to 5, where 1 = really disagree, and 5 = really agree. Source: https://mental.jmir.org/2020/6/e20513
-
-```{r pulling pfs values, include=FALSE}
-
-## Pulling pfs variables
-
-# vars_pfs <- data_hate_scored %>%
-#   select(contains("pfs") & -contains("like") & 
-#            -contains("change") & 
-#            -contains("more") &
-#            -contains("tim")) %>%
-#   head() %>%
-#   print()
-
-```
 
 Mutating pfs character values to numeric values
 
@@ -1409,7 +529,7 @@ Mutating pfs character values to numeric values
 
 ## Mutating character values to numeric across multiple pfs columns 
 
-data_pfs_mutated <- data_hate_scored %>%
+data_pfs_mutated <- data_english_vars_only %>%
   mutate(across(contains("pfs_") & -contains("like") & 
                -contains("change") &
                -contains("more") &
@@ -1443,13 +563,43 @@ data_pfs_mutated %>%
 
 ```
 
+```{r writing a function to setup future mutation checks, include=FALSE}
+
+# Custom function to compare value counts before and after mutation
+prep_mutation_check <- function(data_pre, data_post, var) {
+  
+  # Step 1: Create pre-mutation counts
+  test_pre <- data_pre %>%
+    select(var) %>%
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_pre"), everything())  # Rename columns for pre-mutation
+  
+  # Step 2: Create post-mutation counts
+  test_post <- data_post %>%
+    select(var) %>%
+    mutate(across(all_of(var), ~ factor(., levels = unique(.)))) %>%  # Convert to factor
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_post"), everything())  # Rename columns for post-mutation
+  
+  # Step 3: Combine pre and post counts into one dataframe for comparison
+  test_comparison <- bind_cols(test_pre, test_post)
+  
+  return(test_comparison)
+}
+
+```
+
 ```{r using function to setup pfs mutation check, include=FALSE}
 
 # `data_hate_scored` is the pre-mutation dataframe
 # and `data_pfs_mutated` is the post-mutation dataframe,
 # and we want to compare the value counts of "pfs_1":
 
-test_mutate <- prep_mutation_check(data_hate_scored, data_pfs_mutated, "pfs_1")
+test_mutate <- prep_mutation_check(data_english_vars_only, data_pfs_mutated, "pfs_1")
 
 ```
 
@@ -1526,8 +676,6 @@ Dropping unnecessary columns
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
-  select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
-  select(-dem_ethnicity, -dem_gender_identity) %>% # dropping outdated cols cleaned above
   select(-select_language) # dropping redundant language column
 
 ```
@@ -1538,7 +686,7 @@ Adding cols to document language and data source
 
 data_col_added <- data_col_dropped %>%
   mutate(language = "english",
-         data_id = "d02")
+         data_id = "d03")
 
 ```
 
@@ -1553,16 +701,6 @@ data_reorged <- data_col_added %>%
          perc_progress, finished, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
          contains("reliant"), contains("san_antonio"),
-         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_adult, dem_age, dem_sex,
-         starts_with("dem_gender_") & !contains("tim"),
-         starts_with("dem_sex_orientation") & !contains("tim"), 
-         starts_with("dem_race") & !contains("tim"),
-         starts_with("ssi_prev"), starts_with("ssi_times"), 
-         starts_with("mfq_") & !contains("tim"), 
-         starts_with("pre_bhs_") & !contains("tim"), 
-         starts_with("pre_shs_") & !contains("tim"), 
-         starts_with("pre_self_hate_") & !contains("tim"),
-         starts_with("pre_perceived_control") & !contains("tim"),
          ssi_started,
          starts_with("abc") & !contains("tim"),
          starts_with("proj_care") & !contains("tim"),
@@ -1572,11 +710,7 @@ data_reorged <- data_col_added %>%
          starts_with("advice") & !contains("tim"),
          starts_with("pfs_") & !contains("tim"),
          starts_with("perc_change_") & !contains("tim"),
-         starts_with("post_bhs_") & !contains("tim"),
-         starts_with("post_shs_") & !contains("tim"),
-         starts_with("post_self_hate_") & !contains("tim"),
-         starts_with("post_perceived_control") & !contains("tim"),
-         contains("tim") & starts_with("select_language"),
+         contains("tim") & starts_with("select_lang"),
          contains("tim") & starts_with("intro"),
          contains("tim") & starts_with("into"),
          contains("tim") & starts_with("volunteer"),
@@ -1643,16 +777,11 @@ data_classes_mutated <- data_reorged %>%
          data_id = as.factor(data_id),
          perc_progress = as.numeric(perc_progress),
          finished = as.factor(finished),
-         pre_perceived_control = as.numeric(pre_perceived_control),
-         post_perceived_control = as.numeric(post_perceived_control),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
          ssi_completed = as.factor(ssi_completed),
          advice_permission = as.factor(advice_permission)) %>%
   mutate(across(contains("date"), as.Date)) %>%
-  mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
-  mutate(across(contains("times_completed"), as.numeric)) %>%
-  mutate(across(contains("ssi_prev_completed"), as.factor)) %>%
   mutate(across(contains("_q_") & ends_with("_num"), as.numeric)) %>% # ssi qual questions
   mutate(across(contains("_q_") & -ends_with("_text") & -ends_with("_num") &
                 -ends_with("_rank") & -ends_with("_group"), as.factor)) %>% # ssi qual questions
@@ -1671,7 +800,7 @@ data <- data_classes_mutated
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_d02_english_clean.Rds"
+file_name <- "yes_data_d03_english_clean.Rds"
 full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
