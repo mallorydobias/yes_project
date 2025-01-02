@@ -783,9 +783,9 @@ test_mutate_count <- cbind(test_embedded_count, test_item_count)
 
 ```
 
-Checking ssi_choice variables cleaned correctly
+Checking language subset correctly
 
-```{r checking ssi_choice cleaning, validate = TRUE}
+```{r checking language filter, validate = TRUE}
 
 ## checking counts align pre to post cleaning
 
