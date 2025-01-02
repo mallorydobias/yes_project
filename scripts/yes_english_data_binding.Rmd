@@ -36,17 +36,11 @@ validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from poi
 if(!require(here)){install.packages('here')}
 library(here)
 
-if(!require(janitor)){install.packages('janitor')}
-library(janitor)
-
 if(!require(dplyr)){install.packages('dplyr')}
 library(dplyr)
 
 if(!require(stringr)){install.packages('stringr')}
 library(stringr)
-
-if(!require(pointblank)){install.packages('pointblank')}
-library(pointblank)
 
 if(!require(tidyr)){install.packages('tidyr')}
 library(tidyr)
@@ -85,22 +79,70 @@ data <- bind_rows(d02_data, d09_data)
 
 Checking final data has expected number of rows
 
-```{r checking n rows setup, validate = TRUE}
+```{r checking n rows, validate = TRUE}
 
-# Create the validation to check if the row count of df3 equals the sum of row counts of df1 and df2
+## Checking if the row count of data equals the sum of row counts of component dfs
+
 validation_result <- 
   data %>%
   expect_row_count_match(nrow(d02_data) + nrow(d09_data))
 
-# Print the validation result
+## Printing the validation result - runs if passes
+
 validation_result
 
 ```
 
+Checking final data has expected number of columns
+
 ```{r checking n cols setup}
 
-## Checking data has expected n total columns
+## Counting the number of expected shared and unique columns
+
+# Creating dfs of col names from each component df
+
+d02_cols <- data.frame(column_name = names(d02_data))
+
+d09_cols <- data.frame(column_name = names(d09_data))
+
+# Pulling n shared cols between dfs
+
+n_shared_cols <- d02_cols %>%
+  inner_join(d09_cols) %>%
+  nrow()
+
+# Pulling n cols unique to each df and total
+
+n_unique_cols_d02 <- d02_cols %>%
+  anti_join(d09_cols) %>%
+  nrow()
+
+n_unique_cols_d09 <- d09_cols %>%
+  anti_join(d02_cols) %>%
+  nrow()
+
+n_unique_cols <- n_unique_cols_d02 + n_unique_cols_d09
 
 ```
 
+```{r calc expected n cols}
 
+# Calculating expected n cols
+
+n_expected_cols <- n_shared_cols + n_unique_cols
+
+```
+
+```{r checking n cols, validate = TRUE}
+
+## Checking if the cols count of data equals the sum of cols counts of component dfs
+
+validation_result <- 
+  data %>%
+  expect_col_count_match(n_expected_cols)
+
+## Printing the validation result - runs if passes
+
+validation_result
+
+```
