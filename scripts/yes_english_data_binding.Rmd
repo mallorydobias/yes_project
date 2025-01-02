@@ -73,7 +73,7 @@ d09_data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # d
 
 ## Binding data from all sources
 
-data <- bind_rows(d02_data, d09_data)
+english_data <- bind_rows(d02_data, d09_data)
 
 ```
 
@@ -84,7 +84,7 @@ Checking final data has expected number of rows
 ## Checking if the row count of data equals the sum of row counts of component dfs
 
 validation_result <- 
-  data %>%
+  english_data %>%
   expect_row_count_match(nrow(d02_data) + nrow(d09_data))
 
 ## Printing the validation result - runs if passes
@@ -138,7 +138,7 @@ n_expected_cols <- n_shared_cols + n_unique_cols
 ## Checking if the cols count of data equals the sum of cols counts of component dfs
 
 validation_result <- 
-  data %>%
+  english_data %>%
   expect_col_count_match(n_expected_cols)
 
 ## Printing the validation result - runs if passes
@@ -159,6 +159,6 @@ full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
 
-saveRDS(data, full_path)
+saveRDS(english_data, full_path)
 
 ```
