@@ -73,7 +73,7 @@ d09_data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # d
 
 ## Binding data from all sources
 
-english_data <- bind_rows(d02_data, d09_data)
+english_data_bound <- bind_rows(d02_data, d09_data)
 
 ```
 
@@ -84,7 +84,7 @@ Checking final data has expected number of rows
 ## Checking if the row count of data equals the sum of row counts of component dfs
 
 validation_result <- 
-  english_data %>%
+  english_data_bound %>%
   expect_row_count_match(nrow(d02_data) + nrow(d09_data))
 
 ## Printing the validation result - runs if passes
@@ -138,7 +138,7 @@ n_expected_cols <- n_shared_cols + n_unique_cols
 ## Checking if the cols count of data equals the sum of cols counts of component dfs
 
 validation_result <- 
-  english_data %>%
+  english_data_bound %>%
   expect_col_count_match(n_expected_cols)
 
 ## Printing the validation result - runs if passes
@@ -147,9 +147,96 @@ validation_result
 
 ```
 
+```{r reorganizing cols}
+
+english_data_reorged <- english_data_bound %>%
+  select(response_id, language, data_id, contains("date"),
+         perc_progress, finished, ssi_choice, ssi_source,
+         starts_with("volunteer_") & !contains("tim"),
+         contains("reliant"), contains("san_antonio"),
+         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_adult, dem_age, dem_sex,
+         starts_with("dem_gender_") & !contains("tim"),
+         starts_with("dem_sex_orientation") & !contains("tim"), 
+         starts_with("dem_race") & !contains("tim"),
+         starts_with("ssi_prev"), starts_with("ssi_times"), 
+         starts_with("mfq_") & !contains("tim"), 
+         starts_with("pre_bhs_") & !contains("tim"), 
+         starts_with("pre_shs_") & !contains("tim"), 
+         starts_with("pre_self_hate_") & !contains("tim"),
+         starts_with("pre_perceived_control") & !contains("tim"),
+         ssi_started,
+         starts_with("abc") & !contains("tim"),
+         starts_with("proj_care") & !contains("tim"),
+         starts_with("proj_pers") & !contains("tim"),
+         starts_with("proj_rise") & !contains("tim"),
+         ssi_completed,
+         starts_with("advice") & !contains("tim"),
+         starts_with("pfs_") & !contains("tim"),
+         starts_with("perc_change_") & !contains("tim"),
+         starts_with("post_bhs_") & !contains("tim"),
+         starts_with("post_shs_") & !contains("tim"),
+         starts_with("post_self_hate_") & !contains("tim"),
+         starts_with("post_perceived_control") & !contains("tim"),
+         contains("tim") & starts_with("select_language"),
+         contains("tim") & starts_with("intro"),
+         contains("tim") & starts_with("into"),
+         contains("tim") & starts_with("volunteer"),
+         contains("tim") & starts_with("dem"),
+         contains("tim") & starts_with("ssi"),
+         contains("tim") & starts_with("mfq"),
+         contains("tim") & starts_with("pre_"),
+         contains("tim") & starts_with("abc"),
+         contains("tim") & starts_with("proj_care"),
+         contains("tim") & starts_with("proj_rise"),
+         contains("tim") & starts_with("proj_pers"),
+         contains("tim") & starts_with("advice_"),
+         contains("tim") & starts_with("pfs_"),
+         contains("tim") & starts_with("perc_change_"),
+         contains("tim") & starts_with("post_"))
+
+```
+
+```{r checking col order setup, include=FALSE}
+
+## creating data frames of names pre and post reorg for comparison
+
+pre_reorg_names <- english_data_bound %>%
+  names() # names pre
+
+post_reorg_names <- english_data_reorged %>%
+  names() # names post
+
+# Create tibbles for easier manipulation
+
+pre_reorg_df <- tibble(names = pre_reorg_names)
+post_reorg_df <- tibble(names = post_reorg_names)
+
+# Get the unique names (names not in both data frames)
+
+test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
+  group_by(names) %>%
+  filter(n() == 1)
+         
+```
+
+Checking that reorganizing happened correctly (i.e., no columns dropped) 
+
+```{r checking reorg did not lose cols 2}
+
+## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
+
+n_cols_dropped <- test_reorg %>%
+  nrow() == 0
+
+n_cols_dropped # true if no columns were dropped by reorg
+
+```
+
 # Saving Data
 
 ```{r saving cleaned bound data}
+
+english_data <- english_data_reorged
 
 # Define the folder and file path
 
