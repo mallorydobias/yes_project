@@ -233,13 +233,58 @@ test_rename %>%
 
 ```
 
+Renaming "into_" (typo) variable prefixes to "intro_" prefixes, for clarity and consistency
+
+```{r renaming intro vars}
+
+## Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
+
+data_intro_named <- data_prog_named %>%
+  rename_with(~ str_replace(., "^into_", "intro_"))
+
+```
+
+```{r checking intro var naming setup, include = FALSE}
+
+## checking vars are renamed correctly
+
+# extracting characters following "into_" in column names before renaming
+
+test_pre_rename <- tibble(var_names = names(data_prog_named)) %>%
+  filter(str_detect(var_names, "^into_")) %>% # keep rows with "into_" prefix
+  mutate(pre_renamed = str_extract(var_names, "(?<=into_).*")) %>% # extract characters following "into_"
+  select(-var_names)
+
+# extracting characters following "intro_" in column names after renaming
+
+test_post_rename <- tibble(var_names = names(data_intro_named)) %>%
+  filter(str_detect(var_names, "^intro_")) %>% # keep rows with "intro_" prefix
+  mutate(post_renamed = str_extract(var_names, "(?<=intro_).*")) %>% # extract characters following "intro_"
+  select(-var_names)
+
+# combining to one data frame for comparison
+
+test_rename <- cbind(test_pre_rename, test_post_rename)
+
+```
+
+Checking columns renamed correctly
+
+```{r checking intro var renaming, validate = TRUE}
+
+test_rename %>%
+  pointblank::col_vals_equal(vars(pre_renamed), 
+                             vars(post_renamed)) # passes if renamed columns are identical to original cols
+
+```
+
 Renaming individual items for clarity
 
 ```{r renaming individual vars}
 
 ## Renaming individual vars for clarity
 
-data_items_named <- data_prog_named %>%
+data_items_named <- data_intro_named %>%
   rename(dem_sex_orientation_other_text = dem_sex_orientation_9_text,
          pre_perceived_control = pre_control_1, 
          post_perceived_control = post_control_1,
