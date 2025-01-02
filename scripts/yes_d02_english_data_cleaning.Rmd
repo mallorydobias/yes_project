@@ -849,6 +849,41 @@ data_english_vars_only <- data_english %>%
 
 ```
 
+## Dropping Testing Rows
+
+```{r dropping testing rows}
+
+## Filtering to rows that are na for dem_hear_proj, or that contain text that don't specify
+## that it's a testing row
+
+data_testing_rows_dropped <- data_english_vars_only %>% 
+  filter(is.na(dem_hear_proj) | !str_detect(dem_hear_proj, "testing - UTTH"))
+
+```
+
+Checking data has expected number of rows
+
+```{r checking n rows after dropping testing rows, validate = TRUE}
+
+## Calculating number of testing rows
+
+n_testing_rows <- data_english_vars_only %>% 
+  filter(str_detect(dem_hear_proj, "testing - UTTH")) %>%
+  select(dem_hear_proj) %>%
+  nrow()
+
+## Checking if the row count of data equals expected count
+
+validation_result <- 
+  data_testing_rows_dropped %>%
+  expect_row_count_match(nrow(data_english_vars_only) - n_testing_rows)
+
+## Printing the validation result - runs if passes
+
+validation_result
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -861,7 +896,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_english_vars_only %>%
+data_mfq_mutated <- data_testing_rows_dropped %>%
   mutate(across(starts_with("mfq_") & -contains("tim") & -starts_with("e_"), 
                 ~ case_when(
                     . == "Not True" ~ 0,

@@ -63,7 +63,7 @@ d02_data <- readRDS(here("data", "clean", "yes_data_d02_english_clean.Rds")) # d
 d09_data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # directing to data from project folder root
 
 # head(d02_data)
-# head(d02_data)
+# head(d09_data)
 
 ```
 
