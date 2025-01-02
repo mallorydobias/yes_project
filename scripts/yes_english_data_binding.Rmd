@@ -255,6 +255,7 @@ unique_cols_d09 %>%
   rename(d09_column_name = column_name)
 
 ```
+
 Reorganizing column order
 
 ```{r reorganizing cols}

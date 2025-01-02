@@ -327,7 +327,8 @@ data_items_named <- data_ao_removed %>%
          proj_pers_q_2_text = proj_pers_q_2,
          proj_pers_q_3_text = proj_pers_q_3,
          abc_q_1_1_num = abc_q_1_1, # adding _num to numeric vars in ssis
-         abc_q_3_1_num = abc_q_3_1)
+         abc_q_3_1_num = abc_q_3_1) %>%
+  rename_with(~ str_replace(., "^select_lang_", "select_language_"))
 
 ```
 
