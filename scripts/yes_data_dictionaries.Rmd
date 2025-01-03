@@ -77,6 +77,12 @@ data_for_dictionary <- data %>%
 
 ```
 
+```{r}
+
+names(data_for_dictionary)
+
+```
+
 ```{r creating var labels for dictionary, warning=FALSE}
 
 # Create labels as a named vector. 
@@ -90,10 +96,15 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 ssi_source = "",
                 ssi_choice = "ssi chosen",
                 volunteer_questionnaires_yn = "yes/no, did they agree to optional questionnaires",
+                reliant_mg = "d02 only",
+                san_antonio = "yes/no, lives in San Antonio, d02 only",
+                san_antonio_area = "where lives in San Antonio, d02 only",
+                san_antonio_hear_proj = "chosen source for how they heard about yes, d02 only",
                 dem_hear_proj = "qual, where did they hear about yes",
                 dem_why_interest = "qual, why interested in yes",
                 dem_receive_support = "have they received formal support before",
                 dem_why_no_support = "qual, what prevented formal support",
+                dem_location = "yes/no, do they live in a mixed city (Ramla, Lod, Jaffa, Haifa, Acre), d05 only",
                 dem_age = "age category",
                 dem_sex = "sex assigned at birth",
                 dem_gender_diff_sex = "yes/no, does gender differ from assigned sex",
@@ -122,6 +133,15 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 dem_race_latin_hisp = "yes/no, identifies as Latine/Hispanic",
                 dem_race_white = "yes/no, identifies as White",
                 dem_race_other = "yes/no, identifies with a race/ethnicity not listed above",
+                dem_ethnicity_text = "qual, self-described ethnicity, d05 only",
+                dem_ethnicity_israeli = "yes/no, identifies as Israeli, d05 only",
+                dem_ethnicity_african = "yes/no, identifies as African (Ethiopian), d05 only",
+                dem_ethnicity_mid_eastern = "yes/no, identifies as Middle Eastern or Mediterranean, d05 only",
+                dem_ethnicity_european_n_am = "yes/no, identifies as European or North American, d05 only",
+                dem_ethnicity_s_central_am = "yes/no, identifies as South or Central American, d05 only",
+                dem_ethnicity_ussr_e_european = "yes/no, identifies as from Former Soviet Union or Eastern Europe, d05 only",
+                dem_ethnicity_ne_asian = "yes/no, identifies as Northeast Asian, d05 only",
+                dem_ethnicity_other = "yes/no, identifies with an ethnicity not listed above, d05 only",
                 ssi_prev_completed = "yes/no, previously completed an ssi",
                 ssi_prev_completed_abc = "yes/no, previously completed abc",
                 ssi_prev_completed_care = "yes/no, previously completed care",
