@@ -100,7 +100,25 @@ data <- readRDS(here("data", "clean", "yes_data_english_clean.Rds")) # directing
 ## Filtering to youth only for our analysis
 
 data_youth <- data %>%
-  filter(dem_age != "18 or older")
+  filter(dem_age != "18 or older" &
+         dem_age != "16-20" &
+         dem_age != "21-25" &   
+         dem_age != "26-30" & 
+         dem_age != "31-35" &  
+         dem_age != "36-40" & 
+         dem_age != "41-45" & 
+         dem_age != "46-50" & 
+         dem_age != "51-55" & 
+         dem_age != "56-60" & 
+         dem_age != "61-65" & 
+         dem_age != "66-70" & 
+         dem_age != "71-75" & 
+         dem_age != "76-80" &
+         dem_age != "81-85" &
+         dem_age != "86-90" &
+         dem_age != "91-95" &
+         dem_age != "96-100" &
+         dem_age != "101 or older")
 
 ## Checking that all dfs have values in this column (d03 not present because no age item)
 
@@ -791,7 +809,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking surveys among YES data sources (data_ids: d02, d03, d09, d16; d01 still pending data cleaning). SSIs are completed ~1 out of every 3 times they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking YES surveys (data_ids: d02, d03, d09, d16; d01 still pending data cleaning). SSIs are completed ~1 out of every 3 times they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
 
 **Full Summary**:
 
