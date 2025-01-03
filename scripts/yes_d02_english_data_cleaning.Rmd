@@ -1282,8 +1282,6 @@ Calculating self-hate using a 3-item version of the Self-Hate Scale (measured pr
 
 NOTE: The original scale is a 7-point Likert scale, we've used 6-point Likert scales for items in this data and in the original YES data. 
 
-NOTE 2: While this measure can be seen in the survey flow, it looks like no self-hate data have been collected for this survey. (Possibly a "publish" button error.)
-
 Mutating hate character values to numeric values
 
 ```{r mutating hate values}
