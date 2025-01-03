@@ -315,7 +315,7 @@ n_answered_questionnaires_item <- data_youth %>%
   select(volunteer_questionnaires_yn) %>%
   tally()
 
-perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2)
+perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2) # percent agreed, of those who were asked
 
 ## Checking that all dfs have values in this columns (d03 not present because no age item, d02 does not have volunteer item)
 
@@ -333,7 +333,7 @@ data_youth %>%
 
 m_pfs_overall <- round(mean(data_youth$pfs_mean, na.rm = TRUE), 2)
 
-## Checking that all dfs have values in this column (d03 no age var, d16 has no completers yet)
+## Checking that all dfs have values in this column (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
 
 data_youth %>%
   select(data_id, pfs_mean) %>%
@@ -420,6 +420,20 @@ abc_bhs_n_pairs <- data_youth_abc %>%
   select(post_bhs_mean, pre_bhs_mean) %>%
   nrow()
 
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data_youth %>%
+  select(data_id, pre_bhs_mean) %>%
+  filter(!is.na(pre_bhs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data_youth %>%
+  select(data_id, post_bhs_mean) %>%
+  filter(!is.na(post_bhs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
 ```
 
 ```{r t test effect size bhs abc, include=FALSE}
@@ -455,6 +469,20 @@ abc_shs_n_pairs <- data_youth_abc %>%
   select(post_shs_mean, pre_shs_mean) %>%
   nrow()
 
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data_youth %>%
+  select(data_id, pre_shs_mean) %>%
+  filter(!is.na(pre_shs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data_youth %>%
+  select(data_id, post_shs_mean) %>%
+  filter(!is.na(post_shs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
 ```
 
 ```{r t test effect size shs abc, include=FALSE}
@@ -489,6 +517,20 @@ abc_hate_n_pairs <- data_youth_abc %>%
   filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
   select(post_self_hate_mean, pre_self_hate_mean) %>%
   nrow()
+
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data_youth %>%
+  select(data_id, pre_self_hate_mean) %>%
+  filter(!is.na(pre_self_hate_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data_youth %>%
+  select(data_id, post_self_hate_mean) %>%
+  filter(!is.na(post_self_hate_mean)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 
@@ -593,7 +635,7 @@ results_hate <- run_paired_t_test(data_youth_care, "pre_self_hate_mean", "post_s
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-care_dz_values <- c(care_bhs_dz_value) # not including non-significant outcome results
+care_dz_values <- c(care_bhs_dz_value, care_shs_dz_value, care_hate_dz_value) # not including non-significant outcome results
 print(care_dz_values)
 
 ```
@@ -613,7 +655,7 @@ results_hate <- run_paired_t_test(data_youth_pp, "pre_self_hate_mean", "post_sel
 print(results_hate)
 
 # Combine all dz values into a single vector for reporting
-pp_dz_values <- c(pp_shs_dz_value) # not including non-significant outcome results
+pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) # not including non-significant outcome results
 print(pp_dz_values)
 
 ```
@@ -658,6 +700,14 @@ perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_sur
 
 perc_gender_same_as_sex <- round((n_gender_same_as_sex / n_started_survey)*100,2)
 
+## Checking that all dfs have values in this column (d03 no age var)
+
+data_youth %>%
+  select(data_id, dem_gender_diff_sex) %>%
+  filter(!is.na(dem_gender_diff_sex)) %>%
+  group_by(data_id) %>%
+  tally()
+
 ```
 
 ```{r perc sexual minority, include=FALSE}
@@ -683,6 +733,14 @@ n_sex_straight <- data_youth %>%
 perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
 
 perc_sex_straight <- round((n_sex_straight / n_started_survey)*100,2)
+
+## Checking that all dfs have values in this column (d03 no age var)
+
+data_youth %>%
+  select(data_id, dem_sex_orientation) %>%
+  filter(!is.na(dem_sex_orientation)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 
@@ -715,6 +773,14 @@ perc_racial_latine_hisp <- round((n_racial_latine_hisp / n_started_survey)*100,2
 
 perc_racial_white <- round((n_racial_white / n_started_survey)*100,2)
 
+## Checking that all dfs have values in this column (d03 no dem vars, d05 contains middle east specific ethnicity items)
+
+data_youth %>%
+  select(data_id, dem_race_white) %>%
+  filter(!is.na(dem_race_white)) %>%
+  group_by(data_id) %>%
+  tally()
+
 ```
 
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
@@ -725,14 +791,15 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from the largest English-speaking survey among YES data sources (data_id: d09). SSIs are completed ~1 out of every 3 times they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI, but not for every outcome for all SSIs. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking surveys among YES data sources (data_ids: d02, d03, d09, d16; d01 still pending data cleaning). SSIs are completed ~1 out of every 3 times they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
 
 **Full Summary**:
 
 Looking at YES engagement:
 
 + Our YES survey was started `r n_started_survey` times
-+ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
++ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires when asked
++ Not all cases were asked if they would like to complete questionnaires (e.g., San Antonio data)
 + `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
 Across all survey starts (n = `r n_started_survey`):
@@ -741,14 +808,13 @@ Across all survey starts (n = `r n_started_survey`):
 + Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
 + `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
-+ `r perc_racial_minority`% identify as Asian, Black, or another racial identity not listed (`r perc_racial_white`% white)
-+ `r perc_racial_latine_hisp`% identify as Latine/Hispanic
++ Race and ethnicity are measured differently across surveys (see below)
 
 Of cases with data at both time points:
 
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
-+ Hopelessness decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Agency increased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
 + Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 Of the cases where someone chose an SSI:
@@ -768,7 +834,7 @@ Of cases where someone started an SSI:
 
 Drop-off is highest on pages with writing exercises:
 
-+ Nearly 1 in 5 people drop from one page to the next during Project Personality's first writing exercise
++ More than 1 in 5 people drop from one page to the next during Project Personality's first writing exercise
 
 Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
@@ -779,7 +845,7 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 # Questionnaire Completion
 
-More than half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`), youth agreed to fill out optional questionnaires.
+More than half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`), youth agreed to fill out optional questionnaires. 
 
 ```{r perc agreed questionnaires}
 
@@ -930,13 +996,12 @@ perc_sex_minority
 
 ## Race/Ethnicity
 
-`r perc_racial_minority`% of survey responses identified as Asian, Black, or another racial identity not listed. `r perc_racial_latine_hisp`% identify as Latine or Hispanic. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
-
 ```{r adding missing values to race vars, include=FALSE}
 
 ## Accounting for missing values across all race variables
 
 data_youth_race <- data_youth %>%
+  filter(data_id != "d05") %>% # not counting d05 responses as missing data
   select(contains("race")) %>%
   mutate(dem_race_missing = case_when(
     if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
@@ -945,15 +1010,33 @@ data_youth_race <- data_youth %>%
 
 ```
 
-```{r calculating race tally, include=FALSE}
+```{r calculating race denominator, include=FALSE}
 
-# Using custom function to print race variable counts
+# saving custom denominator value
 
-race_tallies <- count_yes_responses(data_youth_race) %>%
+n_race_denominator <- nrow(data_youth_race)
+
+```
+
+N's and percentages are all calculated out of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
+
+```{r calculating race tallies, include=FALSE}
+
+## Calculating race tallies
+
+race_tallies <- data_youth_race %>%
+  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+  pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+  rowwise() %>%
+  mutate(percentage = count / n_race_denominator * 100) %>% 
+  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
   mutate(variable = str_replace(variable, "dem_race_", "")) %>%
   rename(racial_ethnic_identity = variable) %>%
-  rename("%" = n) %>%
   rename(n = count) %>%
+  rename("%" = percentage) %>%
   arrange(-n) %>%
   mutate(racial_ethnic_identity = case_when(racial_ethnic_identity == "missing" ~ "Missing",
                                      racial_ethnic_identity == "white" ~ "White",
@@ -963,6 +1046,7 @@ race_tallies <- count_yes_responses(data_youth_race) %>%
                                      racial_ethnic_identity == "other" ~ "Another racial/ethnic identity not listed",
                                      TRUE ~ racial_ethnic_identity))
 
+
 ```
 
 ```{r printing race tally, include=TRUE}
@@ -971,9 +1055,64 @@ rempsyc::nice_table(race_tallies)
 
 ```
 
-```{r printing perc racial minority, include=TRUE}
+```{r adding missing values to ethnicity vars, include=FALSE}
 
-perc_racial_minority
+## Accounting for missing values across all race variables
+
+data_youth_ethnicity <- data_youth %>%
+  filter(data_id == "d05") %>%
+  select(starts_with("dem_ethnicity_") & -contains("text")) %>%
+  mutate(dem_ethnicity_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r calculating ethnicity denominator, include=FALSE}
+
+# saving custom denominator value
+
+n_ethnicity_denominator <- nrow(data_youth_ethnicity)
+
+```
+
+Now, we'll take a look at ethnicity as measured in d05. (n = `r n_ethnicity_denominator`, from d05 only). These options were only available to responders to the Middle East yes survey.
+
+```{r calculating ethnicity tally, include=FALSE}
+
+# Using custom function to print race variable counts
+
+ethnicity_tallies <- data_youth_ethnicity %>%
+  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+  pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+  rowwise() %>%
+  mutate(percentage = (count / n_ethnicity_denominator) * 100) %>% 
+  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
+  mutate(variable = str_replace(variable, "dem_ethnicity_", "")) %>%
+  rename(ethnic_identity_middle_east = variable) %>%
+  rename(n = count) %>%
+  rename("%" = percentage) %>%
+  arrange(-n) %>%
+  mutate(ethnic_identity_middle_east = case_when(ethnic_identity_middle_east == "missing" ~ "Missing",
+                                     ethnic_identity_middle_east == "israeli" ~ "Israeli",
+                                     ethnic_identity_middle_east == "african" ~ "African (Ethiopian)",
+                                     ethnic_identity_middle_east == "mid_eastern" ~ "Middle Eastern or Mediterranean",
+                                     ethnic_identity_middle_east == "european_n_am" ~ "European or North American",
+                                     ethnic_identity_middle_east == "s_central_am" ~ "South or Central American",
+                                     ethnic_identity_middle_east == "ussr_e_european" ~ "Former Soviet Union or Eastern European",
+                                     ethnic_identity_middle_east == "ne_asian" ~ "Northeast Asian",
+                                     ethnic_identity_middle_east == "other" ~ "Another ethnicity not listed",
+                                     TRUE ~ ethnic_identity_middle_east))
+
+```
+
+```{r printing ethnicity tally, include=TRUE}
+
+rempsyc::nice_table(ethnicity_tallies)
 
 ```
 
@@ -1115,7 +1254,7 @@ plot_abc_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, agencyincreased from pre to post abc, dz = `r abc_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, agency increased from pre to post abc, dz = `r abc_shs_dz_value`.
 
 ```{r t test results abc shs}
 
@@ -1290,7 +1429,7 @@ plot_care_bhs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-care changes in agency (shs pathways scores). For those who chose the care intervention with data at both time points, we detect no significant change in agency from pre to post care, dz = `r care_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in agency (shs pathways scores). For those who chose the care intervention with data at both time points, agency increased from pre to post care, dz = `r care_shs_dz_value`.
 
 ```{r t test results care shs}
 
@@ -1341,7 +1480,7 @@ plot_care_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, we detect no significant change in self-hate from pre to post care, dz = `r abc_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, self-hate decreased from pre to post care, dz = `r abc_hate_dz_value`.
 
 ```{r t test results care hate}
 
@@ -1414,7 +1553,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, we detect no significant change in hopelessness from pre to post project personality, dz = `r pp_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, hopelessness decreased from pre to post project personality, dz = `r pp_bhs_dz_value`.
 
 ```{r t test results pp bhs}
 
@@ -1516,7 +1655,7 @@ plot_pp_shs
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, we detect no significant change in self-hate from pre to post project personality, dz = `r pp_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, self-hate decreased from pre to post project personality, dz = `r pp_hate_dz_value`.
 
 ```{r t test results pp hate}
 
@@ -2136,7 +2275,7 @@ plot_abc_drop <- ggplot(data_abc_clicks_plot, aes(x=page, y=page_submissions)) +
   geom_area(fill="#32A2A0", alpha=0.4) +
   geom_line(color="#32A2A0", linewidth=1.1) +
   theme_light() +
-  ylim(0, 400) +
+  ylim(0, 1750) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
@@ -2243,7 +2382,7 @@ plot_care_drop <- ggplot(data_care_clicks_plot, aes(x=page, y=page_submissions))
   geom_area(fill="#A52B4D", alpha=0.4) +
   geom_line(color="#A52B4D", linewidth=1.1) +
   theme_light() +
-  ylim(0, 400) +
+  ylim(0, 1750) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
@@ -2358,7 +2497,7 @@ plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
   geom_area(fill="#3F9CF5", alpha=0.4) +
   geom_line(color="#3F9CF5", linewidth=1.1) +
   theme_light() +
-  ylim(0, 400) +
+  ylim(0, 1750) +
   ggtitle("") +
   labs(x = "page number",
        y = "n page submissions") +
