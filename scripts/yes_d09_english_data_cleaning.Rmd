@@ -1604,7 +1604,7 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
   mutate(across(contains("times_completed"), as.numeric)) %>%
   mutate(across(contains("ssi_prev_completed"), as.factor)) %>%
-  mutate(across(contains("_q_") & ends_with("_num"), as.numeric)) %>% # ssi qual questions
+  mutate(across(contains("_q_") & ends_with("_num"), as.numeric)) %>% # ssi numeric questions
   mutate(across(contains("_q_") & -ends_with("_text") & -ends_with("_num") &
                 -ends_with("_rank") & -ends_with("_group"), as.factor)) %>% # ssi qual questions
   mutate(across(contains("commit"), as.factor)) %>%

@@ -89,7 +89,7 @@ library(rmarkdown)
 
 library(here) # places working directory at root of project folder
 
-data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # directing to data from project folder root
+data <- readRDS(here("data", "clean", "yes_data_english_clean.Rds")) # directing to data from project folder root
 
 # head(data) # looks good
 
@@ -101,6 +101,14 @@ data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # direc
 
 data_youth <- data %>%
   filter(dem_age != "18 or older")
+
+## Checking that all dfs have values in this column (d03 not present because no age item)
+
+data_youth %>%
+  select(data_id, dem_age) %>%
+  filter(!is.na(dem_age)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 
@@ -130,6 +138,14 @@ n_chose_pp <- data_youth %>%
 n_chose_rise <- data_youth %>%
   filter(str_detect(ssi_choice, "RISE")) %>%
   tally() # chose pp
+
+## Checking that all dfs have values in the ssi_choice column (d03 not present because no age item)
+
+data_youth %>%
+  select(data_id, ssi_choice) %>%
+  filter(!is.na(ssi_choice)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 
@@ -172,6 +188,20 @@ n_completed_abc <- data_youth %>%
   tally()
 
 perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
+
+## Checking that all dfs have values in these columns (d03 not present because no age item)
+
+data_youth %>%
+  select(data_id, ssi_started) %>%
+  filter(!is.na(ssi_started)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data_youth %>%
+  select(data_id, ssi_completed) %>%
+  filter(!is.na(ssi_completed)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 
@@ -287,6 +317,14 @@ n_answered_questionnaires_item <- data_youth %>%
 
 perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2)
 
+## Checking that all dfs have values in this columns (d03 not present because no age item, d02 does not have volunteer item)
+
+data_youth %>%
+  select(data_id, volunteer_questionnaires_yn) %>%
+  filter(!is.na(volunteer_questionnaires_yn)) %>%
+  group_by(data_id) %>%
+  tally()
+
 ```
 
 ```{r calculating aggregated pfs mean overall, include=FALSE}
@@ -294,6 +332,14 @@ perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questi
 ## Calculating overall pfs mean, across all ssis
 
 m_pfs_overall <- round(mean(data_youth$pfs_mean, na.rm = TRUE), 2)
+
+## Checking that all dfs have values in this column (d03 no age var, d16 has no completers yet)
+
+data_youth %>%
+  select(data_id, pfs_mean) %>%
+  filter(!is.na(pfs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
 
 ```
 

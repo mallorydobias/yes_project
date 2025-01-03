@@ -77,12 +77,6 @@ data_for_dictionary <- data %>%
 
 ```
 
-```{r}
-
-names(data_for_dictionary)
-
-```
-
 ```{r creating var labels for dictionary, warning=FALSE}
 
 # Create labels as a named vector. 
@@ -95,7 +89,7 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 finished = "true/false, is response 100% complete",
                 ssi_choice = "ssi chosen",
                 ssi_source = "embedded data, source of response",
-                volunteer_questionnaires_yn = "yes/no, did they agree to optional questionnaires",
+                volunteer_questionnaires_yn = "yes/no, did they agree to optional questionnaires, d05/d09/d16 only",
                 reliant_mg = "yes/no, are they a patient in Reliant Medical Group in Massachusetts, d02 only",
                 san_antonio = "yes/no, lives in San Antonio, d02 only",
                 san_antonio_area = "where lives in San Antonio, d02 only",
@@ -109,7 +103,7 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 dem_why_no_support = "qual, what prevented formal support",
                 dem_location = "yes/no, do they live in a mixed city (Ramla, Lod, Jaffa, Haifa, Acre), d05 only",
                 dem_adult = "yes/no, are they an adult (over 18), d02 only",
-                dem_age = "age category",
+                dem_age = "age category, d02/d05/d16 only",
                 dem_sex = "sex assigned at birth",
                 dem_gender_diff_sex = "yes/no, does gender differ from assigned sex",
                 dem_gender_other_text = "qual, self-described gender identity",
