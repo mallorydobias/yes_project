@@ -312,6 +312,7 @@ Renaming individual items for clarity
 
 data_items_named <- data_ao_removed %>%
   rename(perc_progress = progress,
+         san_antonio_hear_proj = san_antonio_how,
          ssi_started = project_started,
          ssi_completed = project_completed,
          ssi_choice = ssi_which_activi,
@@ -777,6 +778,7 @@ data_classes_mutated <- data_reorged %>%
   mutate(language = as.factor(language),
          data_id = as.factor(data_id),
          perc_progress = as.numeric(perc_progress),
+         san_antonio_hear_proj = as.factor(san_antonio_hear_proj),
          finished = as.factor(finished),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
