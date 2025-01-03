@@ -64,7 +64,7 @@ library(readr)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH - Activity Only_January 2, 2025_12.03.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH - Activity Only_January 3, 2025_09.48.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
