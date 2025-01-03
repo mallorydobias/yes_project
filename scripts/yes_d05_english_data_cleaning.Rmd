@@ -344,7 +344,8 @@ data_items_named <- data_mfq_named %>%
          ssi_times_completed_care = ssi_proj_care,
          ssi_times_completed_abc = ssi_proj_abc,
          ssi_times_completed_rise = ssi_proj_rise,
-         dem_hear_proj_text = dem_hear_proj_10_text,
+         middle_east_hear_proj = dem_hear_proj,
+         middle_east_hear_proj_text = dem_hear_proj_10_text,
          dem_ethnicity_text = dem_race_ethnicity_8_text,
          abc_q_6_text = abc_q_6, # adding _text to qual entry vars in ssis
          abc_q_8_text = abc_q_8,
