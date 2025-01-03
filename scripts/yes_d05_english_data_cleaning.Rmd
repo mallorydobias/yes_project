@@ -1650,6 +1650,7 @@ data_classes_mutated <- data_reorged %>%
          ssi_completed = as.factor(ssi_completed),
          advice_permission = as.factor(advice_permission)) %>%
   mutate(across(contains("date"), as.Date)) %>%
+  mutate(across(matches("^middle_east_hear_.*") & !matches("text"), as.factor)) %>%
   mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
   mutate(across(contains("times_completed"), as.numeric)) %>%
   mutate(across(contains("ssi_prev_completed"), as.factor)) %>%
