@@ -809,7 +809,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking YES surveys (data_ids: d02, d03, d09, d16; d01 still pending data cleaning). SSIs are completed ~1 out of every 3 times they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking YES surveys (data_ids: d02, d03, d09, d16; d01 still pending data cleaning). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
 
 **Full Summary**:
 
@@ -822,7 +822,7 @@ Looking at YES engagement:
 
 Across all survey starts (n = `r n_started_survey`):
 
-+ There's lots of missing demographic data (>50%), given optional questionnaires and drop-offs
++ There's lots of missing demographic data, given optional questionnaires and drop-offs
 + Ages range from <10 to 17 (categorical data only)
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
 + `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
@@ -877,12 +877,23 @@ perc_agreed_questionnaires
 
 N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
 
+```{r prepping for age tally, include=FALSE}
+
+data_youth_age <- data_youth %>%
+  select(dem_age) %>%
+  mutate(dem_gender_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
 ```{r calculating age tally, include=FALSE}
 
 ## Prepping dataframe with age tallies; renaming is a bit weird here once % is calculated
 ## No need to add missing values here, since only one variable
 
-age_tallies <- data_youth %>%
+age_tallies <- data_youth_age %>%
   select(age = dem_age) %>%
   group_by(age) %>%
   tally() %>%
