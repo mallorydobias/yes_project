@@ -267,15 +267,37 @@ Visual inspection of unique cols to each df
 
 unique_cols_d02 <- d02_cols %>%
   anti_join(d03_cols) %>%
-  anti_join(d09_cols)
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
 
 unique_cols_d03 <- d03_cols %>%
   anti_join(d02_cols) %>%
-  anti_join(d09_cols)
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d05 <- d05_cols %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
 
 unique_cols_d09 <- d09_cols %>%
   anti_join(d02_cols) %>%
-  anti_join(d03_cols)
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d16 <- d16_cols %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols)
+
+```
+
+```{r printing unique cols}
 
 ## Printing colnames unique to each df
 
@@ -285,8 +307,14 @@ unique_cols_d02 %>%
 unique_cols_d03 %>%
   rename(d03_column_name = column_name)
 
+unique_cols_d05 %>%
+  rename(d05_column_name = column_name)
+
 unique_cols_d09 %>%
   rename(d09_column_name = column_name)
+
+unique_cols_d16 %>%
+  rename(d16_column_name = column_name)
 
 ```
 
