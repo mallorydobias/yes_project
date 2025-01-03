@@ -62,7 +62,7 @@ library(datadictionary)
 
 library(here) # places working directory at root of project folder
 
-data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) # directing to data from project folder root
+data <- readRDS(here("data", "clean", "yes_data_english_clean.Rds")) # directing to data from project folder root
 
 ```
 
