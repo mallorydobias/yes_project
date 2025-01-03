@@ -1482,10 +1482,6 @@ data_col_dropped <- data_pfs_scored %>%
   select(-questionnaires) %>% # dropping col redundant with volunteer col
   select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
 
-# data_pfs_scored %>%
-#   select(ssi_choice, ssi_choose) %>%
-#   filter(ssi_choose != "") # handful of cases folks came in with a decision; need to retain both columns and combine info into one MD
-
 ```
 
 Adding cols to document language and data source

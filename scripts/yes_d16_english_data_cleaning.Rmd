@@ -45,9 +45,6 @@ library(dplyr)
 if(!require(stringr)){install.packages('stringr')}
 library(stringr)
 
-if(!require(pointblank)){install.packages('pointblank')}
-library(pointblank)
-
 if(!require(tidyr)){install.packages('tidyr')}
 library(tidyr)
 
@@ -66,11 +63,11 @@ library(codebook)
 
 ```{r reading in data}
 
-## Reading in NU English survey data
+## Reading in survey data
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "NU - YES - English - Questionnaires Optional_December 19, 2024_09.48.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "TEMPORARY - NU - YES - English - Questionnaires Optional_January 3, 2025_09.23.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
@@ -1177,6 +1174,7 @@ test_mutate %>%
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
+
 Calculating shs row means
 
 ```{r calculating shs scores}
@@ -1482,10 +1480,6 @@ data_col_dropped <- data_pfs_scored %>%
   select(-questionnaires) %>% # dropping col redundant with volunteer col
   select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
 
-# data_pfs_scored %>%
-#   select(ssi_choice, ssi_choose) %>%
-#   filter(ssi_choose != "") # handful of cases folks came in with a decision; need to retain both columns and combine info into one MD
-
 ```
 
 Adding cols to document language and data source
@@ -1494,7 +1488,7 @@ Adding cols to document language and data source
 
 data_col_added <- data_col_dropped %>%
   mutate(language = "english",
-         data_id = "d09")
+         data_id = "d16")
 
 ```
 
@@ -1506,7 +1500,7 @@ Reorganizing column order to place important columns first, and then to follow c
 
 data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
-         perc_progress, finished, ssi_source, ssi_choice,
+         perc_progress, finished, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
          dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
@@ -1599,7 +1593,6 @@ data_classes_mutated <- data_reorged %>%
          volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
          pre_perceived_control = as.numeric(pre_perceived_control),
          post_perceived_control = as.numeric(post_perceived_control),
-         ssi_source = as.factor(ssi_source),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
          ssi_completed = as.factor(ssi_completed),
@@ -1626,7 +1619,7 @@ data <- data_classes_mutated
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_d09_english_clean.Rds"
+file_name <- "yes_data_d16_english_clean.Rds"
 full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
