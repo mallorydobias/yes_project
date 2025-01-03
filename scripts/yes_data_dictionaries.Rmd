@@ -99,7 +99,10 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 reliant_mg = "yes/no, are they a patient in Reliant Medical Group in Massachusetts, d02 only",
                 san_antonio = "yes/no, lives in San Antonio, d02 only",
                 san_antonio_area = "where lives in San Antonio, d02 only",
-                san_antonio_hear_proj = "chosen source for how they heard about yes, d02 only",
+                san_antonio_hear_proj = "chosen source for how they heard about yes, d02/d03 only",
+                san_antonio_hear_proj_text = "qual, self-described sourve for how they hear about yes, d02/d03 only",
+                middle_east_hear_proj = "chosen source for how they heard about yes, d05 only",
+                middle_east_hear_proj_text = "qual, self-described sourve for how they hear about yes, d05 only",
                 dem_hear_proj = "qual, where did they hear about yes",
                 dem_why_interest = "qual, why interested in yes",
                 dem_receive_support = "have they received formal support before",
@@ -351,7 +354,7 @@ data_dictionary <- datadictionary::create_dictionary(data_for_dictionary, var_la
 ## Defining the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_d09_data_dictionary.csv"
+file_name <- "yes_english_data_dictionary.csv"
 full_path <- file.path(folder_path, file_name)
 
 write.csv(data_dictionary, full_path, row.names = FALSE)
