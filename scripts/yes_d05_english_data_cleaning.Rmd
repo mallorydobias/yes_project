@@ -1553,7 +1553,7 @@ data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
          perc_progress, finished, ssi_source, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
-         dem_location,
+         dem_location, contains("middle_east_hear_"),
          starts_with("dem_hear_proj"), dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
          starts_with("dem_sex_orientation") & !contains("tim"), 

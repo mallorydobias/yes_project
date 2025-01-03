@@ -286,6 +286,7 @@ Renaming individual items for clarity
 
 data_items_named <- data_intro_named %>%
   rename(san_antonio_hear_proj = san_antonio_how,
+         san_antonio_hear_proj_text = san_antonio_how_9_text,
          dem_sex_orientation_other_text = dem_sex_orientation_9_text,
          pre_perceived_control = pre_control_1, 
          post_perceived_control = post_control_1,
