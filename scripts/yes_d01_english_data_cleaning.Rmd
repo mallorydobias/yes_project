@@ -1,0 +1,131 @@
+---
+title: "yes_data_cleaning"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
+```
+
+```{r, include=FALSE}
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(janitor)){install.packages('janitor')}
+library(janitor)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+if(!require(datadictionary)){install.packages('datadictionary')}
+library(datadictionary)
+
+if(!require(codebook)){install.packages('codebook')}
+library(codebook)
+
+```
+
+# Data Reading
+
+```{r reading in data}
+
+## Reading in NU English survey data
+
+library(here) # places working directory at root of project folder
+
+raw_data_sb_survey <- read.csv(here("data", "raw", "Project YES_January 16, 2025_14.23.csv")) # directing to data from project folder root
+
+# head(raw_data_sb_survey)
+
+```
+
+```{r reading in old data}
+
+raw_data_old_thru_dec_4 <- read.csv(here("data", "raw", "YES raw thru Dec 4.csv"))
+
+raw_data_old_dec_4_12 <- read.csv(here("data", "raw", "YES raw dec 4-12.csv"))
+
+raw_data_old_dec_12_mar_6 <- read.csv(here("data", "raw", "YES raw dec 12-mar 6.csv"))
+
+raw_data_old_mar_8_11 <- read.csv(here("data", "raw", "YES raw Mar 8-11.csv"))
+
+```
+
+# Data Diagnostics
+
+Checking to see if data are missing from the Qualtrics survey I have now
+
+```{r pulling response ids from all sources}
+
+## Pulling responseids from every possible data source
+
+ids_sb_survey <- raw_data_sb_survey %>%
+  select(ResponseId) %>%
+  dplyr::slice(-1,-2) %>%
+  mutate(data = "current sb survey")
+
+ids_thru_dec_4 <- raw_data_old_thru_dec_4 %>%
+  select(ResponseId) %>%
+  dplyr::slice(-1,-2) %>%
+  mutate(data = "old thru dec 4")
+
+ids_dec_4_12 <- raw_data_old_dec_4_12 %>%
+  select(ResponseId) %>%
+  dplyr::slice(-1,-2) %>%
+  mutate(data = "old dec 4-12")
+
+ids_dec_12_mar_6 <- raw_data_old_dec_12_mar_6 %>%
+  select(ResponseId) %>%
+  dplyr::slice(-1,-2) %>%
+  mutate(data = "old dec 12-mar 6")
+
+ids_mar_8_11 <- raw_data_old_mar_8_11 %>%
+  select(ResponseId) %>%
+  dplyr::slice(-1,-2) %>%
+  mutate(data = "old mar 8-11")
+
+```
+
+```{r}
+
+
+
+```
+
