@@ -97,35 +97,85 @@ Checking to see if data are missing from the Qualtrics survey I have now
 ## Pulling responseids from every possible data source
 
 ids_sb_survey <- raw_data_sb_survey %>%
-  select(ResponseId) %>%
+  select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
   mutate(data = "current sb survey")
 
 ids_thru_dec_4 <- raw_data_old_thru_dec_4 %>%
-  select(ResponseId) %>%
+  select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
   mutate(data = "old thru dec 4")
 
 ids_dec_4_12 <- raw_data_old_dec_4_12 %>%
-  select(ResponseId) %>%
+  select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
   mutate(data = "old dec 4-12")
 
 ids_dec_12_mar_6 <- raw_data_old_dec_12_mar_6 %>%
-  select(ResponseId) %>%
+  select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
   mutate(data = "old dec 12-mar 6")
 
 ids_mar_8_11 <- raw_data_old_mar_8_11 %>%
-  select(ResponseId) %>%
+  select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
   mutate(data = "old mar 8-11")
 
 ```
 
-```{r}
+```{r joining all ids dfs}
 
+df_all_ids <- bind_rows(ids_thru_dec_4, ids_dec_4_12,
+                        ids_dec_12_mar_6, ids_mar_8_11, ids_sb_survey)
 
+```
+
+```{r filtering to rows with unique ids}
+
+unique_id_counts <- df_all_ids %>%
+  group_by(ResponseId) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  group_by(data) %>%
+  tally
+
+unique_id_counts
+
+```
+
+```{r getting unique ids from thru dec 4}
+
+unique_ids_dec_4 <- df_all_ids %>%
+  group_by(ResponseId) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  filter(data == "old thru dec 4")
+
+unique_ids_dec_4
+
+```
+
+```{r getting unique ids from old dec 4 thru 12}
+
+unique_ids_old_dec_4_12 <- df_all_ids %>%
+  group_by(ResponseId) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  filter(data == "old dec 4-12")
+
+unique_ids_old_dec_4_12
+
+```
+
+```{r getting unique ids from current sb survey}
+
+unique_ids_current_sb <- df_all_ids %>%
+  group_by(ResponseId) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  filter(data == "current sb survey")
+
+unique_ids_current_sb
 
 ```
 
