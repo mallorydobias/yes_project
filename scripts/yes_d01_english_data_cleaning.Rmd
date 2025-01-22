@@ -54,11 +54,8 @@ library(tidyr)
 if(!require(readr)){install.packages('readr')}
 library(readr)
 
-if(!require(datadictionary)){install.packages('datadictionary')}
-library(datadictionary)
-
-if(!require(codebook)){install.packages('codebook')}
-library(codebook)
+if(!require(lubridate)){install.packages('lubridate')}
+library(lubridate)
 
 ```
 
@@ -90,7 +87,20 @@ raw_data_old_mar_8_11 <- read.csv(here("data", "raw", "YES raw Mar 8-11.csv"))
 
 # Data Diagnostics
 
-Checking to see if data are missing from the Qualtrics survey I have now
+Checking to see if data are missing from the Qualtrics survey I have access to now.
+
+On the lab server, there are four datasets that appear to be included in the original YES study:
+
+1. YES through Dec 4
+2. YES Dec 4-12
+3. YES Dec 12 - March 6
+4. YES March 8-11
+
+Right now, I have access to ONE YES survey from SBU:
+
+1. SB Survey
+
+I'm looking to see which response ids are missing from the SB Survey data I have, so I can determine what data (if any) are missing from this dataset.
 
 ```{r pulling response ids from all sources}
 
@@ -99,27 +109,37 @@ Checking to see if data are missing from the Qualtrics survey I have now
 ids_sb_survey <- raw_data_sb_survey %>%
   select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
-  mutate(data = "current sb survey")
+  mutate(StartDate = str_sub(StartDate, end = -9)) %>% # removing final 9 characters in datetime col
+  mutate(StartDate = lubridate::ymd(StartDate)) %>%
+  mutate(data = "current sb survey") # creating data label var
 
 ids_thru_dec_4 <- raw_data_old_thru_dec_4 %>%
   select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
-  mutate(data = "old thru dec 4")
+  mutate(StartDate = str_replace(StartDate, "/(19|20) .*", "/\\1")) %>% # removing characters pre /19 or /20
+  mutate(StartDate = lubridate::mdy(StartDate)) %>%
+  mutate(data = "old thru dec 4") # creating data label var
 
 ids_dec_4_12 <- raw_data_old_dec_4_12 %>%
   select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
-  mutate(data = "old dec 4-12")
+  mutate(StartDate = str_replace(StartDate, "/(19|20) .*", "/\\1")) %>% # removing characters pre /19 or /20
+  mutate(StartDate = lubridate::mdy(StartDate)) %>%
+  mutate(data = "old dec 4-12") # creating data label var
 
 ids_dec_12_mar_6 <- raw_data_old_dec_12_mar_6 %>%
   select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
-  mutate(data = "old dec 12-mar 6")
+  mutate(StartDate = str_replace(StartDate, "/(19|20) .*", "/\\1")) %>% # removing characters pre /19 or /20
+  mutate(StartDate = lubridate::mdy(StartDate)) %>%
+  mutate(data = "old dec 12-mar 6") # creating data label var
 
 ids_mar_8_11 <- raw_data_old_mar_8_11 %>%
   select(ResponseId, StartDate) %>%
   dplyr::slice(-1,-2) %>%
-  mutate(data = "old mar 8-11")
+  mutate(StartDate = str_replace(StartDate, "/(19|20) .*", "/\\1")) %>% # removing characters pre /19 or /20
+  mutate(StartDate = lubridate::mdy(StartDate)) %>%
+  mutate(data = "old mar 8-11") # creating data label var
 
 ```
 
@@ -130,18 +150,22 @@ df_all_ids <- bind_rows(ids_thru_dec_4, ids_dec_4_12,
 
 ```
 
+This seems to imply there are no unique ids in the Dec 12-March 6 or March 8-11 datasets (that aren't already in other data sources)
+
 ```{r filtering to rows with unique ids}
 
 unique_id_counts <- df_all_ids %>%
-  group_by(ResponseId) %>%
-  filter(n() == 1) %>%
+  group_by(ResponseId) %>% # grouping by response ID
+  filter(n() == 1) %>% # filtering to response IDs that only appear once
   ungroup() %>%
-  group_by(data) %>%
-  tally
+  group_by(data) %>% # grouping by data source
+  tally # counting how many unique responses appear from each data source
 
-unique_id_counts
+unique_id_counts 
 
 ```
+
+List of IDs in the Through Dec 4 dataset that don't appear in any of the other datasets.
 
 ```{r getting unique ids from thru dec 4}
 
@@ -151,7 +175,23 @@ unique_ids_dec_4 <- df_all_ids %>%
   ungroup() %>%
   filter(data == "old thru dec 4")
 
-unique_ids_dec_4
+unique_ids_dec_4 # these are ids in the dec 4 dataset that are not in the SBU survey data
+
+## Earliest and latest dates that are in the dec 4 dataset that are not in the SBU survey data
+
+unique_ids_dec_4 %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE))
+
+## Checking I've calculated missing ids correctly
+
+ids_thru_dec_4 %>%
+  anti_join(ids_sb_survey, by = c("ResponseId" = "ResponseId")) %>%
+  nrow() # 1004 ids are in the dec 4 dataset that are not in the SBU survey data I already have
+
+raw_data_old_thru_dec_4 %>%
+  dplyr::slice(-1,-2) %>%
+  nrow() # none of the dec 4 ids are in the SBU survey data
 
 ```
 
@@ -163,9 +203,60 @@ unique_ids_old_dec_4_12 <- df_all_ids %>%
   ungroup() %>%
   filter(data == "old dec 4-12")
 
-unique_ids_old_dec_4_12
+unique_ids_old_dec_4_12 # these are ids in the dec 4-12 dataset that are not in the SBU survey data
+
+## Earliest and latest dates that are in the dataset that are not in the SBU survey data
+
+unique_ids_old_dec_4_12 %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE))
+
+## Checking I've calculated missing ids correctly
+
+ids_dec_4_12 %>%
+  anti_join(ids_sb_survey, by = c("ResponseId" = "ResponseId")) %>%
+  nrow() # 17 ids are in the dec 4 dataset that are not in the SBU survey data I already have
+
+raw_data_old_dec_4_12 %>%
+  dplyr::slice(-1,-2) %>%
+  nrow() # none of the dec 4-12 ids are in the SBU survey data
 
 ```
+
+Making sure all of the ids in the Dec 12-March 6 and March 8-11 datasets are in the SBU survey data.
+
+```{r checking old dec 12 thru march 6}
+
+## Earliest and latest dates that are in the Dec 12-March 6 dataset
+
+ids_dec_12_mar_6 %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE))
+
+## Checking all ids from this dataset are present in SBU survey data
+
+ids_dec_12_mar_6 %>%
+  anti_join(ids_sb_survey, by = c("ResponseId" = "ResponseId")) %>%
+  nrow() # ALL ids that are in the dec 12- march 6 dataset are also in the SBU survey data I already have
+
+```
+
+```{r checking old march 8-11}
+
+## Earliest and latest dates that are in the March 8-11 dataset
+
+ids_mar_8_11 %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE))
+
+## Checking all ids from this dataset are present in SBU survey data
+
+ids_mar_8_11 %>%
+  anti_join(ids_sb_survey, by = c("ResponseId" = "ResponseId")) %>%
+  nrow() # ALL ids that are in the march 8-11 dataset are also in the SBU survey data I already have
+
+```
+
 
 ```{r getting unique ids from current sb survey}
 
@@ -176,6 +267,20 @@ unique_ids_current_sb <- df_all_ids %>%
   filter(data == "current sb survey")
 
 unique_ids_current_sb
+
+## Earliest and latest dates for ids that are in the SBU survey data and not anywhere else
+
+unique_ids_current_sb %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE)) 
+
+## Earliest and latest dates for ids that are in the SBU survey data generally
+
+ids_sb_survey %>%
+  summarize(earliest_date = min(StartDate, na.rm = TRUE),
+            latest_date = max(StartDate, na.rm = TRUE)) 
+
+## SBU survey has responses between 12/12/19 and present day
 
 ```
 
