@@ -8,6 +8,9 @@ data/
 *.png
 *.csv
 
+## Preventing GitHub from viewing troubleshooting files
+*questions.Rmd
+
 # History files
 .Rhistory
 .Rapp.history
