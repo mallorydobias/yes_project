@@ -61,15 +61,25 @@ library(lubridate)
 
 # Data Reading
 
-```{r reading in data}
+```{r reading in data from qualtrics survey}
 
-## Reading in NU English survey data
+## Reading in survey data
 
 library(here) # places working directory at root of project folder
 
 raw_data <- read.csv(here("data", "raw", "Project YES_January 16, 2025_14.23.csv")) # directing to data from project folder root
 
 # head(raw_data_sb_survey)
+
+```
+
+```{r reading in data from project yes pub}
+
+## Reading in cleaned data from yes pub
+
+## Pulled from: https://osf.io/zguj4
+
+old_data <- read.csv(here("data", "raw", "yes_cleaned_using_r_april_5_2020_anonymized_for_osf.csv")) # directing to data from project folder root
 
 ```
 
@@ -144,6 +154,13 @@ test_var_names %>%
   nrow() == 0 # true if zero col names contain capital letters
 
 ```
+
+
+
+
+
+
+MD LEFT OFF HERE
 
 Renaming unlabeled project rise vars
 
