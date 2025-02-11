@@ -69,17 +69,16 @@ library(here) # places working directory at root of project folder
 
 raw_data <- read.csv(here("data", "raw", "Project YES_January 16, 2025_14.23.csv")) # directing to data from project folder root
 
-# head(raw_data_sb_survey)
-
 ```
 
 ```{r reading in data from project yes pub}
 
-## Reading in cleaned data from yes pub
+## Reading in ids from cleaned data in yes pub
 
 ## Pulled from: https://osf.io/zguj4
 
-old_data <- read.csv(here("data", "raw", "yes_cleaned_using_r_april_5_2020_anonymized_for_osf.csv")) # directing to data from project folder root
+old_data_ids <- read.csv(here("data", "raw", "yes_cleaned_using_r_april_5_2020_anonymized_for_osf.csv")) %>%
+  select(response_id = id, old_duration_secs = duration_secs)
 
 ```
 
@@ -155,54 +154,87 @@ test_var_names %>%
 
 ```
 
+```{r}
+
+glimpse(data_named)
+
+```
+```{r}
+
+# Renaming all unlabeled variables
+
+data_renamed <- data_named %>%
+  rename(perc_progress = progress,
+         language = user_language,
+         dem_race_ethnicity = q327,
+         dem_age = q328,
+         dem_adult = q329,
+         dem_hear_proj = q330,
+         dem_why_interest = q331,
+         dem_receive_support = q332,
+         dem_why_no_support = q333,
+         dem_sex = q334,
+         dem_gender_diff_sex = q335,
+         dem_gender = q336,
+         dem_gender_other_text = q336_17_text,
+         dem_sex_orientation = q337,
+         dem_sex_orientation_other_text = q337_9_text,
+         ssi_prev_completed_choice = q353,
+         ssi_times_completed_personality = q354,
+         ssi_times_completed_care = q355,
+         ssi_times_completed_abc = q356,
+         ssi_choice = q357) %>%
+  rename_with(~ str_replace(., "^q339_", "mfq_"), starts_with("q339_")) %>%
+  rename_with(~ str_replace(., "^bhs_4_", "pre_bhs_"), starts_with("bhs_4_")) %>%
+  rename_with(~ str_replace(., "^shs_agency_", "pre_shs_"), starts_with("shs_agency_")) %>%
+  rename_with(~ str_replace(., "^q342_", "pre_self_hate_"), starts_with("q342_")) %>%
+  rename(pre_perceived_control = q343_1) %>%
+  rename_with(~ str_replace(., "^q498_", "proj_pers_1_"), starts_with("q498_")) %>%
+  rename_with(~ str_replace(., "^q501_", "proj_pers_2_"), starts_with("q501_")) %>%
+  rename_with(~ str_replace(., "^q504_", "proj_pers_3_"), starts_with("q504_")) %>%
+  rename_with(~ str_replace(., "^q506_", "proj_pers_4_"), starts_with("q506_")) %>%
+  rename_with(~ str_replace(., "^q512_", "proj_pers_5_"), starts_with("q512_")) %>%
+  rename_with(~ str_replace(., "^q514_", "proj_pers_6_"), starts_with("q514_")) %>%
+  rename_with(~ str_replace(., "^q516_", "proj_pers_7_"), starts_with("q516_")) %>%
+  rename_with(~ str_replace(., "^q519_", "proj_pers_8_"), starts_with("q519_")) %>%
+  rename(proj_pers_q_1_text = q520) %>%
+  rename_with(~ str_replace(., "^q521_", "proj_pers_9_"), starts_with("q521_")) %>%
+  rename_with(~ str_replace(., "^q525_", "proj_pers_10_"), starts_with("q525_")) %>%
+  rename_with(~ str_replace(., "^q530_", "proj_pers_11_"), starts_with("q530_")) %>%
+  rename_with(~ str_replace(., "^q532_", "proj_pers_12_"), starts_with("q532_")) %>%
+  rename_with(~ str_replace(., "^q534_", "proj_pers_13_"), starts_with("q534_")) %>%
+  rename_with(~ str_replace(., "^q537_", "proj_pers_14_"), starts_with("q537_")) %>%
+  rename(proj_pers_q_2_text = q538) %>%
+  rename_with(~ str_replace(., "^q539_", "proj_pers_15_"), starts_with("q539_")) %>%
+  rename(proj_pers_q_3_text = q540)
+  
+
+glimpse(data_renamed)
+
+```
+
+```{r}
+
+new_cleaned_data <- readRDS(here("data", "clean", "yes_data_english_clean.Rds"))
+
+glimpse(new_cleaned_data)
+
+```
 
 
 
 
+
+
+
+
+
+
+########################################################
+
+########################################################
 
 MD LEFT OFF HERE
-
-Renaming unlabeled project rise vars
-
-```{r naming rise vars}
-
-## Naming RISE vars
-
-# first insert an underscore, then replace q vars with rise var name labels
-
-data_rise_named <- data_named %>%
-  rename_with(~str_replace(., "^q([0-9]+)", "q_\\1"), starts_with("q")) %>%
-  rename_with(~ str_replace(., "^q_", "proj_rise_q_"), starts_with("q_"))
-
-```
-
-```{r checking rise var naming setup, include = FALSE}
-
-## checking rise vars are named correctly
-
-test_rise_pre <- data_named %>%
-  select(starts_with("q"), -questionnaires, -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names pre cleaning
-  colnames() # create df of pre-named var names for comparison
-
-test_rise_post <- data_rise_named %>%
-  select(starts_with("proj_rise_"), -contains("commit"), -contains("text")) %>%
-  rename_with(~ str_extract(., "\\d+")) %>% # extract digits from rise var names post cleaning
-  colnames() # create df of post-named var names for comparison
-
-test_rise_naming_df <- tibble(test_rise_pre, test_rise_post) # creating df for validation
-
-```
-
-Checking columns renamed correctly
-
-```{r checking var naming, validate = TRUE}
-
-test_rise_naming_df %>%
-  pointblank::col_vals_equal(vars(test_rise_pre), 
-                             vars(test_rise_post)) # passes if renamed columns are identical to original cols
-
-```
 
 Renaming "pi_" (post-intervention) variable prefixes to "post_" prefixes, for clarity
 
@@ -210,7 +242,7 @@ Renaming "pi_" (post-intervention) variable prefixes to "post_" prefixes, for cl
 
 ## Renaming "pi_" (post-intervention) vars with "post_" prefix for clarity
 
-data_post_named <- data_rise_named %>%
+data_post_named <- data_named %>%
   rename_with(~ str_replace(., "^pi_", "post_"))
 
 ```
@@ -221,7 +253,7 @@ data_post_named <- data_rise_named %>%
 
 # extracting characters following "pre_" in column names before renaming
 
-test_pre_rename <- tibble(var_names = names(data_rise_named)) %>%
+test_pre_rename <- tibble(var_names = names(data_named)) %>%
   filter(str_detect(var_names, "^pi_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pi_" prefix
   mutate(pre_renamed = str_extract(var_names, "(?<=pi_).*")) %>% # extract characters following "pi_"
   select(-var_names)
