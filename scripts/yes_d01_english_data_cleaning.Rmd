@@ -156,15 +156,10 @@ test_var_names %>%
 
 ```{r}
 
-glimpse(data_named)
-
-```
-```{r}
-
 # Renaming all unlabeled variables
 
 ## This old version of yes did not collect qualtrics timing vars 
-## on every page of the ssiss
+## on every page of the ssiss (proj pers)
 
 ## intervention qualtrics timing vars are renamed to match the
 ## var names for each specific slide in the most recent yes surveys
@@ -216,7 +211,11 @@ data_renamed <- data_named %>%
   rename_with(~ str_replace(., "^q539_", "proj_pers_31_"), starts_with("q539_")) %>%
   rename(proj_pers_q_3_text = q540) %>%
   rename_with(~ str_replace(., "^q359_", "abc_1_"), starts_with("q359_")) %>%
-  
+  rename_with(~ str_replace(., "^q361_", "abc_2_"), starts_with("q361_")) %>%
+  rename_with(~ str_replace(., "^q363_", "abc_3_"), starts_with("q363_")) %>%
+  rename_with(~ str_replace(., "^q365_", "abc_4_"), starts_with("q365_")) %>%
+  rename_with(~ str_replace(., "^q443_", "abc_5_"), starts_with("q443_")) %>%
+  rename(abc_q_1_1_num = q444_1)
 
 glimpse(data_renamed)
 
