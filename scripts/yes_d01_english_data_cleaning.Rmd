@@ -163,6 +163,14 @@ glimpse(data_named)
 
 # Renaming all unlabeled variables
 
+## This old version of yes did not collect qualtrics timing vars 
+## on every page of the ssiss
+
+## intervention qualtrics timing vars are renamed to match the
+## var names for each specific slide in the most recent yes surveys
+## (i.e., proj_pers_2_first_click named consistently to refer to
+## the same intervention slide across all data sources)
+
 data_renamed <- data_named %>%
   rename(perc_progress = progress,
          language = user_language,
@@ -189,23 +197,23 @@ data_renamed <- data_named %>%
   rename_with(~ str_replace(., "^shs_agency_", "pre_shs_"), starts_with("shs_agency_")) %>%
   rename_with(~ str_replace(., "^q342_", "pre_self_hate_"), starts_with("q342_")) %>%
   rename(pre_perceived_control = q343_1) %>%
-  rename_with(~ str_replace(., "^q498_", "proj_pers_1_"), starts_with("q498_")) %>%
-  rename_with(~ str_replace(., "^q501_", "proj_pers_2_"), starts_with("q501_")) %>%
-  rename_with(~ str_replace(., "^q504_", "proj_pers_3_"), starts_with("q504_")) %>%
-  rename_with(~ str_replace(., "^q506_", "proj_pers_4_"), starts_with("q506_")) %>%
-  rename_with(~ str_replace(., "^q512_", "proj_pers_5_"), starts_with("q512_")) %>%
-  rename_with(~ str_replace(., "^q514_", "proj_pers_6_"), starts_with("q514_")) %>%
-  rename_with(~ str_replace(., "^q516_", "proj_pers_7_"), starts_with("q516_")) %>%
-  rename_with(~ str_replace(., "^q519_", "proj_pers_8_"), starts_with("q519_")) %>%
+  rename_with(~ str_replace(., "^q498_", "proj_pers_2_"), starts_with("q498_")) %>%
+  rename_with(~ str_replace(., "^q501_", "proj_pers_4_"), starts_with("q501_")) %>%
+  rename_with(~ str_replace(., "^q504_", "proj_pers_6_"), starts_with("q504_")) %>%
+  rename_with(~ str_replace(., "^q506_", "proj_pers_7_"), starts_with("q506_")) %>%
+  rename_with(~ str_replace(., "^q512_", "proj_pers_12_"), starts_with("q512_")) %>%
+  rename_with(~ str_replace(., "^q514_", "proj_pers_13_"), starts_with("q514_")) %>%
+  rename_with(~ str_replace(., "^q516_", "proj_pers_14_"), starts_with("q516_")) %>%
+  rename_with(~ str_replace(., "^q519_", "proj_pers_16_"), starts_with("q519_")) %>%
   rename(proj_pers_q_1_text = q520) %>%
-  rename_with(~ str_replace(., "^q521_", "proj_pers_9_"), starts_with("q521_")) %>%
-  rename_with(~ str_replace(., "^q525_", "proj_pers_10_"), starts_with("q525_")) %>%
-  rename_with(~ str_replace(., "^q530_", "proj_pers_11_"), starts_with("q530_")) %>%
-  rename_with(~ str_replace(., "^q532_", "proj_pers_12_"), starts_with("q532_")) %>%
-  rename_with(~ str_replace(., "^q534_", "proj_pers_13_"), starts_with("q534_")) %>%
-  rename_with(~ str_replace(., "^q537_", "proj_pers_14_"), starts_with("q537_")) %>%
+  rename_with(~ str_replace(., "^q521_", "proj_pers_18_"), starts_with("q521_")) %>%
+  rename_with(~ str_replace(., "^q525_", "proj_pers_21_"), starts_with("q525_")) %>%
+  rename_with(~ str_replace(., "^q530_", "proj_pers_25_"), starts_with("q530_")) %>%
+  rename_with(~ str_replace(., "^q532_", "proj_pers_26_"), starts_with("q532_")) %>%
+  rename_with(~ str_replace(., "^q534_", "proj_pers_27_"), starts_with("q534_")) %>%
+  rename_with(~ str_replace(., "^q537_", "proj_pers_30_"), starts_with("q537_")) %>%
   rename(proj_pers_q_2_text = q538) %>%
-  rename_with(~ str_replace(., "^q539_", "proj_pers_15_"), starts_with("q539_")) %>%
+  rename_with(~ str_replace(., "^q539_", "proj_pers_31_"), starts_with("q539_")) %>%
   rename(proj_pers_q_3_text = q540)
   
 
