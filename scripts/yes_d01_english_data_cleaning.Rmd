@@ -242,9 +242,25 @@ data_renamed <- data_named %>%
   rename_with(~ str_replace(., "^q393_", "abc_26_"), starts_with("q393_")) %>%
   rename(abc_q_9 = q394) %>%
   rename(abc_q_9_15_text = q394_15_text) %>%
-  rename_with(~ str_replace(., "^q395_", "abc_27_"), starts_with("q395_"))
+  rename_with(~ str_replace(., "^q395_", "abc_27_"), starts_with("q395_")) %>%
+  rename(abc_q_10 = q396) %>%
+  rename_with(~ str_replace(., "^q397", "abc_q_11"), starts_with("q397")) %>%
+  rename_with(~ str_replace(., "^q398", "abc_q_12"), starts_with("q398")) %>%
+  rename_with(~ str_replace(., "^q399", "abc_q_13"), starts_with("q399")) %>%
+  rename_with(~ str_replace(., "^q400", "abc_q_14"), starts_with("q400")) %>%
+  rename_with(~ str_replace(., "^q401", "abc_q_15"), starts_with("q401")) %>%
+  rename_with(~ str_replace(., "^q402_", "abc_32_"), starts_with("q402_")) %>%
+  rename_with(~ str_replace(., "^q403", "abc_q_16"), starts_with("q403")) %>%
+  rename_with(~ str_replace(., "^q404_", "abc_33_"), starts_with("q404_")) %>%
+  rename_with(~ str_replace(., "^q406", "abc_q_17"), starts_with("q406")) %>%
+  rename_with(~ str_replace(., "^q407", "abc_q_18"), starts_with("q407")) %>%
+  rename_with(~ str_replace(., "^q408", "abc_q_19"), starts_with("q408")) %>%
+  rename_with(~ str_replace(., "^q409", "abc_q_20"), starts_with("q409")) %>%
+  rename_with(~ str_replace(., "^q410", "abc_q_21"), starts_with("q410"))
   
   
+
+
 glimpse(data_renamed)
 
 ```
