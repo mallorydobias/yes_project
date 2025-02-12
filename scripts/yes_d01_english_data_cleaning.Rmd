@@ -256,7 +256,34 @@ data_renamed <- data_named %>%
   rename_with(~ str_replace(., "^q407", "abc_q_18"), starts_with("q407")) %>%
   rename_with(~ str_replace(., "^q408", "abc_q_19"), starts_with("q408")) %>%
   rename_with(~ str_replace(., "^q409", "abc_q_20"), starts_with("q409")) %>%
-  rename_with(~ str_replace(., "^q410", "abc_q_21"), starts_with("q410"))
+  rename_with(~ str_replace(., "^q410", "abc_q_21"), starts_with("q410")) %>%
+  rename_with(~ str_replace(., "^q411_", "abc_34_"), starts_with("q411_")) %>%
+  rename_with(~ str_replace(., "^q413_", "abc_35_"), starts_with("q413_")) %>%
+  rename_with(~ str_replace(., "^q415_", "abc_37_"), starts_with("q415_")) %>%
+  rename_with(~ str_replace(., "^q417_", "abc_38_"), starts_with("q417_")) %>%
+  rename(abc_q_22 = q418) %>%
+  rename_with(~ str_replace(., "^q419_", "abc_39_"), starts_with("q419_")) %>%
+  rename_with(~ str_replace(., "^q421_", "abc_40_"), starts_with("q421_")) %>%
+  rename_with(~ str_replace(., "^q423_", "abc_41_"), starts_with("q423_")) %>%
+  rename_with(~ str_replace(., "^q425_", "abc_42_"), starts_with("q425_")) %>%
+  rename(abc_q_23 = q426,
+         abc_q_24 = q428,
+         abc_q_24_7_text = q428_7_text,
+         abc_q_24_8_text = q428_8_text,
+         abc_q_24_9_text = q428_9_text) %>%
+  rename_with(~ str_replace(., "^q427_", "abc_43_"), starts_with("q427_")) %>%
+  # rename_with(~ str_replace(., "^q428", "abc_q_24"), starts_with("q428")) %>%
+  rename_with(~ str_replace(., "^q429_", "abc_44_"), starts_with("q429_")) %>%
+  rename_with(~ str_replace(., "^q435_", "abc_45_"), starts_with("q435_")) %>%
+  rename(abc_q_37_text = q436,
+         pfs_change = pfs_ch,
+         pfs_more_feedback = pfs_etc,
+         perc_change_hope = q351,
+         perc_change_prob = q352) %>%
+  rename_with(~ str_replace(., "^q542_", "post_bhs_"), starts_with("q542_")) %>%
+  rename_with(~ str_replace(., "^q543_", "post_shs_"), starts_with("q543_")) %>%
+  rename_with(~ str_replace(., "^q544_", "post_self_hate_"), starts_with("q544_")) %>%
+  rename(post_perceived_control = q545_1)
   
   
 
