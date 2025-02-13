@@ -763,7 +763,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_ssi_choice_cleaned %>%
+data_mfq_mutated <- data_prev_completed_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -794,7 +794,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_post_named %>%
+test_mfq_pre <- data_prev_completed_cleaned %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -849,11 +849,11 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 ```{r testing function to setup future mutation checks, include=FALSE}
 
 # Example usage:
-# Assuming `data_post_named` is the pre-mutation dataframe
+# Assuming `data_prev_completed_cleaned` is the pre-mutation dataframe
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_post_named, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_prev_completed_cleaned, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
