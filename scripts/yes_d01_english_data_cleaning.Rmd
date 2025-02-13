@@ -1415,10 +1415,12 @@ Dropping unnecessary columns
 
 data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
-         -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
-  select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
-  select(-questionnaires) %>% # dropping col redundant with volunteer col
+         -recorded_date, -language) %>% # dropping unnecessary qualtrics metadata
+  select(-sc0, -sc1, -sc2, -sc7, -sc8, -mood_change) %>% # dropping scale scores calculated within qualtrics
+  select(-create_new_field_or_choose_from_dropdown, -q216_17_text_topics) %>% # dropping empty cols
   select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
+
+# glimpse(data_col_dropped)
 
 ```
 
@@ -1428,7 +1430,7 @@ Adding cols to document language and data source
 
 data_col_added <- data_col_dropped %>%
   mutate(language = "english",
-         data_id = "d09")
+         data_id = "d01")
 
 ```
 
@@ -1440,9 +1442,9 @@ Reorganizing column order to place important columns first, and then to follow c
 
 data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
-         perc_progress, finished, ssi_source, ssi_choice,
+         perc_progress, finished, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
-         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
+         dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_adult, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
          starts_with("dem_sex_orientation") & !contains("tim"), 
          starts_with("dem_race") & !contains("tim"),
