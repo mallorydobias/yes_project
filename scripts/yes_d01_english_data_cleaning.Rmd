@@ -310,7 +310,7 @@ Replacing empty cells with NAs
 
 ## Replacing empty cells with NAs
 
-data_w_nas <- data_items_named %>%
+data_w_nas <- data_renamed %>%
   mutate_all(~ na_if(., ""))
 
 ```
@@ -319,7 +319,7 @@ data_w_nas <- data_items_named %>%
 
 ## Creating data frames of ids of folks with missing data for age pre and post nas
 
-test_pre_nas <- data_items_named %>%
+test_pre_nas <- data_renamed %>%
   filter(dem_age == "") %>%
   select(response_id) # ids with missing data pre nas ("")
 
@@ -497,7 +497,7 @@ Creating separate gender identity columns, given participants could select multi
 ## Boys and men
 
 data_gender_boys_cleaned <- data_race_cleaned %>%
-  rename(dem_gender_diff_sex = dem_sex_and_gender) %>%
+  rename(dem_gender_identity = dem_gender) %>%
   mutate(dem_gender_boy_man = case_when(
     str_detect(dem_gender_identity, "^Male$") | 
       str_detect(dem_gender_identity, "Male,") ~ "yes",
@@ -696,8 +696,7 @@ data_gender_unsure_cleaned <- data_gender_agender_cleaned %>%
 data_gender_other_cleaned <- data_gender_unsure_cleaned %>%
   mutate(dem_gender_other = case_when(str_detect(dem_gender_identity, "Other") ~ "yes",
     !str_detect(dem_gender_identity, "Other") & !is.na(dem_gender_identity) ~ "no",
-    TRUE ~ NA_character_)) %>%
-  rename(dem_gender_other_text = dem_gender_identity_17_text)
+    TRUE ~ NA_character_))
 
 ```
 
