@@ -67,7 +67,7 @@ library(lubridate)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "Project YES_January 16, 2025_14.23.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "Project YES_February 13, 2025_13.25.csv")) # directing to data from project folder root
 
 ```
 
@@ -1612,6 +1612,15 @@ n_expected_remaining == n_actual_remaining # true if actual rows remaining = exp
 test_ids_should_be_zero <- inner_join(ids_to_drop, data_new_ids_only, by = "response_id")
 
 nrow(test_ids_should_be_zero) == 0 # true if no old ids in new data
+
+```
+
+```{r dropping recent fake entry}
+
+# Dropping empty observation from 3 years post-survey
+
+data_drop_recent_observation <- data_new_ids_only %>%
+  filter(start_date != "2024-02-04")
 
 ```
 
