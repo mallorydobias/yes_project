@@ -1209,7 +1209,12 @@ Mutating hate character values to numeric values
 ## Converting number character values from sliding scale to numeric values
 
 data_hate_mutated <- data_shs_scored %>%
-  mutate(across(contains("self_hate") & where(is.character), as.numeric))
+  mutate(across(contains("self_hate_") & -contains("tim"), 
+                ~ case_when(
+                    . == "very true for me" ~ "6",
+                    . == "not at all true for me" ~ "1",
+                    TRUE ~ .)) %>%
+  mutate(across(contains("self_hate") & where(is.character), as.numeric)))
 
 ```
 
@@ -1564,7 +1569,7 @@ data_classes_mutated <- data_reorged %>%
                 -ends_with("_rank") & -ends_with("_group"), as.factor)) %>% # ssi qual questions
   mutate(across(contains("commit"), as.factor)) %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
-  mutate(across(contains("_tim_") | contains("submit") | contains("click"), as.numeric))
+  mutate(across(contains("_tim_"), as.numeric))
 
 glimpse(data_classes_mutated)
 
