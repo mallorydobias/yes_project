@@ -1300,7 +1300,7 @@ data_pfs_mutated <- data_hate_scored %>%
                -contains("tim"),
                 ~ case_when(
                     . == "Really Disagree" ~ 1,
-                    . == "Disagree" ~ 2,
+                    . == "Diagree" ~ 2, # disagree is misspelled in this survey
                     . == "Neutral" ~ 3,
                     . == "Agree" ~ 4,
                     . == "Really Agree" ~ 5,
@@ -1334,6 +1334,12 @@ data_pfs_mutated %>%
 # and we want to compare the value counts of "pfs_1":
 
 test_mutate <- prep_mutation_check(data_hate_scored, data_pfs_mutated, "pfs_1")
+
+data_hate_scored %>%
+  select(contains("pfs_1"))
+
+data_pfs_mutated %>%
+  select(contains("pfs_1"))
 
 ```
 
