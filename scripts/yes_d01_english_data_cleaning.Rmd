@@ -1571,7 +1571,7 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))
 
-glimpse(data_classes_mutated)
+# glimpse(data_classes_mutated)
 
 ```
 
@@ -1614,7 +1614,6 @@ test_ids_should_be_zero <- inner_join(ids_to_drop, data_new_ids_only, by = "resp
 nrow(test_ids_should_be_zero) == 0 # true if no old ids in new data
 
 ```
-
 
 # Saving Data
 
