@@ -1579,23 +1579,47 @@ old_ids # ids from the original yes pub
 
 ids_to_drop <- inner_join(full_ids, old_ids, by = "response_id") # ids in both
 
+n_ids_in_both <- ids_to_drop %>%
+  nrow() # saving n ids that should be dropped
+
 ```
 
+```{r filtering out old pub ids}
+
+# Dropping ids that are in old pub data
+
+data_new_ids_only <- anti_join(data_classes_mutated, old_ids, by = "response_id")
+  
+## Checking n dropped is as expected
+
+n_expected_remaining <- nrow(data_classes_mutated) - n_ids_in_both 
+
+n_actual_remaining <- nrow(data_new_ids_only)
+
+n_expected_remaining == n_actual_remaining # true if actual rows remaining = expected
+
+## Checking no ids from dropped list are in final data
+
+test_ids_should_be_zero <- inner_join(ids_to_drop, data_new_ids_only, by = "response_id")
+
+nrow(test_ids_should_be_zero) == 0 # true if no old ids in new data
+
+```
 
 
 # Saving Data
 
 ```{r saving cleaned data}
 
-data <- data_classes_mutated
+data <- data_new_ids_only
 
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_d09_english_clean.Rds"
+file_name <- "yes_data_d01_english_clean.Rds"
 full_path <- file.path(folder_path, file_name)
 
-# Save the dataframe to the .csv file
+# Save the dataframe to the file
 
 saveRDS(data, full_path)
 
