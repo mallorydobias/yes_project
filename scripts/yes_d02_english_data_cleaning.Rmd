@@ -64,7 +64,7 @@ library(readr)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH_January 3, 2025_09.47.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH_February 13, 2025_13.28.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
@@ -1010,8 +1010,14 @@ Calculating mfq composite scores
 
 ## Calculating composite mfq scores
 
+# data_mfq_scored <- data_mfq_mutated %>%
+#   mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
+#   select(-e_mfq_total) # replacing the var calculated within qualtrics
+
 data_mfq_scored <- data_mfq_mutated %>%
-  mutate(mfq_total = rowSums(across(starts_with("mfq_") & -contains("tim")), na.rm = TRUE)) %>%
+  mutate(mfq_total = case_when(
+      if_all(starts_with("mfq_") & !contains("tim"), is.na) ~ NA_real_, # NA_real_ for numeric NA
+      TRUE ~ rowSums(across(starts_with("mfq_") & !contains("tim")), na.rm = TRUE))) %>%
   select(-e_mfq_total) # replacing the var calculated within qualtrics
 
 ```
