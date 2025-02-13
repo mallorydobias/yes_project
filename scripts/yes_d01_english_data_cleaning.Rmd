@@ -283,7 +283,20 @@ data_renamed <- data_named %>%
   rename_with(~ str_replace(., "^q542_", "post_bhs_"), starts_with("q542_")) %>%
   rename_with(~ str_replace(., "^q543_", "post_shs_"), starts_with("q543_")) %>%
   rename_with(~ str_replace(., "^q544_", "post_self_hate_"), starts_with("q544_")) %>%
-  rename(post_perceived_control = q545_1)
+  rename(post_perceived_control = q545_1,
+         advice = q348,
+         advice_permission = q349) %>%
+  rename_with(~ str_replace(., "^q441_", "abc_16_"), starts_with("q441_")) %>%
+  rename(abc_q_6_text = q442) %>%
+  rename_with(~ str_replace(., "^q376_", "abc_17_"), starts_with("q376_")) %>%
+  rename(proj_care_q_1_text = q457,
+         proj_care_q_2_text = q480,
+         proj_care_q_3 = q490,
+         proj_care_q_4_text = q491,
+         proj_care_q_5_text = q493,
+         proj_care_q_6_text = q494,
+         ssi_started = project_started,
+         ssi_completed = project_completed)
   
   
 
