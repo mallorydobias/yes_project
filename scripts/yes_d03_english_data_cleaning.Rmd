@@ -64,7 +64,7 @@ library(readr)
 
 library(here) # places working directory at root of project folder
 
-raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH - Activity Only_January 3, 2025_09.48.csv")) # directing to data from project folder root
+raw_data <- read.csv(here("data", "raw", "Project YES - ENGLISH AND SPANISH - Activity Only_February 13, 2025_13.30.csv")) # directing to data from project folder root
 
 # head(raw_data)
 
@@ -142,58 +142,13 @@ test_var_names %>%
 
 ```
 
-Renaming "pi_" (post-intervention) variable prefixes to "post_" prefixes, for clarity
-
-```{r renaming pi vars with post label}
-
-## Renaming "pi_" (post-intervention) vars with "post_" prefix for clarity
-
-data_post_named <- data_named %>%
-  rename_with(~ str_replace(., "^pi_", "post_"))
-
-```
-
-```{r checking post var naming setup, include = FALSE}
-
-## checking vars are renamed correctly
-
-# extracting characters following "pre_" in column names before renaming
-
-test_pre_rename <- tibble(var_names = names(data_named)) %>%
-  filter(str_detect(var_names, "^pre_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "pre_" prefix
-  mutate(pre_renamed = str_extract(var_names, "(?<=pre_).*")) %>% # extract characters following "pre_"
-  select(-var_names)
-
-# extracting characters following "post_" in column names after renaming
-
-test_post_rename <- tibble(var_names = names(data_post_named)) %>%
-  filter(str_detect(var_names, "^post_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "post_" prefix
-  mutate(post_renamed = str_extract(var_names, "(?<=post_).*")) %>% # extract characters following "post_"
-  select(-var_names)
-
-# combining to one data frame for comparison
-
-test_rename <- cbind(test_pre_rename, test_post_rename)
-
-```
-
-Checking columns renamed correctly
-
-```{r checking post var renaming, validate = TRUE}
-
-test_rename %>%
-  pointblank::col_vals_equal(vars(pre_renamed), 
-                             vars(post_renamed)) # passes if renamed columns are identical to original cols
-
-```
-
 Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
 
 ```{r renaming prog vars with ssi label}
 
 ## Renaming "prog_" (program) variable prefixes to "ssi_" prefixes, for clarity
 
-data_prog_named <- data_post_named %>%
+data_prog_named <- data_named %>%
   rename_with(~ str_replace(., "^prog_", "ssi_"))
 
 ```
@@ -204,7 +159,7 @@ data_prog_named <- data_post_named %>%
 
 # extracting characters following "prog_" in column names before renaming
 
-test_pre_rename <- tibble(var_names = names(data_post_named)) %>%
+test_pre_rename <- tibble(var_names = names(data_named)) %>%
   filter(str_detect(var_names, "^prog_") & !str_detect(var_names, "tim")) %>% # keep non-time rows with "prog_" prefix
   mutate(pre_renamed = str_extract(var_names, "(?<=prog_).*")) %>% # extract characters following "prog_"
   select(-var_names)
