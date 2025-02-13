@@ -77,8 +77,8 @@ raw_data <- read.csv(here("data", "raw", "Project YES_January 16, 2025_14.23.csv
 
 ## Pulled from: https://osf.io/zguj4
 
-old_data_ids <- read.csv(here("data", "raw", "yes_cleaned_using_r_april_5_2020_anonymized_for_osf.csv")) %>%
-  select(response_id = id, old_duration_secs = duration_secs)
+old_ids <- read.csv(here("data", "raw", "yes_cleaned_using_r_april_5_2020_anonymized_for_osf.csv")) %>%
+  select(response_id = id)
 
 ```
 
@@ -713,8 +713,6 @@ data_prev_completed_cleaned <- data_gender_other_cleaned %>%
          ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "C.A.R.E.") ~ "yes",
                                             TRUE ~ NA_character_),
          ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
-                                            TRUE ~ NA_character_),
-         ssi_prev_completed_rise = case_when(str_detect(ssi_prev_completed_name, "RISE") ~ "yes",
                                             TRUE ~ NA_character_)) %>%
   select(-ssi_prev_completed_name)
   
@@ -1564,9 +1562,26 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))
 
-glimpse(data_classes_mutated)
+# glimpse(data_classes_mutated)
 
 ```
+
+# Filtering Observations
+
+Here, we remove observations that were previously included in the Project YES publication, by response_id. 
+
+```{r pulling response ids in both this data and old pub data}
+
+full_ids <- data_classes_mutated %>%
+  select(response_id) # ids from this survey data
+
+old_ids # ids from the original yes pub
+
+ids_to_drop <- inner_join(full_ids, old_ids, by = "response_id") # ids in both
+
+```
+
+
 
 # Saving Data
 
