@@ -751,6 +751,21 @@ test_mutate_count %>%
 
 ```
 
+Cleaning the ssi_choice var
+
+```{r combining ssi_choice and ssi_chose}
+
+## Cleaning ssi_choice variable
+
+data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
+  mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
+                                str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
+                                str_detect(ssi_choice, "Personality") ~ "Project Personality",
+                                str_detect(ssi_choice, "RISE") ~ "Project RISE",
+                                TRUE ~ ssi_choice))
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -763,7 +778,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_prev_completed_cleaned %>%
+data_mfq_mutated <- data_ssi_choice_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Not True" ~ 0,
@@ -794,7 +809,7 @@ data_mfq_mutated %>%
 
 # creating df of count for each response, pre mutation
 
-test_mfq_pre <- data_prev_completed_cleaned %>%
+test_mfq_pre <- data_ssi_choice_cleaned %>%
   group_by(mfq_1) %>% # grouping by response
   summarize(count = n()) %>% # counting responses pre-mutation
   arrange(desc(count)) %>% # arranged in descending count order
@@ -853,7 +868,7 @@ prep_mutation_check <- function(data_pre, data_post, var) {
 # and `data_mfq_mutated` is the post-mutation dataframe,
 # and you want to compare the value counts of "mfq_1":
 
-test_mutate <- prep_mutation_check(data_prev_completed_cleaned, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_ssi_choice_cleaned, data_mfq_mutated, "mfq_1") # same output as test_mfq_mutate above
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
@@ -1532,10 +1547,8 @@ data_classes_mutated <- data_reorged %>%
          data_id = as.factor(data_id),
          perc_progress = as.numeric(perc_progress),
          finished = as.factor(finished),
-         volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
          pre_perceived_control = as.numeric(pre_perceived_control),
          post_perceived_control = as.numeric(post_perceived_control),
-         ssi_source = as.factor(ssi_source),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
          ssi_completed = as.factor(ssi_completed),
@@ -1550,6 +1563,8 @@ data_classes_mutated <- data_reorged %>%
   mutate(across(contains("commit"), as.factor)) %>%
   mutate(across(contains("perc_change"), as.factor)) %>%
   mutate(across(contains("_tim_"), as.numeric))
+
+glimpse(data_classes_mutated)
 
 ```
 
