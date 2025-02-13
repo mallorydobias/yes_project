@@ -296,9 +296,13 @@ data_renamed <- data_named %>%
          proj_care_q_5_text = q493,
          proj_care_q_6_text = q494,
          ssi_started = project_started,
-         ssi_completed = project_completed)
+         ssi_completed = project_completed) %>%
+  rename_with(~ str_replace(., "(_page)", "_tim\\1"), contains("submit")) %>%
+  rename_with(~ str_replace(., "(_click)", "_tim\\1"), contains("click_count")) %>%
+  rename_with(~ str_replace(., "(_first)", "_tim\\1"), contains("first_click")) %>%
+  rename_with(~ str_replace(., "(_last)", "_tim\\1"), contains("last_click"))
   
-# glimpse(data_renamed) # everything renamed for consistency
+glimpse(data_renamed) # everything renamed for consistency
 
 ```
 
