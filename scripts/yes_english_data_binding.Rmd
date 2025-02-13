@@ -61,7 +61,9 @@ library(purrr)
 
 library(here) # places working directory at root of project folder
 
-d02_data <- readRDS(here("data", "clean", "yes_data_d02_english_clean.Rds")) # directing to data from project folder root
+d01_data <- readRDS(here("data", "clean", "yes_data_d01_english_clean.Rds")) # directing to data from project folder root
+
+d02_data <- readRDS(here("data", "clean", "yes_data_d02_english_clean.Rds"))
 
 d03_data <- readRDS(here("data", "clean", "yes_data_d03_english_clean.Rds")) 
 
@@ -79,7 +81,7 @@ d16_data <- readRDS(here("data", "clean", "yes_data_d16_english_clean.Rds"))
 
 ## Binding data from all sources
 
-english_data_bound <- bind_rows(d02_data, d03_data, d05_data, d09_data, d16_data)
+english_data_bound <- bind_rows(d01_data, d02_data, d03_data, d05_data, d09_data, d16_data)
 
 ```
 
@@ -91,7 +93,7 @@ Checking final data has expected number of rows
 
 validation_result <- 
   english_data_bound %>%
-  expect_row_count_match(nrow(d02_data) + nrow(d03_data) + nrow(d05_data) + nrow(d09_data) + + nrow(d16_data))
+  expect_row_count_match(nrow(d01_data) + nrow(d02_data) + nrow(d03_data) + nrow(d05_data) + nrow(d09_data) + + nrow(d16_data))
 
 ## Printing the validation result - runs if passes
 
@@ -106,6 +108,8 @@ Checking final data has expected columns
 ## Creating dfs of col names from data and each component df
 
 data_cols <- data.frame(column_name = names(english_data_bound))
+
+d01_cols <- data.frame(column_name = names(d01_data))
 
 d02_cols <- data.frame(column_name = names(d02_data))
 
@@ -124,6 +128,7 @@ d16_cols <- data.frame(column_name = names(d16_data))
 ## Confirming no columns exist in final df that are not in a component df
 
 n_new_cols <- data_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d02_cols) %>%
   anti_join(d03_cols) %>%
   anti_join(d05_cols) %>%
@@ -197,6 +202,18 @@ validate_column_counts <- function(original_cols, bound_cols) {
 
 ```
 
+```{r d01 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d01 <- validate_column_counts(d01_cols, data_cols)
+
+## Printing results
+
+print(validation_result_d01$validation_result) # runs if passes
+
+```
+
 ```{r d02 validation, validate=TRUE}
 
 ## Running the validation function
@@ -265,31 +282,43 @@ Visual inspection of unique cols to each df
 ## visual inspection here will help find vars that need renaming
 ## to keep consistency between dfs var naming
 
+unique_cols_d01 <- d01_cols %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
 unique_cols_d02 <- d02_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d03_cols) %>%
   anti_join(d05_cols) %>%
   anti_join(d09_cols) %>%
   anti_join(d16_cols)
 
 unique_cols_d03 <- d03_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d02_cols) %>%
   anti_join(d05_cols) %>%
   anti_join(d09_cols) %>%
   anti_join(d16_cols)
 
 unique_cols_d05 <- d05_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d02_cols) %>%
   anti_join(d03_cols) %>%
   anti_join(d09_cols) %>%
   anti_join(d16_cols)
 
 unique_cols_d09 <- d09_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d02_cols) %>%
   anti_join(d03_cols) %>%
   anti_join(d05_cols) %>%
   anti_join(d16_cols)
 
 unique_cols_d16 <- d16_cols %>%
+  anti_join(d01_cols) %>%
   anti_join(d02_cols) %>%
   anti_join(d03_cols) %>%
   anti_join(d05_cols) %>%
@@ -300,6 +329,9 @@ unique_cols_d16 <- d16_cols %>%
 ```{r printing unique cols}
 
 ## Printing colnames unique to each df
+
+unique_cols_d01 %>%
+  rename(d01_column_name = column_name)
 
 unique_cols_d02 %>%
   rename(d02_column_name = column_name)
