@@ -101,6 +101,7 @@ data <- readRDS(here("data", "clean", "yes_data_english_clean.Rds")) # directing
 
 data_youth <- data %>%
   filter(dem_age != "18 or older" &
+         dem_age != "17 or older" &
          dem_age != "16-20" &
          dem_age != "21-25" &   
          dem_age != "26-30" & 
