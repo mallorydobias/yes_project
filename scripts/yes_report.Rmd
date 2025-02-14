@@ -129,6 +129,13 @@ data_youth %>%
   group_by(data_id) %>%
   tally()
 
+## Checking that data come from youth
+
+data_youth %>%
+  select(data_id, dem_age) %>%
+  group_by(dem_age) %>%
+  tally()
+
 ```
 
 ```{r calculating n milestones, include=FALSE}
@@ -221,6 +228,10 @@ data_youth %>%
   filter(!is.na(ssi_completed)) %>%
   group_by(data_id) %>%
   tally()
+
+# data %>%
+#   filter(data_id == "d05") %>%
+#   select(data_id, ssi_completed, dem_age) # d05 has no ssi_started responses from youth
 
 ```
 
