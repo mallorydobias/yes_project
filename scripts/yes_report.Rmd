@@ -827,7 +827,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from nearly all English-speaking YES surveys (data_ids: d01, d02, d03, d09, d16). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses youth data (under 18) from all English-speaking YES surveys (data_ids: d01, d02, d03, d09, d16). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
 
 **Full Summary**:
 
