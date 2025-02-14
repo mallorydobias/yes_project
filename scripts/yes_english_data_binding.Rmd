@@ -81,7 +81,7 @@ d16_data <- readRDS(here("data", "clean", "yes_data_d16_english_clean.Rds"))
 
 ## Binding data from all sources
 
-english_data_bound <- bind_rows(d01_data, d02_data, d03_data, d05_data, d09_data, d16_data)
+english_data_bound <- bind_rows(d02_data, d03_data, d05_data, d09_data, d16_data, d01_data)
 
 ```
 
@@ -93,7 +93,7 @@ Checking final data has expected number of rows
 
 validation_result <- 
   english_data_bound %>%
-  expect_row_count_match(nrow(d01_data) + nrow(d02_data) + nrow(d03_data) + nrow(d05_data) + nrow(d09_data) + + nrow(d16_data))
+  expect_row_count_match(nrow(d01_data) + nrow(d02_data) + nrow(d03_data) + nrow(d05_data) + nrow(d09_data) + nrow(d16_data))
 
 ## Printing the validation result - runs if passes
 
