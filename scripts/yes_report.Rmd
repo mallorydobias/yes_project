@@ -989,18 +989,18 @@ gender_tallies <- count_yes_responses(data_youth_gender) %>%
          gender_identity = str_replace(gender_identity, "nonbinary", "Nonbinary"),
          gender_identity = str_replace(gender_identity, "unsure", "Unsure"),
          gender_identity = str_replace(gender_identity, "other", "Another gender not listed"),
-         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male transgender/FTM"),
+         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male trans/FTM"),
          gender_identity = str_replace(gender_identity, "trans", "Transgender"),
          gender_identity = str_replace(gender_identity, "genderqueer", "Genderqueer"),
          gender_identity = str_replace(gender_identity, "androgynous", "Androgynous"),
          gender_identity = str_replace(gender_identity, "agender", "Agender"),
-         gender_identity = str_replace(gender_identity, "trans_masc", "Trans male/Trans masculine"),
+         gender_identity = str_replace(gender_identity, "Transgender_masc", "Trans masculine"),
          gender_identity = str_replace(gender_identity, "two_spirited", "Two-spirited"),
          gender_identity = str_replace(gender_identity, "third_gender", "Third gender"),
          gender_identity = str_replace(gender_identity, "intersex", "Intersex"),
          gender_identity = str_replace(gender_identity, "expansive", "Gender expansive"),
-         gender_identity = str_replace(gender_identity, "mtf_trans", "Male to female transgender/MTF"),
-         gender_identity = str_replace(gender_identity, "trans_fem", "Trans female/Trans feminine")) %>%
+         gender_identity = str_replace(gender_identity, "mtf_Transgender", "Male to female transgender/MTF"),
+         gender_identity = str_replace(gender_identity, "Transgender_fem", "Trans feminine")) %>%
   arrange(-n)
 
 ```
@@ -1040,6 +1040,8 @@ sex_orientation_tallies <- data_youth %>%
   mutate(percentage = round(percentage, 2)) %>%
   unnest(cols = c(percentage)) %>%
   rename(n = count, "%" = n)
+
+table(data_youth$dem_sex_orientation)
 
 ```
 
