@@ -1097,33 +1097,6 @@ rempsyc::nice_table(race_tallies)
 
 ```
 
-```{r exporting race table to word, include=FALSE}
-
-# Create a flextable directly from race_tallies
-flextable_output <- flextable::flextable(race_tallies)
-
-# Add additional formatting if needed (e.g., autofit for columns)
-flextable_output <- flextable::autofit(flextable_output)
-
-# Create a Word document
-doc <- officer::read_docx()
-
-# Add the flextable to the document
-doc <- flextable::body_add_flextable(doc, value = flextable_output)
-
-# Specify root directory
-tables_folder <- here("tables")
-
-# Create "tables" folder if it doesn't exist
-if (!dir.exists(tables_folder)) {
-  dir.create(tables_folder)
-}
-  
-# Save the document to the "tables" folder in your project root
-print(doc, target = file.path(tables_folder, "race_tallies_table.docx"))
-
-```
-
 ```{r adding missing values to ethnicity vars, include=FALSE}
 
 ## Accounting for missing values across all race variables
@@ -1182,6 +1155,159 @@ ethnicity_tallies <- data_youth_ethnicity %>%
 ```{r printing ethnicity tally, include=TRUE}
 
 rempsyc::nice_table(ethnicity_tallies)
+
+```
+
+```{r setting up age for demographics table to word, include=FALSE}
+
+## Here I start setting up demographic variables to 
+## create a combined flextable that can be exported
+## to a word document
+
+# Specified character string for the new row
+new_row <- tibble(
+  `age` = "Age",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+age_tallies_for_table <- bind_rows(new_row, age_tallies) %>%
+  rename(Demographics = age)
+
+# View updated data frame
+age_tallies_for_table
+
+```
+
+```{r setting up gender for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `gender_identity` = "Gender Identity",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+gender_tallies_for_table <- bind_rows(new_row, gender_tallies) %>%
+  rename(Demographics = gender_identity)
+
+# View updated data frame
+gender_tallies_for_table
+
+```
+
+```{r setting up sexual orientation for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `sex_orientation` = "Sexual Orientation",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+sex_orientation_tallies_for_table <- bind_rows(new_row, sex_orientation_tallies) %>%
+  rename(Demographics = sex_orientation)
+
+# View updated data frame
+sex_orientation_tallies_for_table
+
+```
+
+```{r setting up race for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `racial_ethnic_identity` = "Racial/Ethnic Identity",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+race_tallies_for_table <- bind_rows(new_row, race_tallies) %>%
+  rename(Demographics = racial_ethnic_identity)
+
+# View updated data frame
+race_tallies_for_table
+
+```
+
+```{r setting up ethnicity for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `ethnic_identity_middle_east` = "Ethnic Identity Middle East",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+ethnicity_tallies_for_table <- bind_rows(new_row, ethnicity_tallies) %>%
+  rename(demographics = ethnic_identity_middle_east)
+
+# View updated data frame
+ethnicity_tallies_for_table
+
+```
+
+```{r creating combined df for demographics table, include=FALSE}
+
+demographics_tallies <- bind_rows(age_tallies_for_table,
+                          gender_tallies_for_table,
+                          sex_orientation_tallies_for_table,
+                          race_tallies_for_table,
+                          ethnicity_tallies_for_table)
+
+```
+
+```{r creating demo flextable, include=FALSE}
+
+# Create a flextable directly from tallies
+flextable_output <- flextable::flextable(demographics_tallies)
+
+# Add additional formatting if needed (e.g., autofit for columns)
+flextable_output <- flextable::autofit(flextable_output)
+
+```
+
+```{r formatting demo flextable, include=FALSE}
+
+# Applying indents within demographic variable categories
+
+flextable_age_formatted <- padding(flextable_output, i=2:8, padding.left = 20)
+
+flextable_gender_formatted <- padding(flextable_age_formatted, i=10:27, padding.left = 20)
+
+flextable_sex_orientation_formatted <- padding(flextable_gender_formatted, i=29:41, padding.left = 20)
+
+flextable_race_formatted <- padding(flextable_sex_orientation_formatted, i=43:48, padding.left = 20)
+
+flextable_ethnicity_formatted <- padding(flextable_race_formatted, i=50:58, padding.left = 20)
+
+flextable_all_demographics <- flextable_ethnicity_formatted
+
+```
+
+```{r exporting demo flextable to word, include=FALSE}
+
+# Create a Word document
+doc <- officer::read_docx()
+
+# Add the flextable to the document
+doc <- flextable::body_add_flextable(doc, value = flextable_all_demographics)
+
+# Specify root directory
+tables_folder <- here("tables")
+
+# Create "tables" folder if it doesn't exist
+if (!dir.exists(tables_folder)) {
+  dir.create(tables_folder)
+}
+  
+# Save the document to the "tables" folder in your project root
+print(doc, target = file.path(tables_folder, "demographics_table.docx"))
 
 ```
 
