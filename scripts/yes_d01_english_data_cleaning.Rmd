@@ -1624,6 +1624,29 @@ data_drop_recent_observation <- data_new_ids_only %>%
 
 ```
 
+```{r dropping remaining old entries from pre pub}
+
+## There are still some observations that are in the data
+## with start dates that occur during the data collection window of 
+## the original yes pub; I'm dropping them here, 
+## to ensure we only have responses from after the pub period
+
+old_dates <- data_drop_recent_observation %>%
+  select(start_date, response_id) %>%
+  filter(start_date <= "2020-03-10") %>%
+  nrow()
+
+data_drop_old_dates <- data_drop_recent_observation %>%
+  filter(start_date > "2020-03-10")
+
+expected_rows <- nrow(data_drop_recent_observation) - old_dates
+
+actual_rows <- nrow(data_drop_old_dates)
+
+expected_rows == actual_rows # true if number dropped as expected
+
+```
+
 # Saving Data
 
 ```{r saving cleaned data}
