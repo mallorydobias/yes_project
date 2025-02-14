@@ -74,6 +74,12 @@ library(rempsyc)
 if(!require(rmarkdown)){install.packages('rmarkdown')}
 library(rmarkdown)
 
+if(!require(officer)){install.packages('officer')}
+library(officer)
+
+if(!require(flextable)){install.packages('flextable')}
+library(flextable)
+
 ```
 
 ```{r note, include=FALSE}
@@ -887,16 +893,12 @@ perc_agreed_questionnaires
 
 ## Age
 
-N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+N's and percentages are all calculated out of the number of survey starts from youth (n = `r n_started_survey`). 
 
 ```{r prepping for age tally, include=FALSE}
 
 data_youth_age <- data_youth %>%
-  select(dem_age) %>%
-  mutate(dem_gender_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
+  select(dem_age)
 
 ```
 
@@ -927,7 +929,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts from youth (n = `r n_started_survey`). 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1059,7 +1061,7 @@ n_race_denominator <- nrow(data_youth_race)
 
 ```
 
-N's and percentages are all calculated out of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
+N's and percentages are all calculated out of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
 
 ```{r calculating race tallies, include=FALSE}
 
@@ -1087,12 +1089,38 @@ race_tallies <- data_youth_race %>%
                                      racial_ethnic_identity == "other" ~ "Another racial/ethnic identity not listed",
                                      TRUE ~ racial_ethnic_identity))
 
-
 ```
 
 ```{r printing race tally, include=TRUE}
 
 rempsyc::nice_table(race_tallies)
+
+```
+
+```{r exporting race table to word, include=FALSE}
+
+# Create a flextable directly from race_tallies
+flextable_output <- flextable::flextable(race_tallies)
+
+# Add additional formatting if needed (e.g., autofit for columns)
+flextable_output <- flextable::autofit(flextable_output)
+
+# Create a Word document
+doc <- officer::read_docx()
+
+# Add the flextable to the document
+doc <- flextable::body_add_flextable(doc, value = flextable_output)
+
+# Specify root directory
+tables_folder <- here("tables")
+
+# Create "tables" folder if it doesn't exist
+if (!dir.exists(tables_folder)) {
+  dir.create(tables_folder)
+}
+  
+# Save the document to the "tables" folder in your project root
+print(doc, target = file.path(tables_folder, "race_tallies_table.docx"))
 
 ```
 
