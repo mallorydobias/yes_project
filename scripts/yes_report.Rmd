@@ -983,6 +983,24 @@ gender_tallies <- count_yes_responses(data_youth_gender) %>%
   rename(gender_identity = variable) %>%
   rename("%" = n) %>%
   rename(n = count) %>%
+  mutate(gender_identity = str_replace(gender_identity, "girl_woman", "Girl/Woman"),
+         gender_identity = str_replace(gender_identity, "boy_man", "Boy/Man"),
+         gender_identity = str_replace(gender_identity, "missing", "Missing"),
+         gender_identity = str_replace(gender_identity, "nonbinary", "Nonbinary"),
+         gender_identity = str_replace(gender_identity, "unsure", "Unsure"),
+         gender_identity = str_replace(gender_identity, "other", "Another gender not listed"),
+         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male transgender/FTM"),
+         gender_identity = str_replace(gender_identity, "trans", "Transgender"),
+         gender_identity = str_replace(gender_identity, "genderqueer", "Genderqueer"),
+         gender_identity = str_replace(gender_identity, "androgynous", "Androgynous"),
+         gender_identity = str_replace(gender_identity, "agender", "Agender"),
+         gender_identity = str_replace(gender_identity, "trans_masc", "Trans male/Trans masculine"),
+         gender_identity = str_replace(gender_identity, "two_spirited", "Two-spirited"),
+         gender_identity = str_replace(gender_identity, "third_gender", "Third gender"),
+         gender_identity = str_replace(gender_identity, "intersex", "Intersex"),
+         gender_identity = str_replace(gender_identity, "expansive", "Gender expansive"),
+         gender_identity = str_replace(gender_identity, "mtf_trans", "Male to female transgender/MTF"),
+         gender_identity = str_replace(gender_identity, "trans_fem", "Trans female/Trans feminine")) %>%
   arrange(-n)
 
 ```
@@ -1245,7 +1263,7 @@ new_row <- tibble(
 
 # Insert new row at position #1
 ethnicity_tallies_for_table <- bind_rows(new_row, ethnicity_tallies) %>%
-  rename(demographics = ethnic_identity_middle_east)
+  rename(Demographics = ethnic_identity_middle_east)
 
 # View updated data frame
 ethnicity_tallies_for_table
@@ -1267,9 +1285,6 @@ demographics_tallies <- bind_rows(age_tallies_for_table,
 # Create a flextable directly from tallies
 flextable_output <- flextable::flextable(demographics_tallies)
 
-# Add additional formatting if needed (e.g., autofit for columns)
-flextable_output <- flextable::autofit(flextable_output)
-
 ```
 
 ```{r formatting demo flextable, include=FALSE}
@@ -1286,7 +1301,9 @@ flextable_race_formatted <- padding(flextable_sex_orientation_formatted, i=43:48
 
 flextable_ethnicity_formatted <- padding(flextable_race_formatted, i=50:58, padding.left = 20)
 
-flextable_all_demographics <- flextable_ethnicity_formatted
+# Autofitting columns
+
+flextable_all_demographics <- flextable::autofit(flextable_ethnicity_formatted)
 
 ```
 
