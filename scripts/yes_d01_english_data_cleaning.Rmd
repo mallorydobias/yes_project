@@ -1651,7 +1651,7 @@ expected_rows == actual_rows # true if number dropped as expected
 
 ```{r saving cleaned data}
 
-data <- data_new_ids_only
+data <- data_drop_old_dates
 
 # Define the folder and file path
 
