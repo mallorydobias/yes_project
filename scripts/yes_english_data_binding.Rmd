@@ -81,7 +81,9 @@ d16_data <- readRDS(here("data", "clean", "yes_data_d16_english_clean.Rds"))
 
 ## Binding data from all sources
 
-english_data_bound <- bind_rows(d02_data, d03_data, d05_data, d09_data, d16_data, d01_data)
+english_data_bound <- bind_rows(d02_data, d03_data, d05_data, d09_data, d16_data, d01_data) %>%
+  mutate(data_id = factor(data_id, levels = c("d01", "d02", "d03", "d05", "d09", "d16"))) %>%
+  arrange(data_id)
 
 ```
 
