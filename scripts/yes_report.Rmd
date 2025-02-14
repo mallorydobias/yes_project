@@ -891,6 +891,41 @@ perc_agreed_questionnaires
 
 # Demographics
 
+## Data Source
+
+N's and percentages are all calculated out of the number of total youth responses.
+
+```{r prepping for data tally, include=FALSE}
+
+data_youth_data_source <- data_youth %>%
+  select(data_id)
+
+```
+
+```{r calculating data tally, include=FALSE}
+
+## Prepping dataframe with data tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+data_source_tallies <- data_youth_data_source %>%
+  group_by(data_id) %>%
+  tally() %>%
+  ungroup() %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / nrow(data_youth_data_source) * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = percentage)
+
+```
+
+```{r printing data tally, include=TRUE}
+
+rempsyc::nice_table(data_source_tallies)
+
+```
+
 ## Age
 
 N's and percentages are all calculated out of the number of survey starts from youth (n = `r n_started_survey`). 
