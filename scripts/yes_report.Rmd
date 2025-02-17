@@ -2750,6 +2750,107 @@ plot_all_ridge
 
 ```
 
+```{r creating separate boxplot dfs per pfs item, include=FALSE}
+
+data_pfs_boxplot_sep_1 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "enjoyed")
+
+data_pfs_boxplot_sep_2 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "understood")
+
+data_pfs_boxplot_sep_3 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "easy to use")
+
+data_pfs_boxplot_sep_4 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "tried my hardest")
+
+data_pfs_boxplot_sep_5 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "helpful for others")
+
+data_pfs_boxplot_sep_6 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "recommend to others")
+
+data_pfs_boxplot_sep_7 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "agree with message")
+
+```
+
+```{r creating separate boxplots pfs item, include=FALSE, warning=FALSE}
+
+# Plotting
+
+plot_boxplot_sep_1 <- ggplot(data_pfs_boxplot_sep_1, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "")
+  
+plot_boxplot_sep_2 <- ggplot(data_pfs_boxplot_sep_2, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_3 <- ggplot(data_pfs_boxplot_sep_3, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_4 <- ggplot(data_pfs_boxplot_sep_4, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_5 <- ggplot(data_pfs_boxplot_sep_5, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_6 <- ggplot(data_pfs_boxplot_sep_6, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_7 <- ggplot(data_pfs_boxplot_sep_7, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "pfs item scores", y = "") +
+                        theme(legend.position = "none")
+
+```
+
+```{r creating combined pfs item boxplot, echo=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
+  
+# Combine the plots vertically
+plot_all_boxplot <- plot_boxplot_sep_1 / plot_boxplot_sep_2 / plot_boxplot_sep_3 / plot_boxplot_sep_4 /
+  plot_boxplot_sep_5 / plot_boxplot_sep_6 / plot_boxplot_sep_7 +
+  plot_annotation(
+    title = "PFS Items Scores for Each SSI",
+    caption = "ABC (green), CARE (red), Project Personality (blue), RISE (orange); 
+    higher scores reflect greater agreement"
+  )
+
+plot_all_boxplot
+
+```
+
 # Drop-Offs
 
 ## ABC Project
