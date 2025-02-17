@@ -2454,7 +2454,7 @@ plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean,
 
 ```
 
-```{r printing plot overall pfs means by ssi, warning=FALSE, include=TRUE}
+```{r printing plot overall pfs means by ssi, warning=FALSE, message=FALSE, include=TRUE}
 
 plot_overall_pfs_ridge
 
@@ -2499,7 +2499,7 @@ data_abc_ridge_plot <- data_youth_abc %>%
 
 ```
 
-```{r plotting abc pfs items scores, include=FALSE, warning=FALSE}
+```{r plotting abc pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
  
 # Setting a group order
 
@@ -2566,7 +2566,7 @@ data_care_ridge_plot <- data_youth_care %>%
 
 ```
 
-```{r plotting care pfs items scores, include=FALSE, warning=FALSE}
+```{r plotting care pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
  
 # Setting a group order
 
@@ -2633,7 +2633,7 @@ data_pp_ridge_plot <- data_youth_pp %>%
 
 ```
 
-```{r plotting pp pfs items scores, include=FALSE, warning=FALSE}
+```{r plotting pp pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
  
 # Setting a group order
 
@@ -2700,7 +2700,7 @@ data_rise_ridge_plot <- data_youth_rise %>%
 
 ```
 
-```{r plotting rise pfs items scores, include=FALSE, warning=FALSE}
+```{r plotting rise pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
  
 # Setting a group order
 
@@ -2744,7 +2744,7 @@ plot_all_ridge <- plot_abc_pfs_ridge + plot_care_pfs_ridge + plot_pp_pfs_ridge +
 
 ```
 
-```{r printing ridge plot for all pfs, warning=FALSE, include=TRUE}
+```{r printing ridge plot for all pfs, message=FALSE, warning=FALSE, include=TRUE}
 
 plot_all_ridge
 
