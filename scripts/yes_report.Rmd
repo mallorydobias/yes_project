@@ -2421,7 +2421,7 @@ data_overall_ridge_plot <- data_youth %>%
 
 ```
 
-```{r plotting overall pfs mean scores by ssi, echo=TRUE, warning=FALSE}
+```{r plotting overall pfs mean scores by ssi, include=FALSE, warning=FALSE}
  
 # Setting a group order
 
@@ -2452,9 +2452,14 @@ plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean,
   plot_annotation(title = "PFS Mean Scores by Chosen SSI",
                   caption = "Overall Program Feedback Scale mean scores by SSI, where higher scores reflect more positive feedback")
 
+```
+
+```{r printing plot overall pfs means by ssi, include=TRUE}
+
 plot_overall_pfs_ridge
 
 ```
+
 
 ## ABC Project
 
