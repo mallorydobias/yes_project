@@ -2421,7 +2421,7 @@ data_overall_ridge_plot <- data_youth %>%
 
 ```
 
-```{r plotting overall pfs mean scores by ssi, include=FALSE, echo=TRUE}
+```{r plotting overall pfs mean scores by ssi, include=FALSE, echo=TRUE, warning=FALSE}
  
 # Setting a group order
 
@@ -2449,7 +2449,8 @@ plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean,
   scale_fill_manual(values = custom_colors) +
   scale_color_manual(values = custom_colors) +
   labs(y = "", x = "PFS Mean Scores") +
-  plot_annotation(title = "PFS Mean Scores by Chosen SSI")
+  plot_annotation(title = "PFS Mean Scores by Chosen SSI",
+                  caption = "Overall Program Feedback Scale mean scores by SSI, where higher scores reflect more positive feedback")
 
 plot_overall_pfs_ridge
 
@@ -2471,13 +2472,55 @@ summary_pfs_abc
 
 ```
 
-```{r}
+```{r setting up data for pfs abc ridge plot, include=FALSE}
 
-data_youth_abc %>%
-  select(starts_with("pfs_") & -contains("like") & -contains("change"), -contains("feedback"), -contains("tim"), ssi_choice)
+# Setting up data for ridge plot 
+
+data_abc_ridge_plot <- data_youth_abc %>%
+  select(starts_with("pfs_") & 
+         -contains("like") & -contains("change"), 
+         -contains("mean"), -contains("feedback"), 
+         -contains("tim")) %>%
+  pivot_longer(cols = everything()) %>%
+  rename(pfs_item = name) %>%
+  mutate(pfs_item = case_when(pfs_item == "pfs_1" ~ "enjoyed",
+                              pfs_item == "pfs_2" ~ "understood",
+                              pfs_item == "pfs_3" ~ "easy to use",
+                              pfs_item == "pfs_4" ~ "tried my hardest",
+                              pfs_item == "pfs_5" ~ "helpful for others",
+                              pfs_item == "pfs_6" ~ "recommend to others",
+                              pfs_item == "pfs_7" ~ "agree with message",
+                              TRUE ~ pfs_item))
 
 ```
 
+```{r plotting abc pfs items scores, include=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_abc_ridge_plot_mutated <- data_abc_ridge_plot %>%
+  mutate(pfs_item = factor(data_abc_ridge_plot$pfs_item, levels = custom_order))
+
+# Plotting pfs mean scores by ssi chosen
+
+plot_abc_pfs_ridge <- ggplot(data_abc_ridge_plot_mutated, aes(x = value, 
+                                                              y = reorder(pfs_item, -as.numeric(pfs_item)),
+                                                              fill = pfs_item, color = pfs_item)) +  
+  geom_density_ridges(alpha = 0.6) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom fill color
+  scale_color_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom color
+  labs(y = "", x = "PFS Item Scores")
+
+plot_abc_pfs_ridge
+
+```
 
 ## Project CARE
 
