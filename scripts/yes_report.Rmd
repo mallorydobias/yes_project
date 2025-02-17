@@ -2167,6 +2167,28 @@ plots_all
 
 # SSI Completion
 
+## Overall
+
+Of `r n_started_any_ssi` cases where someone started any ssi, `r n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `r perc_completed_any_ssi`% for any ssi.
+
+```{r n started any ssi}
+
+n_started_any_ssi
+
+```
+
+```{r n completed any ssi}
+
+n_completed_any_ssi
+
+```
+
+```{r perc completed any ssi}
+
+perc_completed_any_ssi
+
+```
+
 ## ABC Project
 
 Of `r n_started_abc` cases where someone started abc, `r n_completed_abc` cases completed the intervention. This results in an abc completion rate of `r perc_completed_abc`%.
@@ -2361,28 +2383,6 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
            size = 4) +
   geom_segment(aes(y = 20, yend = 120, x = 1, xend = 1), 
                linetype = "solid", color = "black", size = .5)
-
-```
-
-## All
-
-Of `r n_started_any_ssi` cases where someone started any ssi, `r n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `r perc_completed_any_ssi`% for any ssi.
-
-```{r n started any ssi}
-
-n_started_any_ssi
-
-```
-
-```{r n completed any ssi}
-
-n_completed_any_ssi
-
-```
-
-```{r perc completed any ssi}
-
-perc_completed_any_ssi
 
 ```
 
