@@ -1387,7 +1387,7 @@ perc_youth_elev_dep <- round((n_youth_elev_dep / nrow(data_youth))*100, 2)
 
 Over a quarter of cases (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire youth sample.
 
-```{r plotting mfq, warning=FALSE, message=FALSE}
+```{r plotting mfq, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Creating data frame
 
