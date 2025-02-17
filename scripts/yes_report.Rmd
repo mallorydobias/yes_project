@@ -2454,7 +2454,7 @@ plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean,
 
 ```
 
-```{r printing plot overall pfs means by ssi, include=TRUE}
+```{r printing plot overall pfs means by ssi, warning=FALSE, include=TRUE}
 
 plot_overall_pfs_ridge
 
