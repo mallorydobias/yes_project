@@ -2724,6 +2724,27 @@ plot_rise_pfs_ridge
 
 ```
 
+## By SSI
+
+```{r combining all ridge plots, warning=FALSE, message=FALSE, include=FALSE}
+
+library(patchwork)
+
+# Combine the plots vertically
+plot_all_ridge <- plot_abc_pfs_ridge + plot_care_pfs_ridge + plot_pp_pfs_ridge + plot_rise_pfs_ridge +
+  plot_annotation(
+    title = "PFS Items Scores for Each SSI",
+    caption = "ABC (green), CARE (red), Project Personality (blue), RISE (orange); higher scores reflect greater agreement"
+  )
+
+```
+
+```{r printing ridge plot for all pfs, warning=FALSE, include=TRUE}
+
+plot_all_ridge
+
+```
+
 # Drop-Offs
 
 ## ABC Project
