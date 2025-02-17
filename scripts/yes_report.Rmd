@@ -2255,6 +2255,109 @@ perc_completed_rise
 
 ```
 
+## By SSI
+
+Here, we plot starters vs completers by each SSI.
+
+```{r, warning=FALSE}
+
+# Create data for bar plot
+
+data_barplot_abc <- data.frame(
+  ssi = c("ABC Project"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_abc), as.integer(n_completed_abc))
+)
+
+data_barplot_care <- data.frame(
+  ssi = c("Project CARE"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_care), as.integer(n_completed_care))
+)
+
+data_barplot_pp <- data.frame(
+  ssi = c("Project Personality"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_pp), as.integer(n_completed_pp))
+)
+
+data_barplot_rise <- data.frame(
+  ssi = c("Project RISE"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_rise), as.integer(n_completed_rise))
+)
+
+data_barplot_all <- bind_rows(data_barplot_abc, data_barplot_care,
+                              data_barplot_pp, data_barplot_rise)
+
+# Define colors for each ssi and category combination
+
+custom_colors <- c(
+  "ABC Project.starters" = "#a4e3e2", "ABC Project.completers" = "#32A2A0",
+  "Project CARE.starters" = "#e69fb3", "Project CARE.completers" = "#A52B4D",
+  "Project Personality.starters" = "#b2d7fb", "Project Personality.completers" = "#3F9CF5",
+  "Project RISE.starters" = "#fbcdb9", "Project RISE.completers" = "#F48151"
+)
+
+# Reorder 'ssi' factor
+data_barplot_all$ssi <- factor(data_barplot_all$ssi, 
+                               levels = c("ABC Project", "Project CARE", "Project Personality", "Project RISE"))
+
+# Reorder 'category' factor to ensure "starters" comes before "completers" within each 'ssi'
+data_barplot_all$category <- fct_relevel(data_barplot_all$category, "starters", "completers")
+
+# Reorder 'interaction(ssi, category)' factor to match the desired order
+data_barplot_all$interaction_ssi_category <- interaction(data_barplot_all$ssi, data_barplot_all$category)
+
+# Ensure the interaction factor levels are in the right order for both bars and the legend
+data_barplot_all$interaction_ssi_category <- factor(data_barplot_all$interaction_ssi_category, 
+                                                    levels = c("ABC Project.starters", "ABC Project.completers",
+                                                               "Project CARE.starters", "Project CARE.completers",
+                                                               "Project Personality.starters", "Project Personality.completers",
+                                                               "Project RISE.starters", "Project RISE.completers"))
+
+
+
+# Bar plot
+
+ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +   
+  geom_bar(position = "identity", stat = "identity") +
+  scale_fill_manual(values = custom_colors) +
+  coord_flip() +  # Flip coordinates to get horizontal bars
+  scale_x_discrete(limits = rev(levels(data_barplot_all$ssi))) +  # Reverse x-axis to fix order after flip
+  theme_minimal() +
+  labs(x = "", y = "n completed vs n started (%)", title = "Completion Rates, by SSI") +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(0, 2250)) +  # Set y-axis max to 200
+  annotate(geom = "text", 
+           x = 4,  # Adjust x to match where you want the text (based on your data)
+           y = 300,  # Adjust y position as needed
+           label = paste(perc_completed_abc, "%"), 
+           color = "black", 
+           size = 4) + # Customize size and color of the annotation
+  annotate(geom = "text", 
+           x = 3,  # Adjust x to match where you want the text (based on your data)
+           y = 290,  # Adjust y position as needed
+           label = paste(perc_completed_care, "%"), 
+           color = "black", 
+           size = 4) + # Customize size and color of the annotation
+  annotate(geom = "text", 
+           x = 2,  # Adjust x to match where you want the text (based on your data)
+           y = 430,  # Adjust y position as needed
+           label = paste(perc_completed_personality, "%"), 
+           color = "black", 
+           size = 4) +
+  annotate(geom = "text", 
+           x = 1,  # Adjust x to match where you want the text (based on your data)
+           y = 290,  # Adjust y position as needed
+           label = paste(perc_completed_rise, "%"), 
+           color = "black", 
+           size = 4) +
+  geom_segment(aes(y = 20, yend = 120, x = 1, xend = 1), 
+               linetype = "solid", color = "black", size = .5)
+
+```
+
 ## All
 
 Of `r n_started_any_ssi` cases where someone started any ssi, `r n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `r perc_completed_any_ssi`% for any ssi.
