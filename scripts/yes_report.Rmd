@@ -2279,7 +2279,7 @@ perc_completed_any_ssi
 
 # Acceptability
 
-## All
+## Overall
 
 ```{r calculating pfs item means across all ssis, include=FALSE}
 
@@ -2421,7 +2421,7 @@ data_overall_ridge_plot <- data_youth %>%
 
 ```
 
-```{r plotting overall pfs mean scores by ssi, include=FALSE, echo=TRUE, warning=FALSE}
+```{r plotting overall pfs mean scores by ssi, echo=TRUE, warning=FALSE}
  
 # Setting a group order
 
