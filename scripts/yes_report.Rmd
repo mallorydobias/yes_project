@@ -1395,7 +1395,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, **hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.**
 
 ```{r t test results abc bhs}
 
@@ -1498,15 +1498,7 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 ```
 
-Plotting hopelessness pre and post abc
-
-```{r plotting bhs pre and post abc, warning=FALSE, message=FALSE}
-
-plot_abc_bhs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, agency increased from pre to post abc, dz = `r abc_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, **agency increased from pre to post abc, dz = `r abc_shs_dz_value`.**
 
 ```{r t test results abc shs}
 
@@ -1549,15 +1541,7 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
 
 ```
 
-Plotting agency pre and post abc
-
-```{r plotting shs pre and post abc, warning=FALSE, message=FALSE}
-
-plot_abc_shs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-abc changes in self-hate (self-hate scale scores). For those who chose the abc intervention with data at both time points, self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-abc changes in self-hate (self-hate scale scores). For those who chose the abc intervention with data at both time points, **self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.**
 
 ```{r t test results abc hate}
 
@@ -1600,15 +1584,7 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
 
 ```
 
-Plotting self-hate pre and post abc
-
-```{r plotting hate pre and post abc, warning=FALSE, message=FALSE}
-
-plot_abc_hate
-
-```
-
-Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1630,7 +1606,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-care changes in hopelessness (bhs scores). For those who chose the care intervention with data at both time points, hopelessness decreased from pre to post care, dz = `r care_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in hopelessness (bhs scores). For those who chose the care intervention with data at both time points, **hopelessness decreased from pre to post care, dz = `r care_bhs_dz_value`.**
 
 ```{r t test results care bhs}
 
@@ -1673,15 +1649,7 @@ plot_care_bhs <- plot_data_bhs_care_function %>%
 
 ```
 
-Plotting hopelessness pre and post care
-
-```{r plotting bhs pre and post care, warning=FALSE, message=FALSE}
-
-plot_care_bhs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-care changes in agency (shs pathways scores). For those who chose the care intervention with data at both time points, agency increased from pre to post care, dz = `r care_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in agency (shs pathways scores). For those who chose the care intervention with data at both time points, **agency increased from pre to post care, dz = `r care_shs_dz_value`.**
 
 ```{r t test results care shs}
 
@@ -1724,15 +1692,7 @@ plot_care_shs <- plot_data_shs_care_function %>%
 
 ```
 
-Plotting agency pre and post care
-
-```{r plotting shs pre and post care, warning=FALSE, message=FALSE}
-
-plot_care_shs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, self-hate decreased from pre to post care, dz = `r abc_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-care changes in self-hate (self-hate scale scores). For those who chose the care intervention with data at both time points, **self-hate decreased from pre to post care, dz = `r abc_hate_dz_value`.**
 
 ```{r t test results care hate}
 
@@ -1775,15 +1735,7 @@ plot_care_hate <- plot_data_hate_care_function %>%
 
 ```
 
-Plotting self-hate pre and post care
-
-```{r plotting hate pre and post care, warning=FALSE, message=FALSE}
-
-plot_care_hate
-
-```
-
-Combining all project care pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project care; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project care; right plot shows distributions of self-hate scores before and after project care. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+Combining all project care pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project care; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after project care; right plot shows distributions of self-hate scores before and after project care. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1805,7 +1757,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, hopelessness decreased from pre to post project personality, dz = `r pp_bhs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, **hopelessness decreased from pre to post project personality, dz = `r pp_bhs_dz_value`.**
 
 ```{r t test results pp bhs}
 
@@ -1848,15 +1800,7 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
 
 ```
 
-Plotting hopelessness pre and post project personality
-
-```{r plotting bhs pre and post pp, warning=FALSE, message=FALSE}
-
-plot_pp_bhs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-project personality changes in agency (shs pathways scores). For those who chose the project personality intervention with data at both time points, agency increased from pre to post project personality, dz = `r pp_shs_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in agency (shs pathways scores). For those who chose the project personality intervention with data at both time points, **agency increased from pre to post project personality, dz = `r pp_shs_dz_value`.**
 
 ```{r t test results pp shs}
 
@@ -1899,15 +1843,7 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
 
 ```
 
-Plotting agency pre and post project personality
-
-```{r plotting shs pre and post pp, warning=FALSE, message=FALSE}
-
-plot_pp_shs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, self-hate decreased from pre to post project personality, dz = `r pp_hate_dz_value`.
+Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, **self-hate decreased from pre to post project personality, dz = `r pp_hate_dz_value`.**
 
 ```{r t test results pp hate}
 
@@ -1950,15 +1886,7 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
 
 ```
 
-Plotting self-hate pre and post project personality
-
-```{r plotting hate pre and post pp, warning=FALSE, message=FALSE}
-
-plot_pp_hate
-
-```
-
-Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1980,7 +1908,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find **no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
 ```{r t test results rise bhs}
 
@@ -2023,15 +1951,7 @@ plot_rise_bhs <- plot_data_bhs_rise_function %>%
 
 ```
 
-Plotting hopelessness pre and post project rise
-
-```{r plotting bhs pre and post rise, warning=FALSE, message=FALSE}
-
-plot_rise_bhs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-rise changes in agency (shs pathways scores). For those who chose the rise intervention with data at both time points, we find no evidence that agency increased from pre to post rise, dz = `r rise_shs_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+Conducting a paired t-test to evaluate pre vs post-rise changes in agency (shs pathways scores). For those who chose the rise intervention with data at both time points, we find **no evidence that agency increased from pre to post rise, dz = `r rise_shs_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
 ```{r t test results rise shs}
 
@@ -2074,15 +1994,7 @@ plot_rise_shs <- plot_data_shs_rise_function %>%
 
 ```
 
-Plotting agency pre and post project rise
-
-```{r plotting shs pre and post rise, warning=FALSE, message=FALSE}
-
-plot_rise_shs
-
-```
-
-Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, we find no evidence that self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`. However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
+Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, we find **no evidence that self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
 
 ```{r t test results rise hate}
 
@@ -2122,14 +2034,6 @@ plot_rise_hate <- plot_data_hate_rise_function %>%
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
   labs(x = "Self-Hate", y = " ")
-
-```
-
-Plotting self-hate pre and post project rise
-
-```{r plotting hate pre and post rise, warning=FALSE, message=FALSE}
-
-plot_rise_hate
 
 ```
 
