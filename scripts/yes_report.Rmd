@@ -2750,6 +2750,44 @@ plot_all_ridge
 
 ```
 
+```{r setting up data for boxplots}
+
+data_abc_box_plot <- data_abc_ridge_plot %>%
+  mutate(ssi_choice = "ABC Project")
+
+data_care_box_plot <- data_care_ridge_plot %>%
+  mutate(ssi_choice = "Project CARE")
+
+data_pp_box_plot <- data_pp_ridge_plot %>%
+  mutate(ssi_choice = "Project Personality")
+
+data_rise_box_plot <- data_rise_ridge_plot %>%
+  mutate(ssi_choice = "Project RISE")
+
+data_pfs_boxplot <- bind_rows(data_abc_box_plot,
+                              data_care_box_plot,
+                              data_pp_box_plot,
+                              data_rise_box_plot)
+
+# Setting ssi order
+
+custom_order_ssi <- c("ABC Project", "Project CARE", "Project Personality", "Project RISE")
+
+# Setting pfs order
+
+custom_order_pfs <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_pfs_boxplot_mutated <- data_pfs_boxplot %>%
+  mutate(pfs_item = factor(pfs_item, levels = custom_order_pfs),
+         ssi_choice = factor(ssi_choice, levels = custom_order_ssi))
+
+
+```
+
+
 ```{r creating separate boxplot dfs per pfs item, include=FALSE}
 
 data_pfs_boxplot_sep_1 <- data_pfs_boxplot_mutated %>%
@@ -2775,7 +2813,7 @@ data_pfs_boxplot_sep_7 <- data_pfs_boxplot_mutated %>%
 
 ```
 
-```{r creating separate boxplots pfs item, include=FALSE, warning=FALSE}
+```{r creating separate boxplots pfs item, include=FALSE, swarning=FALSE}
 
 # Plotting
 
@@ -2850,6 +2888,7 @@ plot_all_boxplot <- plot_boxplot_sep_1 / plot_boxplot_sep_2 / plot_boxplot_sep_3
 plot_all_boxplot
 
 ```
+
 
 # Drop-Offs
 
