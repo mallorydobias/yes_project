@@ -2279,7 +2279,7 @@ perc_completed_rise
 
 ## By SSI
 
-Here, we plot starters vs completers by each SSI.
+Here, we plot completion rates for each SSI.
 
 ```{r setting up data for bar plot completion rates, include=FALSE}
 
