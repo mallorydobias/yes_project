@@ -2888,7 +2888,7 @@ plot_all_boxplot <- plot_boxplot_sep_1 / plot_boxplot_sep_2 / plot_boxplot_sep_3
 
 ```
 
-```{r printing combined pfs item boxplot, include=FALSE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
+```{r printing combined pfs item boxplot, include=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
 
 plot_all_boxplot
 
