@@ -1610,7 +1610,7 @@ plot_abc_hate
 
 Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining abc pre post outcomes plots, warning=FALSE, message=FALSE}
+```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for abc
 
@@ -1785,7 +1785,7 @@ plot_care_hate
 
 Combining all project care pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project care; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project care; right plot shows distributions of self-hate scores before and after project care. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining care pre post outcomes plots, warning=FALSE, message=FALSE}
+```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for care
 
@@ -1960,7 +1960,7 @@ plot_pp_hate
 
 Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining pp pre post outcomes plots, warning=FALSE, message=FALSE}
+```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
 
@@ -2135,7 +2135,7 @@ plot_rise_hate
 
 Combining all project rise pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project rise; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project rise; right plot shows distributions of self-hate scores before and after project rise Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
 
-```{r combining rise pre post outcomes plots, warning=FALSE, message=FALSE}
+```{r combining rise pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for rise
 
@@ -2149,7 +2149,7 @@ plots_rise
 
 ## All
 
-```{r combining all pre post outcomes plots, warning=FALSE, message=FALSE}
+```{r combining all pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 library(patchwork)
 
