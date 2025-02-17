@@ -1368,6 +1368,62 @@ print(doc, target = file.path(tables_folder, "demographics_table.docx"))
 
 ```
 
+## MFQ Scores
+
+```{r calculating proportion of teens elevated depression, echo=FALSE}
+
+# Calculating n youth with elevated depression
+
+n_youth_elev_dep <- data_youth %>%
+  select(mfq_total) %>%
+  filter(mfq_total >= 12) %>%
+  nrow()
+
+# Calculating perc youth with elevated depression
+
+perc_youth_elev_dep <- round((n_youth_elev_dep / nrow(data_youth))*100, 2)
+
+```
+
+Over a quarter of cases (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire youth sample.
+
+```{r plotting mfq, warning=FALSE, message=FALSE}
+
+# Creating data frame
+
+data_mfq_plot <- data_youth %>%
+  select(mfq_total) %>%
+  filter(!is.na(mfq_total))
+
+mfq_mean <- data_mfq_plot %>%
+  summarize(mfq_mean = round(mean(mfq_total, na.rm = TRUE), 2))
+
+# Convert mfq_category to a factor
+
+data_mfq_plot$mfq_category <- as.factor((data_mfq_plot$mfq_total >= 12))
+
+# Plotting mfq
+plot_mfq <- ggplot(data_mfq_plot, aes(x = mfq_total, fill = mfq_category)) +  # conditional fill
+  geom_histogram(binwidth = 1, alpha = 0.8) +
+  scale_fill_manual(values = c("FALSE" = "#836EAA", "TRUE" = "#4E2A84")) +  # color for <12 and >=12
+  geom_vline(aes(xintercept = mfq_mean$mfq_mean), color = "black", linetype = "solid", size = 0.5) +  # line
+  scale_x_continuous(limits = c(0, 26)) +  # Set x-axis limits
+  theme_light() +
+  labs(x = "depression score", y = "frequency") +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  plot_annotation(title = "Depression scale scores (MFQ) for all youth",
+                  caption = paste("Higher scores (further right) mean greater depressive symptoms. 
+                  Scores of 12 or higher suggest possible depression (darker purple). 
+                  Mean score =", round(mfq_mean$mfq_mean, 2), "(solid line)."))
+
+plot_mfq
+
+```
+
+
 # Clinical Outcomes 
 
 ```{r plot setup, include=FALSE, warning=FALSE}
