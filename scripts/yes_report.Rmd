@@ -2259,7 +2259,7 @@ perc_completed_rise
 
 Here, we plot starters vs completers by each SSI.
 
-```{r, warning=FALSE}
+```{r setting up data for bar plot completion rates, include=FALSE}
 
 # Create data for bar plot
 
@@ -2290,6 +2290,10 @@ data_barplot_rise <- data.frame(
 data_barplot_all <- bind_rows(data_barplot_abc, data_barplot_care,
                               data_barplot_pp, data_barplot_rise)
 
+```
+
+```{r writing plot settings for bar plot completion rates, include=FALSE}
+
 # Define colors for each ssi and category combination
 
 custom_colors <- c(
@@ -2316,7 +2320,9 @@ data_barplot_all$interaction_ssi_category <- factor(data_barplot_all$interaction
                                                                "Project Personality.starters", "Project Personality.completers",
                                                                "Project RISE.starters", "Project RISE.completers"))
 
+```
 
+```{r plotting completion rates, echo=FALSE, warning=FALSE, message=FALSE}
 
 # Bar plot
 
