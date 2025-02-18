@@ -2647,7 +2647,7 @@ data_rise_plot_change_hope_mutated <- data_rise_plot_change_hope %>%
 # Plotting 
 
 plot_rise_change_hopeless <- ggplot(data_rise_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
-  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  geom_histogram(stat="count", fill = "#F48151", alpha = 0.8) +  
   theme_light() +
   theme(legend.position = "none",
         title = element_text(size = 10),
@@ -2716,7 +2716,7 @@ data_rise_plot_change_prob_mutated <- data_rise_plot_change_prob %>%
 # Plotting 
 
 plot_rise_change_prob <- ggplot(data_rise_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
-  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  geom_histogram(stat="count", fill = "#F48151", alpha = 0.8) +  
   theme_light() +
   theme(legend.position = "none",
         title = element_text(size = 10),
