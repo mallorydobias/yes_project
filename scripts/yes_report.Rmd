@@ -2683,7 +2683,7 @@ perc_rise_lot_little_more_prob <- round((n_rise_lot_little_more_prob / n_rise_an
 
 Of those who answered this question, **`r perc_rise_lot_little_more_prob`% of responses reported they felt "a lot" or "a little" more able to solve problems post-RISE.**
 
-```{r printing pp change problem solving, include=TRUE}
+```{r printing rise change problem solving, include=TRUE}
 
 perc_rise_lot_little_more_prob
 
