@@ -2378,7 +2378,7 @@ plot_pp_change_hopeless
 
 ```
 
-```{r change care problem solving, include=FALSE}
+```{r change pp problem solving, include=FALSE}
 
 # Calculating number a lot or little more able to solve problems
 
@@ -2595,6 +2595,137 @@ plots_rise <- plot_rise_bhs + plot_rise_shs + plot_rise_hate +
                   theme = theme(plot.title = element_text(hjust = 0.5)))
 
 plots_rise
+
+```
+
+```{r change rise hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_rise_lot_little_less_hopeless <- data_youth_rise %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_rise_answered_hopeless <- data_youth_rise %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_rise_lot_little_less_hopeless <- round((n_rise_lot_little_less_hopeless / n_rise_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_rise_lot_little_less_hopeless`% of responses reported they felt "a lot" or "a little" less hopeless post-RISE.**
+
+```{r printing rise change hopelessness, include=TRUE}
+
+perc_rise_lot_little_less_hopeless
+
+```
+
+```{r plotting rise change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_rise_plot_change_hope <- data_youth_rise %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_rise_plot_change_hope_mutated <- data_rise_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_rise_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_rise_change_hopeless <- ggplot(data_rise_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project RISE), how hopeless do you feel right now?") +
+  labs(x = "response", y = "frequency")
+
+plot_rise_change_hopeless
+
+```
+
+```{r change rise problem solving, include=FALSE}
+
+# Calculating number a lot or little more able to solve problems
+
+n_rise_lot_little_more_prob <- data_youth_rise %>%
+  filter(perc_change_prob == "A lot more able to solve the problems" | 
+           perc_change_prob == "A little more able to solve the problems") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_rise_answered_prob <- data_youth_rise %>%
+  filter(!is.na(perc_change_prob)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_rise_lot_little_more_prob <- round((n_rise_lot_little_more_prob / n_rise_answered_prob)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_rise_lot_little_more_prob`% of responses reported they felt "a lot" or "a little" more able to solve problems post-RISE.**
+
+```{r printing pp change problem solving, include=TRUE}
+
+perc_rise_lot_little_more_prob
+
+```
+
+```{r plotting rise change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_rise_plot_change_prob <- data_youth_rise %>%
+  filter(!is.na(perc_change_prob)) %>%
+  select(perc_change_prob) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "A lot more able to solve the problems" ~ "A lot more able",
+                                      perc_change_prob == "A little more able to solve the problems" ~ "A little more able",
+                                      perc_change_prob == "The same amount able to solve the problems" ~ "The same amount able",
+                                      perc_change_prob == "A little less able to solve the problems" ~ "A little less able",
+                                      perc_change_prob == "Much less able to solve the problems" ~ "Much less able",
+                                      TRUE ~ perc_change_prob))
+
+# Setting a group order
+
+custom_order <- c("A lot more able", "A little more able", "The same amount able", 
+                  "A little less able", "Much less able")
+
+# Convert to a factor with the specified order
+
+data_rise_plot_change_prob_mutated <- data_rise_plot_change_prob %>%
+  mutate(perc_change_prob = factor(data_rise_plot_change_prob$perc_change_prob, levels = custom_order))
+
+# Plotting 
+
+plot_rise_change_prob <- ggplot(data_rise_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
+  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project RISE), how able are you to solve your problems?") +
+  labs(x = "response", y = "frequency")
+
+plot_rise_change_prob
 
 ```
 
