@@ -822,6 +822,60 @@ data_youth %>%
 
 ```
 
+```{r calculating mfq descriptives, include=FALSE}
+
+# Calculating n youth with elevated depression
+
+n_youth_elev_dep <- data_youth %>%
+  select(mfq_total) %>%
+  filter(mfq_total >= 12) %>%
+  nrow()
+
+# Calculating perc youth with elevated depression
+
+perc_youth_elev_dep <- round((n_youth_elev_dep / n_started_survey)*100, 2)
+
+# Creating data frame
+
+data_mfq_plot <- data_youth %>%
+  select(mfq_total) %>%
+  filter(!is.na(mfq_total))
+
+mfq_mean <- data_mfq_plot %>%
+  summarize(mfq_mean = round(mean(mfq_total, na.rm = TRUE), 2))
+
+```
+
+```{r calculating access to support descriptives, include=FALSE}
+
+# Calculating n youth with unmet mental health needs
+# (no history of support, but they've wanted support)
+
+n_youth_no_support <- data_youth %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before") %>%
+  nrow()
+
+# Calculating perc youth with history of unmet mh needs
+
+perc_youth_no_support <- round((n_youth_no_support / n_started_survey)*100, 2)
+
+# Calculating n youth with elevated depressive symptoms
+# and with no history of support
+
+n_youth_no_support_w_depression <- data_youth %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+         dem_receive_support == "no, and I have not wanted to get support before") %>%
+  filter(mfq_total >= 12) %>%
+  select(dem_receive_support, mfq_total) %>%
+  nrow()
+
+# Calculating perc youth with depression, without support
+
+perc_youth_no_support_w_depression <- round((n_youth_no_support_w_depression / n_started_survey)*100, 2)
+
+```
+
 ```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
@@ -848,6 +902,9 @@ Across all survey starts (n = `r n_started_survey`):
 + `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
 + `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
 + Race and ethnicity are measured differently across surveys (see below)
++ `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
++ `r perc_youth_no_support`% report never accessing mh support despite wanting it
++ `r perc_youth_no_support_w_depression`% report no history of mh support access AND elevated depression symptoms
 
 Of cases with data at both time points:
 
@@ -892,7 +949,7 @@ perc_agreed_questionnaires
 
 ```
 
-# Demographics
+# Sample Characteristics
 
 ## Data Source
 
@@ -1372,31 +1429,13 @@ print(doc, target = file.path(tables_folder, "demographics_table.docx"))
 
 ```{r calculating proportion of teens elevated depression, echo=FALSE}
 
-# Calculating n youth with elevated depression
-
-n_youth_elev_dep <- data_youth %>%
-  select(mfq_total) %>%
-  filter(mfq_total >= 12) %>%
-  nrow()
-
-# Calculating perc youth with elevated depression
-
-perc_youth_elev_dep <- round((n_youth_elev_dep / nrow(data_youth))*100, 2)
+perc_youth_elev_dep
 
 ```
 
-Over a quarter of cases (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire youth sample.
+**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
 
 ```{r plotting mfq, echo=FALSE, warning=FALSE, message=FALSE}
-
-# Creating data frame
-
-data_mfq_plot <- data_youth %>%
-  select(mfq_total) %>%
-  filter(!is.na(mfq_total))
-
-mfq_mean <- data_mfq_plot %>%
-  summarize(mfq_mean = round(mean(mfq_total, na.rm = TRUE), 2))
 
 # Convert mfq_category to a factor
 
@@ -1420,6 +1459,11 @@ plot_mfq <- ggplot(data_mfq_plot, aes(x = mfq_total, fill = mfq_category)) +  # 
 plot_mfq
 
 ```
+
+## Access to Support
+
+
+
 
 # Clinical Outcomes 
 
