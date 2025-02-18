@@ -1427,13 +1427,13 @@ print(doc, target = file.path(tables_folder, "demographics_table.docx"))
 
 ## MFQ Scores
 
+**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
+
 ```{r calculating proportion of teens elevated depression, echo=FALSE}
 
 perc_youth_elev_dep
 
 ```
-
-**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
 
 ```{r plotting mfq, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1462,8 +1462,21 @@ plot_mfq
 
 ## Access to Support
 
+**Across all survey starts, `r perc_youth_no_support`% report never accessing mental health support, despite wanting to.**
 
+```{r showing unmet mental health need, include=TRUE}
 
+perc_youth_no_support
+
+```
+
+**`r perc_youth_no_support_w_depression`% report never accessing mental health support AND elevated depressive symptoms (MFQ score of 12 or higher)**. 
+
+```{r showing no access to support and depression, include=TRUE}
+
+perc_youth_no_support_w_depression
+
+```
 
 # Clinical Outcomes 
 
