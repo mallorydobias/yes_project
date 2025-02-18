@@ -1409,20 +1409,17 @@ plot_mfq <- ggplot(data_mfq_plot, aes(x = mfq_total, fill = mfq_category)) +  # 
   geom_vline(aes(xintercept = mfq_mean$mfq_mean), color = "black", linetype = "solid", size = 0.5) +  # line
   scale_x_continuous(limits = c(0, 26)) +  # Set x-axis limits
   theme_light() +
-  labs(x = "depression score", y = "frequency") +
   theme(legend.position = "none",
-        text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
   plot_annotation(title = "Depression scale scores (MFQ) for all youth",
                   caption = paste("Higher scores (further right) mean greater depressive symptoms. 
-                  Scores of 12 or higher suggest possible depression (darker purple). 
-                  Mean score =", round(mfq_mean$mfq_mean, 2), "(solid line)."))
+                  Scores of 12 or higher suggest possible depression (dark purple); mean =", round(mfq_mean$mfq_mean, 2), "(solid line).")) +
+  labs(x = "depression score", y = "frequency")
 
 plot_mfq
 
 ```
-
 
 # Clinical Outcomes 
 
