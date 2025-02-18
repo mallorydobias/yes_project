@@ -1752,6 +1752,69 @@ plots_abc
 
 ```
 
+```{r change abc hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_abc_lot_little_less_hopeless <- data_youth_abc %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_abc_answered_hopeless <- data_youth_abc %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_abc_lot_little_less_hopeless <- round((n_abc_lot_little_less_hopeless / n_abc_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_abc_lot_little_less_hopeless`% of responses reported they felt "a lot" or "a little" less hopeless post-ABC.**
+
+```{r printing abc change hopelessness, include=TRUE}
+
+perc_abc_lot_little_less_hopeless
+
+```
+
+```{r plotting abc change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_abc_plot_change_hope <- data_youth_abc %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_abc_plot_change_hope_mutated <- data_abc_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_abc_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_abc_change_hopeless <- ggplot(data_abc_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#32A2A0", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before doing this activity, how hopeless do you feel right now?") +
+  labs(x = "response", y = "frequency")
+
+plot_abc_change_hopeless
+
+```
+
+
 ## Project CARE
 
 ```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
