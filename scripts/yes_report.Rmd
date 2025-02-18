@@ -1501,6 +1501,8 @@ data_access_plot_mutated <- data_access_plot %>%
 
 ```
 
+Here, we plot responses to the treatment access question. Notably, this figure does not include missing responses.
+
 ```{r plotting access to support, echo=FALSE}
 
 # Plotting 
