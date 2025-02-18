@@ -1478,6 +1478,48 @@ perc_youth_no_support_w_depression
 
 ```
 
+```{r setting up to plot access to support, include=FALSE}
+
+# Creating df for plot
+
+data_access_plot <- data_youth %>%
+  select(dem_receive_support) %>%
+  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, ",no")) %>% # dropping multiple conflicting responses 
+  mutate(dem_receive_support = str_replace(dem_receive_support, "yes, I am getting support now", "yes (now)"),
+         dem_receive_support = str_replace(dem_receive_support, "yes, I have gotten support in the past", "yes (past)"),
+         dem_receive_support = str_replace(dem_receive_support, "no, and I have not wanted to get support before", "no (never wanted it)"),
+         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no (has wanted it)"))
+  
+# Setting a group order
+
+custom_order <- c("no (never wanted it)", "no (has wanted it)", "yes (now)", "yes (past)", "yes (now),yes (past)")
+
+# Convert to a factor with the specified order
+
+data_access_plot_mutated <- data_access_plot %>%
+  mutate(dem_receive_support = factor(data_access_plot$dem_receive_support, levels = custom_order))
+
+```
+
+```{r plotting access to support, echo=FALSE}
+
+# Plotting 
+
+plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +  
+  geom_histogram(stat="count", fill = "#4E2A84", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
+                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor'")) +
+  labs(x = "response", y = "frequency")
+
+plot_access
+
+```
+
 # Clinical Outcomes 
 
 ```{r plot setup, include=FALSE, warning=FALSE}
