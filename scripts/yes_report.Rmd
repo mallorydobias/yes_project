@@ -2968,6 +2968,15 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
 
 ```
 
+## By Date
+
+```{r}
+
+
+
+```
+
+
 # Acceptability
 
 ## Overall
@@ -3474,9 +3483,7 @@ data_pfs_boxplot_mutated <- data_pfs_boxplot %>%
   mutate(pfs_item = factor(pfs_item, levels = custom_order_pfs),
          ssi_choice = factor(ssi_choice, levels = custom_order_ssi))
 
-
 ```
-
 
 ```{r creating separate boxplot dfs per pfs item, include=FALSE}
 
