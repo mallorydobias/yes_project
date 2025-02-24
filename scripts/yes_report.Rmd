@@ -1781,8 +1781,6 @@ rempsyc::nice_table(t_results_abc)
 
 ```
 
-Combining all abc pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
-
 ```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for abc
@@ -1790,9 +1788,10 @@ Combining all abc pre-post outcomes into one plot. Within each plot, higher scor
 plots_abc <- plot_abc_bhs + plot_abc_shs + plot_abc_hate +
   plot_annotation(title = "Outcomes before vs after ABC Project",
                   theme = theme(plot.title = element_text(hjust = 0.5)),
-                  caption = "Left = hopelessness scores (BHS) before and after ABC;
-                  Middle = agency scores (SHS) before and after ABC;
-                  Right = self-hate scores before and after ABC.")
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after ABC;
+                  Middle plot = agency scores (SHS) before and after ABC;
+                  Right plot = self-hate scores before and after ABC.")
 
 plots_abc
 
@@ -2094,8 +2093,6 @@ rempsyc::nice_table(t_results_care)
 
 ```
 
-Combining all project care pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
-
 ```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for care
@@ -2103,9 +2100,10 @@ Combining all project care pre-post outcomes into one plot. Within each plot, hi
 plots_care <- plot_care_bhs + plot_care_shs + plot_care_hate +
   plot_annotation(title = "Outcomes before vs after Project CARE",
                   theme = theme(plot.title = element_text(hjust = 0.5)),
-                  caption = "Left = hopelessness scores (BHS) before and after CARE;
-                  Middle = agency scores (SHS) before and after CARE;
-                  Right = self-hate scores before and after CARE.")
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after CARE;
+                  Middle plot = agency scores (SHS) before and after CARE;
+                  Right plot = self-hate scores before and after CARE.")
 
 plots_care
 
@@ -2416,9 +2414,10 @@ Combining all project personality pre-post outcomes into one plot. Within each p
 plots_pp <- plot_pp_bhs + plot_pp_shs + plot_pp_hate +
    plot_annotation(title = "Outcomes before vs after Project Personality",
                   theme = theme(plot.title = element_text(hjust = 0.5)),
-                  caption = "Left = hopelessness scores (BHS) before and after Personality;
-                  Middle = agency scores (SHS) before and after Personality;
-                  Right = self-hate scores before and after Personality.")
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after Personality;
+                  Middle plot = agency scores (SHS) before and after Personality;
+                  Right plot = self-hate scores before and after Personality.")
 
 plots_pp
 
@@ -2446,7 +2445,7 @@ perc_pp_lot_little_less_hopeless <- round((n_pp_lot_little_less_hopeless / n_pp_
 
 Of those who answered this question, **`r perc_pp_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-Project Personality.**
 
-```{r printing pp change hopelessness, include=TRUE}
+```{r printing pp change hopelessness, include=FALSE}
 
 perc_pp_lot_little_less_hopeless
 
@@ -2509,7 +2508,7 @@ perc_pp_lot_little_more_prob <- round((n_pp_lot_little_more_prob / n_pp_answered
 
 Of those who answered this question, **`r perc_pp_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-Project Personality.**
 
-```{r printing pp change problem solving, include=TRUE}
+```{r printing pp change problem solving, include=FALSE}
 
 perc_pp_lot_little_more_prob
 
@@ -2563,17 +2562,24 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in hopelessness (bhs scores). For those who chose the rise intervention with data at both time points, we find **no evidence that hopelessness decreased from pre to post rise, dz = `r rise_bhs_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+For those who chose **Project RISE** with data at both time points:
 
-```{r t test results rise bhs}
++ **No evidence that hopelessness decreased** from pre to post rise, dz = `r rise_bhs_dz_value`.
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
-t_rise_bhs
+```{r t test results rise bhs, echo=FALSE}
 
-```
+# t_rise_bhs # full results here
 
-```{r t test effect size rise bhs}
+# Pulling table values
 
-rise_bhs_dz_value
+data_t_rise_bhs <- broom::tidy(t_rise_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_bhs_dz_value,
+         rise_test = "Hopelessness") %>%
+  select(rise_test, t, df, p.value, dz)
 
 ```
 
@@ -2606,17 +2612,22 @@ plot_rise_bhs <- plot_data_bhs_rise_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in agency (shs pathways scores). For those who chose the rise intervention with data at both time points, we find **no evidence that agency increased from pre to post rise, dz = `r rise_shs_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
++ **No evidence that agency increased** from pre to post rise, dz = `r rise_shs_dz_value`. 
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
 
-```{r t test results rise shs}
+```{r t test results rise shs, echo=FALSE}
 
-t_rise_shs
+# t_rise_shs # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size rise shs}
-
-rise_shs_dz_value
+data_t_rise_shs <- broom::tidy(t_rise_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_shs_dz_value,
+         rise_test = "Agency") %>%
+  select(rise_test, t, df, p.value, dz)
 
 ```
 
@@ -2649,17 +2660,22 @@ plot_rise_shs <- plot_data_shs_rise_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-rise changes in self-hate (self-hate scale scores). For those who chose the rise intervention with data at both time points, we find **no evidence that self-hate decreased from pre to post rise, dz = `r rise_hate_dz_value`.** However, this test is currently run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
++ **No evidence that self-hate decreased** from pre to post rise, dz = `r rise_hate_dz_value`. 
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
 
-```{r t test results rise hate}
+```{r t test results rise hate, echo=FALSE}
 
-t_rise_hate
+# t_rise_hate # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size rise hate}
-
-rise_hate_dz_value
+data_t_rise_hate <- broom::tidy(t_rise_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_hate_dz_value,
+         rise_test = "Self-Hate") %>%
+  select(rise_test, t, df, p.value, dz)
 
 ```
 
@@ -2692,7 +2708,19 @@ plot_rise_hate <- plot_data_hate_rise_function %>%
 
 ```
 
-Combining all project rise pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project rise; middle plot shows distributions of pathway scores (SHS scale, pathways subscale) before and after project rise; right plot shows distributions of self-hate scores before and after project rise Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, hope, and self-hate respectively.
+Paired t-test results for Project RISE:
+
+```{r all rise t results, echo=FALSE}
+
+# Combining t results
+
+t_results_rise <- bind_rows(data_t_rise_bhs, data_t_rise_shs, data_t_rise_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_rise)
+
+```
 
 ```{r combining rise pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -2700,7 +2728,11 @@ Combining all project rise pre-post outcomes into one plot. Left plot shows dist
 
 plots_rise <- plot_rise_bhs + plot_rise_shs + plot_rise_hate +
   plot_annotation(title = "Outcomes before vs after Project RISE",
-                  theme = theme(plot.title = element_text(hjust = 0.5)))
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after RISE;
+                  Middle plot = agency scores (SHS) before and after RISE;
+                  Right plot = self-hate scores before and after RISE")
 
 plots_rise
 
@@ -2726,9 +2758,9 @@ perc_rise_lot_little_less_hopeless <- round((n_rise_lot_little_less_hopeless / n
 
 ```
 
-Of those who answered this question, **`r perc_rise_lot_little_less_hopeless`% of responses reported they felt "a lot" or "a little" less hopeless post-RISE.**
+Of those who answered this question, **`r perc_rise_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-RISE.**
 
-```{r printing rise change hopelessness, include=TRUE}
+```{r printing rise change hopelessness, include=FALSE}
 
 perc_rise_lot_little_less_hopeless
 
@@ -2762,7 +2794,7 @@ plot_rise_change_hopeless <- ggplot(data_rise_plot_change_hope_mutated, aes(x = 
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (Project RISE), how hopeless do you feel right now?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_rise_change_hopeless
 
@@ -2789,9 +2821,9 @@ perc_rise_lot_little_more_prob <- round((n_rise_lot_little_more_prob / n_rise_an
 
 ```
 
-Of those who answered this question, **`r perc_rise_lot_little_more_prob`% of responses reported they felt "a lot" or "a little" more able to solve problems post-RISE.**
+Of those who answered this question, **`r perc_rise_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-RISE.**
 
-```{r printing rise change problem solving, include=TRUE}
+```{r printing rise change problem solving, include=FALSE}
 
 perc_rise_lot_little_more_prob
 
@@ -2831,7 +2863,7 @@ plot_rise_change_prob <- ggplot(data_rise_plot_change_prob_mutated, aes(x = perc
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (Project RISE), how able are you to solve your problems?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_rise_change_prob
 
