@@ -3069,7 +3069,7 @@ plot_completions_by_date
 
 ```
 
-Here we calculate SSI completion rates before vs after introducing the commit items to d02 (date we added commit item: `r date_d02_commit_introduced`). Given the large number of SSI completions in mid-Dec, we also compare SSI completion rates pre-commitment item to those after the unusual spike in completions. When taking out completion rates from the SA event period, completion rates look very similar in these data from pre to post adding the commitment item.
+Here we calculate SSI completion rates before vs after introducing the commit items to d02 (date we added commit item: `r date_d02_commit_introduced`). Given the large number of SSI completions in mid-Dec, we also compare SSI completion rates pre-commitment item to those after the unusual spike in completions. When excluding completions from the SA event period, completion rates look very similar in these data from pre to post adding the commitment item.
 
 We likely get a large completion rate boost due to people in SA encouraging youth to complete an SSI during this mid-Dec window.
 
