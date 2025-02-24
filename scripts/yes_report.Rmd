@@ -945,9 +945,9 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 # Questionnaire Completion
 
-More than half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`), youth agreed to fill out optional questionnaires when asked. 
+When asked, **youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**.
 
-```{r perc agreed questionnaires}
+```{r perc agreed questionnaires, include=FALSE}
 
 perc_agreed_questionnaires
 
@@ -957,7 +957,7 @@ perc_agreed_questionnaires
 
 ## Data Source
 
-N's and percentages are all calculated out of the number of total youth responses.
+Data source(s), of all responses:
 
 ```{r prepping for data tally, include=FALSE}
 
@@ -980,11 +980,17 @@ data_source_tallies <- data_youth_data_source %>%
   mutate(percentage = count / nrow(data_youth_data_source) * 100) %>%
   mutate(percentage = round(percentage, 2)) %>%
   unnest(cols = c(percentage)) %>%
+  mutate(notes = case_when(data_id == "d01" ~ "original English YES",
+                           data_id == "d02" ~ "San Antonio English with Q's",
+                           data_id == "d05" ~ "YES Middle East English",
+                           data_id == "d09" ~ "current YES English",
+                           data_id == "d16" ~ "temporary YES English during move")) %>%
+  select(data_id, notes, count, percentage) %>%
   rename(n = count, "%" = percentage)
 
 ```
 
-```{r printing data tally, include=TRUE}
+```{r printing data tally, echo=FALSE}
 
 rempsyc::nice_table(data_source_tallies)
 
@@ -992,7 +998,7 @@ rempsyc::nice_table(data_source_tallies)
 
 ## Age
 
-N's and percentages are all calculated out of the number of survey starts from youth (n = `r n_started_survey`). 
+Age(s), of all survey starts from youth (n = `r n_started_survey`). 
 
 ```{r prepping for age tally, include=FALSE}
 
@@ -1020,7 +1026,7 @@ age_tallies <- data_youth_age %>%
 
 ```
 
-```{r printing age tally, include=TRUE}
+```{r printing age tally, echo=FALSE}
 
 rempsyc::nice_table(age_tallies)
 
@@ -1466,17 +1472,19 @@ plot_mfq
 
 ## Access to Support
 
-**Across all survey starts, `r perc_youth_no_support`% report never accessing mental health support, despite wanting to.**
+Across all survey starts: 
 
-```{r showing unmet mental health need, include=TRUE}
++ **`r perc_youth_no_support`% never accessed mental health support,** despite wanting to.
+
+```{r showing unmet mental health need, include=FALSE}
 
 perc_youth_no_support
 
 ```
 
-**`r perc_youth_no_support_w_depression`% report never accessing mental health support AND elevated depressive symptoms (MFQ score of 12 or higher)**. 
++ **`r perc_youth_no_support_w_depression`% never accessed mental health support AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
 
-```{r showing no access to support and depression, include=TRUE}
+```{r showing no access to support and depression, include=FALSE}
 
 perc_youth_no_support_w_depression
 
@@ -1505,8 +1513,6 @@ data_access_plot_mutated <- data_access_plot %>%
 
 ```
 
-Here, we plot responses to the treatment access question. Notably, this figure does not include missing responses.
-
 ```{r plotting access to support, echo=FALSE}
 
 # Plotting 
@@ -1519,8 +1525,9 @@ plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
-                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor'")) +
-  labs(x = "response", y = "frequency")
+                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor;
+                                  Plot does not include missing values'")) +
+  labs(x = "", y = "frequency")
 
 plot_access
 
