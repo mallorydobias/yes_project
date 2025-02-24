@@ -1553,7 +1553,9 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, **hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.**
+For those who chose the ABC Project intervention with data at both time points:
+
++ **hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.**
 
 ```{r t test results abc bhs, echo=FALSE}
 
@@ -1660,7 +1662,7 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, **agency increased from pre to post abc, dz = `r abc_shs_dz_value`.**
++ **agency increased from pre to post abc, dz = `r abc_shs_dz_value`.**
 
 ```{r t test results abc shs, echo=FALSE}
 
@@ -1707,7 +1709,7 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-abc changes in self-hate (self-hate scale scores). For those who chose the abc intervention with data at both time points, **self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.**
++ **self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.**
 
 ```{r t test results abc hate, echo=FALSE}
 
