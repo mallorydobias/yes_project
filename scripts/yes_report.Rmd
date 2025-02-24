@@ -1429,11 +1429,11 @@ print(doc, target = file.path(tables_folder, "demographics_table.docx"))
 
 ```
 
-## MFQ Scores
+## Depression Scores
 
 **Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
 
-```{r calculating proportion of teens elevated depression, echo=FALSE}
+```{r calculating proportion of teens elevated depression, include=FALSE}
 
 perc_youth_elev_dep
 
