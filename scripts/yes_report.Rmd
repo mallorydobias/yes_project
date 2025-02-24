@@ -86,6 +86,9 @@ library(ggplot2)
 if(!require(broom)){install.packages('broom')}
 library(broom)
 
+if(!require(tidytext)){install.packages('tidytext')}
+library(tidytext)
+
 ```
 
 ```{r note, include=FALSE}
@@ -1537,6 +1540,78 @@ plot_access
 
 ```
 
+# Why Interested in YES
+
+```{r removing stop words, include=FALSE}
+
+library(tidytext)
+
+data(stop_words)
+
+## Tokenize the text data into individual words and remove stop words
+
+# heard about yes from
+
+heard_from_does_tidytext <- data_youth %>%
+  # Selecting the question
+  select(dem_hear_proj) %>%
+  # Tokenize the text
+  unnest_tokens(word, dem_hear_proj) %>%
+  # Remove stop words
+  anti_join(stop_words, by = "word") %>%
+  na.omit()
+
+# why interested in yes
+
+interested_bc_tidytext <- data_youth %>%
+  # Selecting the question
+  select(dem_why_interest) %>%
+  # Tokenize the text
+  unnest_tokens(word, dem_why_interest) %>%
+  # Remove stop words
+  anti_join(stop_words, by = "word") %>%
+  na.omit()
+
+```
+
+```{r plotting common words heard about yes from, echo=FALSE}
+
+## Creating plot
+
+heard_from_does_tidytext %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "#CCC4DF") +
+  xlab(NULL) +
+  theme_light() +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "white")) +
+  labs(y = "Number of Times Each Word Appeared", title = "Most Common Words, How They Heard About YES") +
+  coord_flip()
+
+```
+
+```{r plotting common words interested in yes because, echo=FALSE}
+
+## Creating plot
+
+interested_bc_tidytext %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "#9380B6") +
+  xlab(NULL) +
+  theme_light() +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "white")) +
+  labs(y = "Number of Times Each Word Appeared", title = "Most Common Words, Interested in YES Because") +
+  coord_flip()
+
+```
+
 # Clinical Outcomes 
 
 ```{r plot setup, include=FALSE, warning=FALSE}
@@ -2961,7 +3036,7 @@ completions_rise <- data_youth_rise %>%
 
 ```
 
-```{r binding completion rate rows, echo=FALSE}
+```{r binding completion rate rows, include=FALSE}
 
 completions_by_ssi <- bind_rows(completions_overall,
                                 completions_abc,
@@ -2971,7 +3046,7 @@ completions_by_ssi <- bind_rows(completions_overall,
 
 ```
 
-```{r printing completion rates table, include=TRUE}
+```{r printing completion rates table, echo=FALSE}
 
 rempsyc::nice_table(completions_by_ssi)
 
