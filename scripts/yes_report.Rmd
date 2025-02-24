@@ -2405,8 +2405,6 @@ rempsyc::nice_table(t_results_pp)
 
 ```
 
-Combining all project personality pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
-
 ```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
@@ -2963,7 +2961,7 @@ completions_rise <- data_youth_rise %>%
 
 ```
 
-```{r binding completion rate rows, include=FALSE}
+```{r binding completion rate rows, echo=FALSE}
 
 completions_by_ssi <- bind_rows(completions_overall,
                                 completions_abc,
@@ -2972,6 +2970,7 @@ completions_by_ssi <- bind_rows(completions_overall,
                                 completions_rise)
 
 ```
+
 ```{r printing completion rates table, include=TRUE}
 
 rempsyc::nice_table(completions_by_ssi)
@@ -3227,7 +3226,7 @@ completion_rates_pre_and_post_commit <- bind_rows(completion_rate_pre_commit,
 
 ```
 
-```{r printing completion rate data pre commit item, include=TRUE}
+```{r printing completion rate data pre commit item, echo=FALSE}
 
 rempsyc::nice_table(completion_rates_pre_and_post_commit)
 
@@ -3312,9 +3311,9 @@ summary_pfs_overall <- dplyr::bind_rows(
 
 ```
 
-Overall PFS scale item descriptives across all SSIs
+Overall PFS scale item descriptives across all SSIs:
 
-```{r printing overall pfs item descriptives across all ssis}
+```{r printing overall pfs item descriptives across all ssis, echo=FALSE}
 
 summary_pfs_overall
 
@@ -3389,7 +3388,7 @@ data_overall_ridge_plot <- data_youth %>%
 
 PFS scale item descriptives for abc
 
-```{r pfs item desctiptives for abc}
+```{r pfs item desctiptives for abc, echo=FALSE}
 
 ## Running custom function to get pfs item descriptives 
 
@@ -3456,7 +3455,7 @@ plot_abc_pfs_ridge
 
 PFS scale item descriptives for care
 
-```{r pfs item desctiptives for care}
+```{r pfs item desctiptives for care, echo=FALSE}
 
 ## Running custom function to get pfs item descriptives 
 
@@ -3523,7 +3522,7 @@ plot_care_pfs_ridge
 
 PFS scale item descriptives for project personality
 
-```{r pfs item desctiptives for pp}
+```{r pfs item desctiptives for pp, echo=FALSE}
 
 ## Running custom function to get pfs item descriptives 
 
@@ -3590,7 +3589,7 @@ plot_pp_pfs_ridge
 
 PFS scale item descriptives for rise
 
-```{r pfs item desctiptives for rise}
+```{r pfs item desctiptives for rise, echo=FALSE}
 
 ## Running custom function to get pfs item descriptives 
 
@@ -4151,7 +4150,7 @@ Project RISE plot is unavailable, as we do not have timing variables on the page
 
 ## All
 
-Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater. Vertical lines are pages with writing exercises.
+Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater.
 
 ```{r combining all drop plots, warning=FALSE, message=FALSE, include=FALSE}
 
@@ -4161,7 +4160,8 @@ library(patchwork)
 plot_all_drop <- plot_abc_drop + plot_care_drop + plot_pp_drop + 
   plot_annotation(
     title = "Number of Page Submissions by Page of Each SSI",
-    caption = "ABC (green), CARE (red), Project Personality (Blue); vertical lines are pages with writing exercises"
+    caption = "ABC (green/left), CARE (red/middle), Project Personality (blue/right); 
+    Vertical lines are pages with writing exercises."
   )
 
 ```
