@@ -83,6 +83,9 @@ library(ggridges)
 if(!require(ggplot2)){install.packages('ggplot2')}
 library(ggplot2)
 
+if(!require(broom)){install.packages('broom')}
+library(broom)
+
 ```
 
 ```{r note, include=FALSE}
@@ -1552,15 +1555,19 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 Conducting a paired t-test to evaluate pre vs post-abc changes in hopelessness (bhs scores). For those who chose the abc intervention with data at both time points, **hopelessness decreased from pre to post abc, dz = `r abc_bhs_dz_value`.**
 
-```{r t test results abc bhs}
+```{r t test results abc bhs, echo=FALSE}
 
-t_abc_bhs
+# t_abc_bhs # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size abc bhs}
-
-abc_bhs_dz_value
+data_t_abc_bhs <- broom::tidy(t_abc_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_bhs_dz_value,
+         abc_test = "Hopelessness") %>%
+  select(abc_test, t, df, p.value, dz)
 
 ```
 
@@ -1655,9 +1662,19 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 Conducting a paired t-test to evaluate pre vs post-abc changes in agency (shs pathways scores). For those who chose the abc intervention with data at both time points, **agency increased from pre to post abc, dz = `r abc_shs_dz_value`.**
 
-```{r t test results abc shs}
+```{r t test results abc shs, echo=FALSE}
 
-t_abc_shs
+# t_abc_shs # full results here
+
+# Pulling table values
+
+data_t_abc_shs <- broom::tidy(t_abc_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_shs_dz_value,
+         abc_test = "Agency") %>%
+  select(abc_test, t, df, p.value, dz)
 
 ```
 
@@ -1698,15 +1715,19 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
 
 Conducting a paired t-test to evaluate pre vs post-abc changes in self-hate (self-hate scale scores). For those who chose the abc intervention with data at both time points, **self-hate decreased from pre to post abc, dz = `r abc_hate_dz_value`.**
 
-```{r t test results abc hate}
+```{r t test results abc hate, echo=FALSE}
 
-t_abc_hate
+# t_abc_hate # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size abc hate}
-
-abc_hate_dz_value
+data_t_abc_hate <- broom::tidy(t_abc_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_hate_dz_value,
+         abc_test = "Self-Hate") %>%
+  select(abc_test, t, df, p.value, dz)
 
 ```
 
@@ -1736,6 +1757,18 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
   labs(x = "Self-Hate", y = " ")
+
+```
+
+```{r all abc t results, echo=FALSE}
+
+# Combining t results
+
+t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_abc)
 
 ```
 
@@ -3720,7 +3753,7 @@ plot_all_boxplot
 
 ## ABC Project
 
-Counting number of page submissions by page number (looking for drop-off). Pulling largest drop-off point during this SSI.
+Given extensive display logic, we can't confidently calculate largest page for drop-off in ABC.
 
 ```{r selecting abc pages for plot, include=FALSE}
 
