@@ -2975,25 +2975,63 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
 # Pulling variables
 
 data_completion_by_date_plot <- data_youth %>%
-  select(start_date, volunteer_questionnaires_yn, data_id)
+  select(start_date, abc_commit, proj_care_commit, proj_pers_commit, proj_rise_commit, data_id)
 
-# Pulling earliest start_date with optional qs data within each data_id
+# Pulling earliest start_date with commit data within each data_id
   
-date_optional_qs_introduced <- data_completion_by_date_plot %>%
-  filter(!is.na(volunteer_questionnaires_yn)) %>%
+date_commit_introduced_by_data_id <- data_completion_by_date_plot %>%
+  filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
   arrange(start_date) %>%
   group_by(data_id) %>%
   slice(1)
 
-date_first_observation <- data_completion_by_date_plot %>%
+date_first_observation_per_data_id <- data_completion_by_date_plot %>%
   arrange(start_date) %>%
   group_by(data_id) %>%
-  slice(1) # d09 is the only data_id with pre and post commitment data
+  slice(1) 
 
-# Pulling first start_date where optional qs were introduced in d09
+# Binding these two dfs for comparisons
 
-date_d09_optional_qs_introduced <- data_completion_by_date_plot %>%
-  filter(!is.na(volunteer_questionnaires_yn) & data_id == "d09") %>%
+data_commit_date_bound <- bind_rows(date_commit_introduced_by_data_id, date_first_observation_per_data_id) %>%
+  group_by(data_id) %>%
+  arrange(start_date)
+
+```
+
+```{r comparing first observation by data id vs first commit data by data id, include=FALSE}
+
+data_commit_date_d01 <- data_commit_date_bound %>%
+  filter(data_id == "d01")  # no commit data 
+
+data_commit_date_d02 <- data_commit_date_bound %>%
+  filter(data_id == "d02")  # first observation vs first commit data
+
+data_commit_date_d05 <- data_commit_date_bound %>%
+  filter(data_id == "d05")  # no commit data 
+
+data_commit_date_d09 <- data_commit_date_bound %>%
+  filter(data_id == "d09")  # no pre-commit data 
+
+data_commit_date_d16 <- data_commit_date_bound %>%
+  filter(data_id == "d16")  # no pre-commit data 
+
+```
+
+```{r}
+
+# d02 is the only data_id with pre and post commitment data
+## (first observation is much earlier than first commit data, 
+## was originally na for all commit vars)
+
+data_completion_by_date_plot %>%
+  filter(data_id == "d02") %>%
+  arrange(start_date)
+
+# Pulling first start_date where commitment qs were introduced 
+
+date_d02_commit_introduced <- data_completion_by_date_plot %>%
+  filter(data_id == "d02") %>%
+  filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
   arrange(start_date) %>%
   slice(1) %>%
   select(start_date) %>%
@@ -3001,13 +3039,12 @@ date_d09_optional_qs_introduced <- data_completion_by_date_plot %>%
 
 ```
 
-```{r plotting d09 completions by start_date}
+```{r plotting d09 completions by start_date, include=FALSE}
 
 ## MD this is where I'll plot completions by start_date in d09
 ## Showing the exact point where the optional 
 
 ```
-
 
 # Acceptability
 
