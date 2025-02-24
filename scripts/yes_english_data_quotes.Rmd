@@ -1,0 +1,100 @@
+---
+title: "YES Data Quotes"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r packages, include=FALSE}
+
+## Loading packages
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+if(!require(tidyverse)){install.packages('tidyverse')}
+library(tidyverse)
+
+if(!require(rmarkdown)){install.packages('rmarkdown')}
+library(rmarkdown)
+
+```
+
+```{r reading in data, include=FALSE}
+
+## Reading in cleaned youth quote data
+
+library(here) # places working directory at root of project folder
+
+data_youth_quotes <- readRDS(here("data", "clean", "yes_data_english_clean.Rds")) %>% # directing to data from project folder root
+  filter(dem_age != "18 or older" &
+         dem_age != "17 or older" &
+         dem_age != "16-20" &
+         dem_age != "21-25" &   
+         dem_age != "26-30" & 
+         dem_age != "31-35" &  
+         dem_age != "36-40" & 
+         dem_age != "41-45" & 
+         dem_age != "46-50" & 
+         dem_age != "51-55" & 
+         dem_age != "56-60" & 
+         dem_age != "61-65" & 
+         dem_age != "66-70" & 
+         dem_age != "71-75" & 
+         dem_age != "76-80" &
+         dem_age != "81-85" &
+         dem_age != "86-90" &
+         dem_age != "91-95" &
+         dem_age != "96-100" &
+         dem_age != "101 or older") %>%
+select(pfs_like, pfs_more_feedback) %>%
+  filter(!is.na(pfs_like) | !is.na(pfs_more_feedback))
+
+```
+
+```{r creating quotes csv, warning=FALSE}
+
+## Creating csv
+
+## Defining the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_english_data_youth_quotes.csv"
+full_path <- file.path(folder_path, file_name)
+
+write.csv(data_youth_quotes, full_path, row.names = FALSE)
+
+```
