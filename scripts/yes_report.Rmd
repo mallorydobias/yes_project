@@ -911,6 +911,7 @@ Across all survey starts (n = `r n_started_survey`):
 + `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
 + `r perc_youth_no_support`% report never accessing mh support despite wanting it
 + `r perc_youth_no_support_w_depression`% report no history of mh support access AND elevated depression symptoms
++ By far, most responses in this data heard about yes in school
 
 Of cases with data at both time points:
 
@@ -1540,7 +1541,7 @@ plot_access
 
 ```
 
-# Why Interested in YES
+## Heard About YES From
 
 ```{r removing stop words, include=FALSE}
 
@@ -1574,6 +1575,10 @@ interested_bc_tidytext <- data_youth %>%
 
 ```
 
+## Interest in YES Because
+
+Here, we plot the most common words in a qualitative question about where they'd heard about yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
+
 ```{r plotting common words heard about yes from, echo=FALSE}
 
 ## Creating plot
@@ -1592,6 +1597,8 @@ heard_from_does_tidytext %>%
   coord_flip()
 
 ```
+
+Here, we plot the most common words in a qualitative question about why they were interested in yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
 
 ```{r plotting common words interested in yes because, echo=FALSE}
 
