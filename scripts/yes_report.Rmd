@@ -2752,7 +2752,7 @@ plots_all
 
 ## By SSI
 
-Here, we pull the number of starts, completions, and completion rate overall and within each SSI.
+Here, we pull and plot the number of starts, completions, and completion rate overall and within each SSI.
 
 ```{r overall completion rate calc, include=FALSE}
 
@@ -2838,8 +2838,6 @@ completions_by_ssi <- bind_rows(completions_overall,
 rempsyc::nice_table(completions_by_ssi)
 
 ```
-
-Here, we plot completion rates for each SSI.
 
 ```{r setting up data for bar plot completion rates, include=FALSE}
 
@@ -3037,7 +3035,7 @@ It's clear our San Antonio partners had many students complete an SSI on one day
 plot_completions_by_date <- ggplot(plot_data_completions_per_date, aes(x = start_date, y = n)) +   
   geom_histogram(position = "identity", stat = "identity", fill = "#4E2A84") +
   theme_minimal() +
-  labs(x = "", y = "n ssis completed", title = "Daily SSI Completions by Start Date (d02 only)") +
+  labs(x = "", y = "n ssis completed", title = "Daily SSI Completions (d02 only)") +
   theme(legend.position = "none") +
   geom_vline(xintercept = date_d02_commit_introduced, color = "black", linetype = "dotted") +
   plot_annotation(caption = paste("Taller bars indicate more completions on a specific date. 
