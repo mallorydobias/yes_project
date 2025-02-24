@@ -945,7 +945,7 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 # Questionnaire Completion
 
-When asked, **youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**.
+**Youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**, when asked.
 
 ```{r perc agreed questionnaires, include=FALSE}
 
@@ -1034,9 +1034,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** 
-
-Gender(s), of all survey starts from youth (n = `r n_started_survey`): 
+**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** Gender(s), of all survey starts from youth (n = `r n_started_survey`): 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1126,9 +1124,7 @@ perc_gender_differs_from_sex
 
 ## Sexual Orientation
 
-**`r perc_sex_minority`% of responses endorsed a sexual orientation other than heterosexual.** 
-
-Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`): 
+**`r perc_sex_minority`% of responses endorsed a sexual orientation other than heterosexual.** Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`): 
 
 ```{r calculating sex orientation tallies, include=FALSE}
 
@@ -1154,7 +1150,7 @@ table(data_youth$dem_sex_orientation)
 
 ```
 
-```{r printing sex orientation tally, include=TRUE}
+```{r printing sex orientation tally, echo=FALSE}
 
 rempsyc::nice_table(sex_orientation_tallies)
 
@@ -2254,17 +2250,23 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in hopelessness (bhs scores). For those who chose the project personality intervention with data at both time points, **hopelessness decreased from pre to post project personality, dz = `r pp_bhs_dz_value`.**
+For those who chose **Project Personality** with data at both time points:
 
-```{r t test results pp bhs}
++ **hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
 
-t_pp_bhs
+```{r t test results pp bhs, echo=FALSE}
 
-```
+# t_pp_bhs # full results here
 
-```{r t test effect size pp bhs}
+# Pulling table values
 
-pp_bhs_dz_value
+data_t_pp_bhs <- broom::tidy(t_pp_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_bhs_dz_value,
+         pp_test = "Hopelessness") %>%
+  select(pp_test, t, df, p.value, dz)
 
 ```
 
@@ -2297,17 +2299,21 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in agency (shs pathways scores). For those who chose the project personality intervention with data at both time points, **agency increased from pre to post project personality, dz = `r pp_shs_dz_value`.**
++ **agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
 
-```{r t test results pp shs}
+```{r t test results pp shs, echo=FALSE}
 
-t_pp_shs
+# t_pp_shs # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size pp shs}
-
-pp_shs_dz_value
+data_t_pp_shs <- broom::tidy(t_pp_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_shs_dz_value,
+         pp_test = "Agency") %>%
+  select(pp_test, t, df, p.value, dz)
 
 ```
 
@@ -2340,17 +2346,21 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
 
 ```
 
-Conducting a paired t-test to evaluate pre vs post-project personality changes in self-hate (self-hate scale scores). For those who chose the project personality intervention with data at both time points, **self-hate decreased from pre to post project personality, dz = `r pp_hate_dz_value`.**
++ **self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
 
-```{r t test results pp hate}
+```{r t test results pp hate, echo=FALSE}
 
-t_pp_hate
+# t_pp_hate # full results here
 
-```
+# Pulling table values
 
-```{r t test effect size pp hate}
-
-pp_hate_dz_value
+data_t_pp_hate <- broom::tidy(t_pp_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_hate_dz_value,
+         pp_test = "Self-Hate") %>%
+  select(pp_test, t, df, p.value, dz)
 
 ```
 
@@ -2383,15 +2393,32 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
 
 ```
 
-Combining all project personality pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project personality; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after project personality; right plot shows distributions of self-hate scores before and after project personality Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
+Paired t-test results for Project Personality:
+
+```{r all pp t results, echo=FALSE}
+
+# Combining t results
+
+t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_pp)
+
+```
+
+Combining all project personality pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
 
 plots_pp <- plot_pp_bhs + plot_pp_shs + plot_pp_hate +
-  plot_annotation(title = "Outcomes before vs after Project Personality",
-                  theme = theme(plot.title = element_text(hjust = 0.5)))
+   plot_annotation(title = "Outcomes before vs after Project Personality",
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Left = hopelessness scores (BHS) before and after Personality;
+                  Middle = agency scores (SHS) before and after Personality;
+                  Right = self-hate scores before and after Personality.")
 
 plots_pp
 
@@ -2417,7 +2444,7 @@ perc_pp_lot_little_less_hopeless <- round((n_pp_lot_little_less_hopeless / n_pp_
 
 ```
 
-Of those who answered this question, **`r perc_pp_lot_little_less_hopeless`% of responses reported they felt "a lot" or "a little" less hopeless post-Project Personality.**
+Of those who answered this question, **`r perc_pp_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-Project Personality.**
 
 ```{r printing pp change hopelessness, include=TRUE}
 
@@ -2453,7 +2480,7 @@ plot_pp_change_hopeless <- ggplot(data_pp_plot_change_hope_mutated, aes(x = perc
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (Project Personality), how hopeless do you feel right now?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_pp_change_hopeless
 
@@ -2480,7 +2507,7 @@ perc_pp_lot_little_more_prob <- round((n_pp_lot_little_more_prob / n_pp_answered
 
 ```
 
-Of those who answered this question, **`r perc_pp_lot_little_more_prob`% of responses reported they felt "a lot" or "a little" more able to solve problems post-Project Personality.**
+Of those who answered this question, **`r perc_pp_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-Project Personality.**
 
 ```{r printing pp change problem solving, include=TRUE}
 
@@ -2522,7 +2549,7 @@ plot_pp_change_prob <- ggplot(data_pp_plot_change_prob_mutated, aes(x = perc_cha
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (Project Personality), how able are you to solve your problems?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_pp_change_prob
 
