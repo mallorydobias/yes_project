@@ -2116,7 +2116,7 @@ perc_care_lot_little_less_hopeless <- round((n_care_lot_little_less_hopeless / n
 
 Of those who answered this question, **`r perc_care_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-CARE.**
 
-```{r printing care change hopelessness, include=TRUE}
+```{r printing care change hopelessness, include=FALSE}
 
 perc_care_lot_little_less_hopeless
 
@@ -2179,7 +2179,7 @@ perc_care_lot_little_more_prob <- round((n_care_lot_little_more_prob / n_care_an
 
 Of those who answered this question, **`r perc_care_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-CARE.**
 
-```{r printing care change problem solving, include=TRUE}
+```{r printing care change problem solving, include=FALSE}
 
 perc_care_lot_little_more_prob
 
