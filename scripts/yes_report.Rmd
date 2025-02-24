@@ -2959,7 +2959,7 @@ library(patchwork)
 plots_all <- plots_abc / plots_care / plots_pp / plots_rise  + 
   plot_annotation(
     title = "Outcomes before and after all SSIs",
-    caption = "hopelessness, hope, self-hate before + after ABC (green), CARE (red), Project Personality (blue), and RISE (orange)"
+    caption = "hopelessness, agency, self-hate before + after ABC (green), CARE (red), Project Personality (blue), and RISE (orange)"
   )
 
 # Show the combined plot
