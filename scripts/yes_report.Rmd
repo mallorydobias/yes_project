@@ -3098,6 +3098,14 @@ rempsyc::nice_table(completion_rates_pre_and_post_commit)
 
 ## Overall
 
+Teens had lots of positive things to say about Project YES.
+
+```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_quotes.png")
+
+```
+
 ```{r calculating pfs item means across all ssis, include=FALSE}
 
 ## Calculating individual pfs item means, across all ssis
