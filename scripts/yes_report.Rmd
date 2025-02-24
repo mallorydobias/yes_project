@@ -1034,7 +1034,9 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** Gender(s), of all survey starts from youth (n = `r n_started_survey`). 
+**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** 
+
+Gender(s), of all survey starts from youth (n = `r n_started_survey`): 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1124,7 +1126,9 @@ perc_gender_differs_from_sex
 
 ## Sexual Orientation
 
-**`r perc_sex_minority`% of responses endorsed a non-heterosexual orientation.** Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`). 
+**`r perc_sex_minority`% of responses endorsed a sexual orientation other than heterosexual.** 
+
+Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`): 
 
 ```{r calculating sex orientation tallies, include=FALSE}
 
@@ -1188,6 +1192,8 @@ n_race_denominator <- nrow(data_youth_race)
 
 Race/ethnicities, of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
 
+Races/ethnicities (non-d05):
+
 ```{r calculating race tallies, include=FALSE}
 
 ## Calculating race tallies
@@ -1245,6 +1251,8 @@ n_ethnicity_denominator <- nrow(data_youth_ethnicity)
 ```
 
 Now, we'll take a look at ethnicity as measured in d05. (n = `r n_ethnicity_denominator`, from d05 only). These options were only available to responders to the Middle East yes survey.
+
+Races/ethnicities (d05):
 
 ```{r calculating ethnicity tally, include=FALSE}
 
@@ -1777,7 +1785,7 @@ rempsyc::nice_table(t_results_abc)
 
 ```
 
-Combining all abc pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after abc; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after abc; right plot shows distributions of self-hate scores before and after abc. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
+Combining all abc pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1785,7 +1793,10 @@ Combining all abc pre-post outcomes into one plot. Left plot shows distributions
 
 plots_abc <- plot_abc_bhs + plot_abc_shs + plot_abc_hate +
   plot_annotation(title = "Outcomes before vs after ABC Project",
-                  theme = theme(plot.title = element_text(hjust = 0.5)))
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Left = hopelessness scores (BHS) before and after ABC;
+                  Middle = agency scores (SHS) before and after ABC;
+                  Right = self-hate scores before and after ABC.")
 
 plots_abc
 
@@ -2087,7 +2098,7 @@ rempsyc::nice_table(t_results_care)
 
 ```
 
-Combining all project care pre-post outcomes into one plot. Left plot shows distributions of hopelessness scores (BHS scale) before and after project care; middle plot shows distributions of agency scores (SHS scale, pathways subscale) before and after project care; right plot shows distributions of self-hate scores before and after project care. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
+Combining all project care pre-post outcomes into one plot. Within each plot, higher scores (i.e., further to the right) reflect more hopelessness, agency, and self-hate respectively.
 
 ```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -2095,7 +2106,10 @@ Combining all project care pre-post outcomes into one plot. Left plot shows dist
 
 plots_care <- plot_care_bhs + plot_care_shs + plot_care_hate +
   plot_annotation(title = "Outcomes before vs after Project CARE",
-                  theme = theme(plot.title = element_text(hjust = 0.5)))
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Left = hopelessness scores (BHS) before and after CARE;
+                  Middle = agency scores (SHS) before and after CARE;
+                  Right = self-hate scores before and after CARE.")
 
 plots_care
 
