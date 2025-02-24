@@ -1678,12 +1678,6 @@ data_t_abc_shs <- broom::tidy(t_abc_shs) %>%
 
 ```
 
-```{r t test effect size abc shs}
-
-abc_shs_dz_value
-
-```
-
 ```{r running custom plot function on abc shs data, include=FALSE}
 
 ## Running plot setup function
@@ -1760,6 +1754,8 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
 
 ```
 
+Paired t-test results for ABC:
+
 ```{r all abc t results, echo=FALSE}
 
 # Combining t results
@@ -1808,7 +1804,7 @@ perc_abc_lot_little_less_hopeless <- round((n_abc_lot_little_less_hopeless / n_a
 
 Of those who answered this question, **`r perc_abc_lot_little_less_hopeless`% of responses reported they felt "a lot" or "a little" less hopeless post-ABC.**
 
-```{r printing abc change hopelessness, include=TRUE}
+```{r printing abc change hopelessness, include=FALSE}
 
 perc_abc_lot_little_less_hopeless
 
@@ -1842,7 +1838,7 @@ plot_abc_change_hopeless <- ggplot(data_abc_plot_change_hope_mutated, aes(x = pe
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (ABC Project), how hopeless do you feel right now?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_abc_change_hopeless
 
@@ -1871,7 +1867,7 @@ perc_abc_lot_little_more_prob <- round((n_abc_lot_little_more_prob / n_abc_answe
 
 Of those who answered this question, **`r perc_abc_lot_little_more_prob`% of responses reported they felt "a lot" or "a little" more able to solve problems post-ABC.**
 
-```{r printing abc change problem solving, include=TRUE}
+```{r printing abc change problem solving, include=FALSE}
 
 perc_abc_lot_little_more_prob
 
@@ -1911,7 +1907,7 @@ plot_abc_change_prob <- ggplot(data_abc_plot_change_prob_mutated, aes(x = perc_c
         plot.background = element_rect(fill = "white"),
         axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
   plot_annotation(title = "Compared to before (ABC Project), how able are you to solve your problems?") +
-  labs(x = "response", y = "frequency")
+  labs(x = "", y = "frequency")
 
 plot_abc_change_prob
 
