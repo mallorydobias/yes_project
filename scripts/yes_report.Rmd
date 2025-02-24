@@ -2750,117 +2750,92 @@ plots_all
 
 # SSI Completion
 
-## Overall
-
-Of `r n_started_any_ssi` cases where someone started any ssi, `r n_completed_any_ssi` cases completed the intervention. This results in an overall completion rate of `r perc_completed_any_ssi`% for any ssi.
-
-```{r n started any ssi}
-
-n_started_any_ssi
-
-```
-
-```{r n completed any ssi}
-
-n_completed_any_ssi
-
-```
-
-```{r perc completed any ssi}
-
-perc_completed_any_ssi
-
-```
-
-## ABC Project
-
-Of `r n_started_abc` cases where someone started abc, `r n_completed_abc` cases completed the intervention. This results in an abc completion rate of `r perc_completed_abc`%.
-
-```{r n started abc}
-
-n_started_abc
-
-```
-
-```{r n completed abc}
-
-n_completed_abc
-
-```
-
-```{r perc completed abc}
-
-perc_completed_abc
-
-```
-
-## Project CARE
-
-Of `r n_started_care` cases where someone started care, `r n_completed_care` cases completed the intervention. This results in an project care completion rate of `r perc_completed_care`%.
-
-```{r n started care}
-
-n_started_care
-
-```
-
-```{r n completed care}
-
-n_completed_care
-
-```
-
-```{r perc completed care}
-
-perc_completed_care
-
-```
-
-## Project Personality
-
-Of `r n_started_pp` cases where someone started project personality, `r n_completed_pp` cases completed the intervention. This results in a project personality completion rate of `r perc_completed_personality`%.
-
-```{r n started pp}
-
-n_started_pp
-
-```
-
-```{r n completed pp}
-
-n_completed_pp
-
-```
-
-```{r perc completed pp}
-
-perc_completed_personality
-
-```
-
-## Project RISE
-
-Of `r n_started_rise` cases where someone started project rise, `r n_completed_rise` cases completed the intervention. This results in a project rise completion rate of `r perc_completed_rise`%.
-
-```{r n started rise}
-
-n_started_rise
-
-```
-
-```{r n completed rise}
-
-n_completed_rise
-
-```
-
-```{r perc completed rise}
-
-perc_completed_rise
-
-```
-
 ## By SSI
+
+```{r overall completion rate calc, include=FALSE}
+
+# Calculating completion rates overall
+
+completions_overall <- data_youth %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Any SSI") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r abc completion rate calc, include=FALSE}
+
+# Calculating completion rates abc
+
+completions_abc <- data_youth_abc %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "ABC Project") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r care completion rate calc, include=FALSE}
+
+# Calculating completion rates care
+
+completions_care <- data_youth_care %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project CARE") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r pp completion rate calc, include=FALSE}
+
+# Calculating completion rates pp
+
+completions_pp <- data_youth_pp %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project Personality") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r rise completion rate calc, include=FALSE}
+
+# Calculating completion rates rise
+
+completions_rise <- data_youth_rise %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project RISE") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r binding completion rate rows, include=FALSE}
+
+completions_by_ssi <- bind_rows(completions_overall,
+                                completions_abc,
+                                completions_care,
+                                completions_pp,
+                                completions_rise)
+
+```
+```{r printing completion rates table, include=TRUE}
+
+rempsyc::nice_table(completions_by_ssi)
+
+```
 
 Here, we plot completion rates for each SSI.
 
