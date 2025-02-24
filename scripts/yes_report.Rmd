@@ -2970,7 +2970,7 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
 
 ## By Date
 
-Within d02, we have SSI completion rate data before and after introducing commitment items (where teens "commit" to finishing the SSI they chose). Here, we plot SSI completions by date, as well as SSI completion rates by date. We indicate when the commit items were introduced.
+Within d02, we have SSI completion rate data before and after introducing commitment items (where teens "commit" to finishing the SSI they chose). Here, we plot SSI completions by date, indicating when the commit items were introduced.
 
 ```{r pulling start_date and completion data, include=FALSE}
 
@@ -3069,7 +3069,9 @@ plot_completions_by_date
 
 ```
 
-Overall, here we calculate SSI completion rates before vs after introducing the commit items to this data source (date we added commit item: `r date_d02_commit_introduced`).
+Overall, here we calculate SSI completion rates before vs after introducing the commit items to d02 (date we added commit item: `r date_d02_commit_introduced`). Given the large number of SSI completions in mid-Dec, we also compare SSI completion rates pre-commitment item to those after the unusual spike in completions. When taking out completion rates from the SA event period, completion rates look very similar in these data from pre to post adding the commitment item.
+
+We likely get a large completion rate boost due to people in SA encouraging youth to complete an SSI during this mid-Dec window.
 
 ```{r completion rate data pre commit item, include=FALSE}
 
@@ -3081,7 +3083,7 @@ completion_rate_pre_commit <- data_completion_by_date_d02 %>%
     ssi_starts = sum(!is.na(ssi_started)),
     ssi_completions = sum(!is.na(ssi_completed)),
     completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
-  mutate(timing = "before commit item") %>%
+  mutate(timing = "before commit item and SA event") %>%
   select(timing, everything())
 
 completion_rate_post_commit <- data_completion_by_date_d02 %>%
@@ -3093,9 +3095,20 @@ completion_rate_post_commit <- data_completion_by_date_d02 %>%
   mutate(timing = "after commit item") %>%
   select(timing, everything())
 
+completion_rate_post_sa_push <- data_completion_by_date_d02 %>%
+  filter(start_date > "2021-12-17") %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "after commit item and SA event") %>%
+  select(timing, everything())
+
 # Binding rows
 
-completion_rates_pre_and_post_commit <- bind_rows(completion_rate_pre_commit, completion_rate_post_commit)
+completion_rates_pre_and_post_commit <- bind_rows(completion_rate_pre_commit, 
+                                                  completion_rate_post_commit,
+                                                  completion_rate_post_sa_push)
 
 ```
 
