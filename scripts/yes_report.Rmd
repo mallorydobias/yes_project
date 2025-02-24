@@ -2970,22 +2970,24 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
 
 ## By Date
 
+Within d02, we have SSI completion rate data before and after introducing commitment items (where teens "commit" to finishing the SSI they chose). Here, we plot SSI completions by date, as well as SSI completion rates by date. We indicate when the commit items were introduced.
+
 ```{r pulling start_date and completion data, include=FALSE}
 
 # Pulling variables
 
-data_completion_by_date_plot <- data_youth %>%
+data_commit_by_date <- data_youth %>%
   select(start_date, abc_commit, proj_care_commit, proj_pers_commit, proj_rise_commit, data_id)
 
 # Pulling earliest start_date with commit data within each data_id
   
-date_commit_introduced_by_data_id <- data_completion_by_date_plot %>%
+date_commit_introduced_by_data_id <- data_commit_by_date %>%
   filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
   arrange(start_date) %>%
   group_by(data_id) %>%
   slice(1)
 
-date_first_observation_per_data_id <- data_completion_by_date_plot %>%
+date_first_observation_per_data_id <- data_commit_by_date %>%
   arrange(start_date) %>%
   group_by(data_id) %>%
   slice(1) 
@@ -3017,32 +3019,89 @@ data_commit_date_d16 <- data_commit_date_bound %>%
 
 ```
 
-```{r}
+```{r pulling data points for commit and completions by date plot, include=FALSE}
 
 # d02 is the only data_id with pre and post commitment data
 ## (first observation is much earlier than first commit data, 
 ## was originally na for all commit vars)
 
-data_completion_by_date_plot %>%
+data_completion_by_date_d02 <- data_youth %>%
+  select(start_date, abc_commit, proj_care_commit, proj_pers_commit, 
+         proj_rise_commit, ssi_started, ssi_completed, data_id) %>%
   filter(data_id == "d02") %>%
   arrange(start_date)
 
 # Pulling first start_date where commitment qs were introduced 
 
-date_d02_commit_introduced <- data_completion_by_date_plot %>%
-  filter(data_id == "d02") %>%
+date_d02_commit_introduced <- data_completion_by_date_d02 %>%
   filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
   arrange(start_date) %>%
   slice(1) %>%
   select(start_date) %>%
   pull()
 
+# Creating data to plot ssi completions by start_date
+
+plot_data_completions_per_date <- data_completion_by_date_d02 %>%
+  group_by(start_date) %>%
+  filter(!is.na(ssi_completed)) %>%
+  tally() %>%
+  ungroup()
+
 ```
 
-```{r plotting d09 completions by start_date, include=FALSE}
+It's clear our San Antonio partners had many students complete an SSI on one day in late Dec of 2021. 
 
-## MD this is where I'll plot completions by start_date in d09
-## Showing the exact point where the optional 
+```{r plotting d02 completions by start_date, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Plotting completions (raw)
+
+plot_completions_by_date <- ggplot(plot_data_completions_per_date, aes(x = start_date, y = n)) +   
+  geom_histogram(position = "identity", stat = "identity", fill = "#4E2A84") +
+  theme_minimal() +
+  labs(x = "", y = "n ssis completed", title = "Daily SSI Completions by Start Date (d02 only)") +
+  theme(legend.position = "none") +
+  geom_vline(xintercept = date_d02_commit_introduced, color = "black", linetype = "dotted") +
+  plot_annotation(caption = paste("Taller bars indicate more completions on a specific date. 
+                  Dotted black line shows the date we introduced 'commit' items to SSIs:", date_d02_commit_introduced,"."))
+
+plot_completions_by_date
+
+```
+
+Overall, here we calculate SSI completion rates before vs after introducing the commit items to this data source (date we added commit item: `r date_d02_commit_introduced`).
+
+```{r completion rate data pre commit item, include=FALSE}
+
+# Calculating completion rate data pre and post commit item
+
+completion_rate_pre_commit <- data_completion_by_date_d02 %>%
+  filter(start_date < date_d02_commit_introduced) %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "before commit item") %>%
+  select(timing, everything())
+
+completion_rate_post_commit <- data_completion_by_date_d02 %>%
+  filter(start_date > date_d02_commit_introduced) %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "after commit item") %>%
+  select(timing, everything())
+
+# Binding rows
+
+completion_rates_pre_and_post_commit <- bind_rows(completion_rate_pre_commit, completion_rate_post_commit)
+
+```
+
+```{r printing completion rate data pre commit item, include=TRUE}
+
+rempsyc::nice_table(completion_rates_pre_and_post_commit)
 
 ```
 
