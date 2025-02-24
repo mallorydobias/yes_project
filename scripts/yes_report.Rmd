@@ -3098,7 +3098,7 @@ rempsyc::nice_table(completion_rates_pre_and_post_commit)
 
 ## Overall
 
-Teens had lots of positive things to say about Project YES.
+Project YES helped teens feel less alone, kinder toward themselves, and capable to creating a personal action plan.
 
 ```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
 
