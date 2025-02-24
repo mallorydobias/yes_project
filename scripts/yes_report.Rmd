@@ -2752,6 +2752,8 @@ plots_all
 
 ## By SSI
 
+Here, we pull the number of starts, completions, and completion rate overall and within each SSI.
+
 ```{r overall completion rate calc, include=FALSE}
 
 # Calculating completion rates overall
