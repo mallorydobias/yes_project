@@ -1034,7 +1034,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Gender
 
-`r perc_gender_differs_from_sex`% of survey responses endorsed a gender identity that differs from sex assigned at birth. N's and percentages are all calculated out of the number of survey starts from youth (n = `r n_started_survey`). 
+**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** Gender(s), of all survey starts from youth (n = `r n_started_survey`). 
 
 ```{r combining sex and gender data, include=FALSE}
 
@@ -1110,13 +1110,13 @@ gender_tallies <- count_yes_responses(data_youth_gender) %>%
 
 ```
 
-```{r printing gender tally, include=TRUE}
+```{r printing gender tally, echo=FALSE}
 
 rempsyc::nice_table(gender_tallies)
 
 ```
 
-```{r perc gender differs from sex, include=TRUE}
+```{r perc gender differs from sex, include=FALSE}
 
 perc_gender_differs_from_sex
 
@@ -1124,7 +1124,7 @@ perc_gender_differs_from_sex
 
 ## Sexual Orientation
 
-`r perc_sex_minority`% of survey responses endorsed a sexual orientation other than heterosexual. N's and percentages are all calculated out of the number of survey starts (n = `r n_started_survey`). 
+**`r perc_sex_minority`% of responses endorsed a non-heterosexual orientation.** Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`). 
 
 ```{r calculating sex orientation tallies, include=FALSE}
 
@@ -1156,7 +1156,7 @@ rempsyc::nice_table(sex_orientation_tallies)
 
 ```
 
-```{r printing perc sexual minority, include=TRUE}
+```{r printing perc sexual minority, include=FALSE}
 
 perc_sex_minority
 
@@ -1186,7 +1186,7 @@ n_race_denominator <- nrow(data_youth_race)
 
 ```
 
-N's and percentages are all calculated out of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
+Race/ethnicities, of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
 
 ```{r calculating race tallies, include=FALSE}
 
@@ -1216,7 +1216,7 @@ race_tallies <- data_youth_race %>%
 
 ```
 
-```{r printing race tally, include=TRUE}
+```{r printing race tally, echo=FALSE}
 
 rempsyc::nice_table(race_tallies)
 
@@ -1277,7 +1277,7 @@ ethnicity_tallies <- data_youth_ethnicity %>%
 
 ```
 
-```{r printing ethnicity tally, include=TRUE}
+```{r printing ethnicity tally, echo=FALSE}
 
 rempsyc::nice_table(ethnicity_tallies)
 
