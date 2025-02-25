@@ -1,6 +1,6 @@
 ---
-title: "YES English Report"
-author: "Mallory Dobias"
+title: "Project YES: Meaningful and Scalable Impact on Youth Mental Health"
+author: "Mallory Dobias, PhD"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
   html_document:
@@ -882,80 +882,29 @@ perc_youth_no_support_w_depression <- round((n_youth_no_support_w_depression / n
 
 ```
 
-```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
+```{r, out.width = "500px", out.height = "290px", include=TRUE, echo=FALSE}
 
-knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsmh_nu_logo.png")
 
 ```
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from all English-speaking YES surveys (data_ids: d01, d02, d03, d09, d16). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Our work develops digital, evidence-based youth mental health supports that make an impact at scale.** Each "Single-Session Intervention", or SSI, is designed as a standalone experience; in ~30-minutes, youth walk away with a concrete lesson, skill, or plan to make a difference for their mental health. 
 
-**Full Summary**:
+**We reach youth who would otherwise go undetected and under-supported.** Everything is self-led, available online, 100% free, and anonymous. For youth experiencing acute concerns, we offer personalized referrals to local and approved resources. Accessibility is our priority.
 
-Looking at YES engagement:
+**We maximize the impact 30 minutes can make.** By focusing on core principles of evidence-based mental health intervention and psychotherapies (e.g., "you are capable of change", "your thoughts and feelings are connected"), we make the most of limited time. 
 
-+ Our YES survey was started `r n_started_survey` times
-+ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires when asked
-+ Not all cases were asked if they would like to complete questionnaires (e.g., San Antonio data)
-+ `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
+**Our work is backed by scientific research.** In gold standard [randomized controlled trials](https://www.nature.com/articles/s41562-021-01235-0), our interventions improve key mental health outcomes, like reducing hopelessness and boosting youth's sense of agency, right away. They also reduce mental health symptoms three months later.
 
-Across all survey starts (n = `r n_started_survey`):
+**Here we share results from >5,500 youth across the U.S. who have tried our open-access SSIs** (data collection ongoing). From before to after trying an SSI online, youth report:
 
-+ There's lots of missing demographic data, given optional questionnaires and drop-offs
-+ Ages range from <10 to 17 (categorical data only)
-+ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
-+ `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
-+ Race and ethnicity are measured differently across surveys (see below)
-+ `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
-+ `r perc_youth_no_support`% report never accessing mh support despite wanting it
-+ `r perc_youth_no_support_w_depression`% report no history of mh support access AND elevated depression symptoms
-+ By far, most responses in this data heard about YES in school
++ **Reduced hopelessness**
++ **Increased agency**
++ **Reduced self-hate**
 
-Of cases with data at both time points:
 
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
-+ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
-
-Of the cases where someone chose an SSI:
-
-+ `r perc_chose_abc`% chose ABC
-+ `r perc_chose_care`% chose CARE
-+ `r perc_chose_pp`% chose Project Personality
-+ `r perc_chose_rise`% chose RISE, although this ssi was likely added to the survey later
-
-Of cases where someone started an SSI:
-
-+ `r perc_completed_any_ssi`% of cases completed an SSI (n = `r n_completed_any_ssi`) after starting one (n = `r n_started_any_ssi`)
-+ `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
-+ `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
-+ `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
-+ `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
-+ We have no evidence that adding the "commit to finish this SSI" item has increased completion rates overall
-
-Drop-off is highest on pages with writing exercises:
-
-+ More than 1 in 4 people drop from one page to the next during Project Personality's first writing exercise
-
-Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
-
-+ ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
-+ CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
-+ Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
-+ RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
-
-# Questionnaire Completion
-
-**Youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**, when asked.
-
-```{r perc agreed questionnaires, include=FALSE}
-
-perc_agreed_questionnaires
-
-```
 
 # Sample Characteristics
 
