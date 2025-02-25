@@ -898,11 +898,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsm
 
 **Our work is backed by scientific research.** In gold standard [randomized controlled trials](https://www.nature.com/articles/s41562-021-01235-0), our interventions improve key mental health outcomes, like reducing hopelessness and boosting youth's sense of agency, right away. They also reduce mental health symptoms three months later.
 
-**Here we share results from >5,500 youth across the globe who have tried our open-access SSIs** (data collection ongoing). From before to after trying an SSI online, youth report:
-
-+ **Reduced hopelessness**
-+ **Increased agency**
-+ **Reduced self-hate**
+**Here we share results from >5,500 youth across the globe who have tried our open-access SSIs** (data collection ongoing). From before to after trying an SSI online, youth report improvements on key mental health outcomes (hopelessness, agency, self-hate).
 
 # Do Our SSIs Work?
 
