@@ -882,7 +882,7 @@ perc_youth_no_support_w_depression <- round((n_youth_no_support_w_depression / n
 
 ```
 
-```{r, out.width = "350px", out.height = "120px", include=TRUE, echo=FALSE}
+```{r, out.width = "300px", out.height = "102px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsmh_nu_logo.png")
 
@@ -890,7 +890,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsm
 
 # Summary
 
-**We develop digital, evidence-based youth mental health supports that make an impact at scale.** Each "Single-Session Intervention", or SSI, is designed as a standalone experience; in ~30-minutes, youth walk away with a concrete lesson, skill, or plan to make a difference for their mental health. We published [Project YES](https://www.schleiderlab.org/yes.html), an online platform to share our SSIs publicly.
+**We develop digital, evidence-based youth mental health supports that make an impact at scale.** Each "Single-Session Intervention", or SSI, is designed as a standalone experience; in ~30-minutes, youth walk away with a concrete lesson, skill, or plan to make a difference for their mental health. We [published Project YES](https://www.schleiderlab.org/yes.html), an online platform to share our SSIs publicly.
 
 **We reach youth who would otherwise go undetected and under-supported.** Everything is self-led, available online, 100% free, and anonymous. For youth experiencing acute concerns, we can offer personalized referrals to local and approved resources. Accessibility is our priority.
 
@@ -898,32 +898,27 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsm
 
 **Our work is backed by scientific research.** In gold standard [randomized controlled trials](https://www.nature.com/articles/s41562-021-01235-0), our interventions improve key mental health outcomes, like reducing hopelessness and boosting youth's sense of agency, right away. They also reduce mental health symptoms three months later.
 
-**Here we share results from >5,500 youth across the globe who have tried our open-access SSIs** (data collection ongoing). From before to after trying an SSI online, youth report improvements on key mental health outcomes (hopelessness, agency, self-hate).
+**Here we share positive results from >5,500 youth across the globe who have tried our open-access SSIs**. From before to after trying an SSI online, youth report improvements on key mental health outcomes (decreased hopelessness, increased agency, decreased self-hate).
 
 # Do Our SSIs Work?
 
 We share results from three of our open-access SSIs, currently offered on our [Project YES platform](https://www.schleiderlab.org/yes.html):
 
-+ **ABC Project**: A behavioral activation activity, where youth learn how to take action to manage their mood
-+ **Project CARE**: A self-compassion activity, where youth learn steps to be kinder to themselves
-+ **Project Personality**: A growth mindset activity, where youth learn about their power to change
++ *ABC Project*: A behavioral activation activity, where youth learn how to take action to manage their mood
++ *Project CARE*: A self-compassion activity, where youth learn steps to be kinder to themselves
++ *Project Personality*: A growth mindset activity, where youth learn about their power to change
 
-```{r, out.width = "700px", out.height = "240px", include=TRUE, echo=FALSE}
+```{r, out.width = "780px", out.height = "240px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/all_ssis_logo.png")
 
 ```
 
-All three SSIs show improvements in key mental health outcomes, from before to after completing an activity:
+**All three SSIs show improvements in key mental health outcomes**, from before to after completing an activity:
 
 + **Reduced hopelessness** (e.g., less thinking that the future is dark and unlikely to improve)
 + **Increased agency** (e.g., increased belief in one's capability to reach goals and solve problems) 
 + **Reduced self-hate** (e.g., less feelings of shame and disgust with oneself)
-
-Compared to before completing an activity...
-
-+ **`r perc_pp_lot_little_less_hopeless`-`r perc_abc_lot_little_less_hopeless`% were "a lot" or "a little" less hopeless**
-+ **`r perc_pp_lot_little_more_prob`-`r perc_abc_lot_little_more_prob`% were "a lot" or "a little" more able to solve problems**
 
 ```{r plot setup, include=FALSE, warning=FALSE}
 
@@ -1415,7 +1410,7 @@ plot_care_hate <- plot_data_hate_care_function %>%
 
 ```
 
-```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+```{r combining care pre post outcomes plots, include=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for care
 
@@ -1693,7 +1688,7 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
 
 ```
 
-```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+```{r combining pp pre post outcomes plots, include=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
 
@@ -1836,7 +1831,9 @@ plot_pp_change_prob
 
 ```
 
-## All
+In the plot below, grey curves are outcome scores before each intervention, and colored curves are outcome scores after each intervention. Larger scores (when curves are further to the right) mean greater hopelessness, greater agency, and greater self-hate respectively. For all SSIs (ABC Project = top row, Project CARE = middle row, Project Personality = bottom row), colored curves show improvements in outcomes... **lower hopelessness, higher agency, and lower self-hate after the intervention**.
+
+These results are exactly what we'd expect, given our [rigorous clinical trial research results](https://www.nature.com/articles/s41562-021-01235-0).
 
 ```{r combining all pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1854,7 +1851,9 @@ plots_all
 
 ```
 
-Paired t-test results for ABC Project:
+**When we run statistical tests (paired t-tests), youth report...**
+
++ significant improvements in all three outcomes from before to after the ABC Project:
 
 ```{r all abc t results, echo=FALSE}
 
@@ -1868,7 +1867,7 @@ rempsyc::nice_table(t_results_abc)
 
 ```
 
-Paired t-test results for Project CARE:
++ significant improvements in all three outcomes from before to after the Project CARE:
 
 ```{r all care t results, echo=FALSE}
 
@@ -1882,7 +1881,7 @@ rempsyc::nice_table(t_results_care)
 
 ```
 
-Paired t-test results for Project Personality:
++ significant improvements in all three outcomes from before to after the Project Personality:
 
 ```{r all pp t results, echo=FALSE}
 
@@ -1896,7 +1895,14 @@ rempsyc::nice_table(t_results_pp)
 
 ```
 
-Project YES helped teens feel less alone, kinder toward themselves, and capable of creating a personal action plan. See real testimonials from youth who visited our platform:
+Compared to before completing an activity...
+
++ **`r round(perc_pp_lot_little_less_hopeless,0)` to `r round(perc_abc_lot_little_less_hopeless,0)`%** were "a lot" or "a little" less hopeless
++ **`r round(perc_pp_lot_little_more_prob,0)` to `r round(perc_abc_lot_little_more_prob,0)`%** were "a lot" or "a little" more able to solve problems
+
+In other words, the math checks out. After completing a free, 30-minute online, youth reported small to medium improvements on things like: believing they can solve problems and reach their goals, feeling less shame and disgust about themselves, and lessening beliefs that the future won't ever improve.
+
+**See real testimonials from youth who visited our platform.** Project YES also helped teens feel less alone, kinder toward themselves, and capable of creating a personal action plan:
 
 ```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
 
@@ -1906,11 +1912,9 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Who Accessed Our SSIs?
 
-Our Project YES resource has already reached a wide range of youth, across age, gender, and racial/ethnic identity.
+Our Project YES resource has already reached a wide range of youth, across age and racial/ethnic identity. YES has also reached youth with high levels of depression symptoms.
 
 ## Age
-
-Ages of all YES responses from youth (n = `r n_started_survey`). 
 
 ```{r prepping for age tally, include=FALSE}
 
@@ -1944,90 +1948,6 @@ rempsyc::nice_table(age_tallies)
 
 ```
 
-## Gender
-
-Genders of all YES responses from youth (n = `r n_started_survey`): 
-
-```{r combining sex and gender data, include=FALSE}
-
-## Imputing gender identity data for folks who answered gender does not differ from sex
-## Only folks who reported gender differs from sex were asked gender identity item
-
-data_youth_gender <- data_youth %>%
-  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
-         TRUE ~ dem_gender_girl_woman)) %>%
-  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
-         TRUE ~ dem_gender_boy_man)) %>%
-  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
-         TRUE ~ dem_gender_intersex)) %>%
-  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
-  mutate(dem_gender_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
-
-```
-
-```{r custom demographic count function, include=FALSE}
-
-# Custom function to tally yeses in each demographic column 
-
-count_yes_responses <- function(data) {
-  # Ensure n_agreed_questionnaires exists in the global environment
-  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
-    stop("n_agreed_questionnaires is not defined in the global environment")
-  }
-  
-  data %>%
-    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rowwise() %>%
-    mutate(percentage = count / n_started_survey * 100) %>% 
-    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
-    unnest(cols = c(percentage))  # Ensure percentage column is not nested
-}
-
-```
-
-```{r calculating gender tally, include=FALSE}
-
-# Using custom function to print gender variable counts
-
-gender_tallies <- count_yes_responses(data_youth_gender) %>%
-  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
-  rename(gender_identity = variable) %>%
-  rename("%" = n) %>%
-  rename(n = count) %>%
-  mutate(gender_identity = str_replace(gender_identity, "girl_woman", "Girl/Woman"),
-         gender_identity = str_replace(gender_identity, "boy_man", "Boy/Man"),
-         gender_identity = str_replace(gender_identity, "missing", "Missing"),
-         gender_identity = str_replace(gender_identity, "nonbinary", "Nonbinary"),
-         gender_identity = str_replace(gender_identity, "unsure", "Unsure"),
-         gender_identity = str_replace(gender_identity, "other", "Another gender not listed"),
-         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male trans/FTM"),
-         gender_identity = str_replace(gender_identity, "trans", "Transgender"),
-         gender_identity = str_replace(gender_identity, "genderqueer", "Genderqueer"),
-         gender_identity = str_replace(gender_identity, "androgynous", "Androgynous"),
-         gender_identity = str_replace(gender_identity, "agender", "Agender"),
-         gender_identity = str_replace(gender_identity, "Transgender_masc", "Trans masculine"),
-         gender_identity = str_replace(gender_identity, "two_spirited", "Two-spirited"),
-         gender_identity = str_replace(gender_identity, "third_gender", "Third gender"),
-         gender_identity = str_replace(gender_identity, "intersex", "Intersex"),
-         gender_identity = str_replace(gender_identity, "expansive", "Gender expansive"),
-         gender_identity = str_replace(gender_identity, "mtf_Transgender", "Male to female transgender/MTF"),
-         gender_identity = str_replace(gender_identity, "Transgender_fem", "Trans feminine")) %>%
-  arrange(-n)
-
-```
-
-```{r printing gender tally, echo=FALSE}
-
-rempsyc::nice_table(gender_tallies)
-
-```
-
 ## Race/Ethnicity
 
 ```{r adding missing values to race vars, include=FALSE}
@@ -2051,8 +1971,6 @@ data_youth_race <- data_youth %>%
 n_race_denominator <- nrow(data_youth_race)
 
 ```
-
-Race/Ethnicity of all YES responses from youth, where race and ethnicity were collected according to U.S. guidelines (n = `r n_race_denominator`). 
 
 ```{r calculating race tallies, include=FALSE}
 
@@ -2090,9 +2008,9 @@ rempsyc::nice_table(race_tallies)
 
 ## Depression Scores
 
-**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores, using the [Mood and Feelings Questionnaire (MFQ)](https://doi.org/10.1002/mpr.1610), across the entire youth sample.
+**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** This means *more than 1 in 4 youth who accessed our Project YES platform* were possibly experiencing clinical levels of things like loneliness, self-hate, low motivation, low concentration, and low mood.
 
-This means *more than 1 in 4 youth who accessed our Project YES platform* were possibly experiencing clinical levels of things like loneliness, self-hate, low motivation, low concentration, and low mood.
+Here, we plot depression scale scores, using the [Mood and Feelings Questionnaire (MFQ)](https://doi.org/10.1002/mpr.1610), across the entire youth sample.
 
 ```{r calculating proportion of teens elevated depression, include=FALSE}
 
