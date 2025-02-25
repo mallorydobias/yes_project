@@ -2022,54 +2022,11 @@ plot_mfq
 
 ## Treatment Access
 
-**`r perc_youth_unmet_mh_need`% of youth responses reported a history of unmet need for mental health support.** Out of all responses that shared their past mental health treatment access, these responses said they wanted treatment they did not receive.
+**`r perc_youth_no_support`% of youth responses had never accessed formal mental health support.** 
 
 ```{r showing unmet mental health need, include=FALSE}
 
 perc_youth_no_support
-
-```
-
-```{r setting up to plot access to support, include=FALSE}
-
-# Creating df for plot
-
-data_access_plot <- data_youth %>%
-  select(dem_receive_support) %>%
-  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, ",no")) %>% # dropping multiple conflicting responses
-  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, "now") & 
-           !str_detect(dem_receive_support, "not wanted")) %>% # dropping irrelevant responses
-  mutate(dem_receive_support = str_replace(dem_receive_support, "yes, I have gotten support in the past", "yes, past support"),
-         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no past support (but wanted it)"))
-  
-# Setting a group order
-
-custom_order <- c("no past support (but wanted it)", "yes, past support")
-
-# Convert to a factor with the specified order
-
-data_access_plot_mutated <- data_access_plot %>%
-  mutate(dem_receive_support = factor(data_access_plot$dem_receive_support, levels = custom_order))
-
-```
-
-```{r plotting access to support, echo=FALSE, warning=FALSE, message=FALSE}
-
-# Plotting 
-
-plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +  
-  geom_histogram(stat="count", fill = "#4E2A84", alpha = 0.8) +  
-  theme_light() +
-  theme(legend.position = "none",
-        title = element_text(size = 10),
-        plot.background = element_rect(fill = "white")) +
-        # axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
-  plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
-                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor;
-                                  Plot does not include missing values'")) +
-  labs(x = "", y = "frequency")
-
-plot_access
 
 ```
 
