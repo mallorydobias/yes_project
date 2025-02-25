@@ -3,18 +3,18 @@ title: "Project YES: Meaningful and Scalable Impact on Youth Mental Health"
 author: "Mallory Dobias, PhD"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '5'
-  pdf_document:
-    toc: yes
-    toc_depth: '5'
   html_document:
     toc: yes
     toc_depth: 5
     toc_float:
       collapsed: no
       smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
 geometry: margin=0.50in
 ---
 
