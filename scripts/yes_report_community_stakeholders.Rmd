@@ -905,8 +905,14 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsm
 We share results from three of our open-access SSIs, currently offered on our [Project YES platform](https://www.schleiderlab.org/yes.html):
 
 + **ABC Project**: A behavioral activation activity, where youth learn how to take action to manage their mood
-+ **Project Personality**: A growth mindset activity, where youth learn about their power to change
 + **Project CARE**: A self-compassion activity, where youth learn steps to be kinder to themselves
++ **Project Personality**: A growth mindset activity, where youth learn about their power to change
+
+```{r, out.width = "350px", out.height = "120px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/all_ssis_logo.png")
+
+```
 
 All three SSIs show improvements in key mental health outcomes, from before to after completing an activity:
 
@@ -1142,21 +1148,7 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
 
 ```
 
-Paired t-test results for ABC:
-
-```{r all abc t results, echo=FALSE}
-
-# Combining t results
-
-t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_abc)
-
-```
-
-```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+```{r combining abc pre post outcomes plots, include=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for abc
 
@@ -1451,20 +1443,6 @@ plot_care_hate <- plot_data_hate_care_function %>%
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
   labs(x = "Self-Hate", y = " ")
-
-```
-
-Paired t-test results for CARE:
-
-```{r all care t results, echo=FALSE}
-
-# Combining t results
-
-t_results_care <- bind_rows(data_t_care_bhs, data_t_care_shs, data_t_care_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_care)
 
 ```
 
@@ -1766,20 +1744,6 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
 
 ```
 
-Paired t-test results for Project Personality:
-
-```{r all pp t results, echo=FALSE}
-
-# Combining t results
-
-t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_pp)
-
-```
-
 ```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Plotting all pre post outcomes for pp
@@ -1887,7 +1851,7 @@ perc_pp_lot_little_more_prob
 
 ```
 
-```{r plotting pp change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting pp change problem solving, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1945,7 +1909,49 @@ plots_all
 
 ```
 
-Project YES helped teens feel less alone, kinder toward themselves, and capable to creating a personal action plan. Here are real testimonials from youth who visited our platform:
+Paired t-test results for ABC Project:
+
+```{r all abc t results, echo=FALSE}
+
+# Combining t results
+
+t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_abc)
+
+```
+
+Paired t-test results for Project CARE:
+
+```{r all care t results, echo=FALSE}
+
+# Combining t results
+
+t_results_care <- bind_rows(data_t_care_bhs, data_t_care_shs, data_t_care_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_care)
+
+```
+
+Paired t-test results for Project Personality:
+
+```{r all pp t results, echo=FALSE}
+
+# Combining t results
+
+t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_pp)
+
+```
+
+Project YES helped teens feel less alone, kinder toward themselves, and capable of creating a personal action plan. See real testimonials from youth who visited our platform:
 
 ```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
 
