@@ -8,6 +8,7 @@ data/
 *.png
 *.csv
 *.docx
+*.pdf
 
 ## Preventing GitHub from viewing troubleshooting files
 *questions.Rmd
