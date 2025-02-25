@@ -3,18 +3,18 @@ title: "Project YES: Meaningful and Scalable Impact on Youth Mental Health"
 author: "Mallory Dobias, PhD"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
+  word_document:
+    toc: yes
+    toc_depth: '5'
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
   html_document:
     toc: yes
     toc_depth: 5
     toc_float:
       collapsed: no
       smooth_scroll: no
-  pdf_document:
-    toc: yes
-    toc_depth: '5'
-  word_document:
-    toc: yes
-    toc_depth: '5'
 geometry: margin=0.50in
 ---
 
@@ -1851,50 +1851,6 @@ plots_all
 
 ```
 
-**When we run statistical tests (paired t-tests), youth report...**
-
-+ significant improvements in all three outcomes from before to after the ABC Project:
-
-```{r all abc t results, echo=FALSE}
-
-# Combining t results
-
-t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_abc)
-
-```
-
-+ significant improvements in all three outcomes from before to after the Project CARE:
-
-```{r all care t results, echo=FALSE}
-
-# Combining t results
-
-t_results_care <- bind_rows(data_t_care_bhs, data_t_care_shs, data_t_care_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_care)
-
-```
-
-+ significant improvements in all three outcomes from before to after the Project Personality:
-
-```{r all pp t results, echo=FALSE}
-
-# Combining t results
-
-t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_pp)
-
-```
-
 Compared to before completing an activity...
 
 + **`r round(perc_pp_lot_little_less_hopeless,0)` to `r round(perc_abc_lot_little_less_hopeless,0)`%** were "a lot" or "a little" less hopeless
@@ -2045,4 +2001,4 @@ plot_mfq
 
 # Questions?
 
-Email us...
+Email us with questions: jessica.schleider@northwestern.edu and mallory.dobias1@northwestern.edu.
