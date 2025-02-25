@@ -2020,9 +2020,9 @@ plot_mfq
 
 ```
 
-## Access to Support
+## Treatment Access
 
-**`r perc_youth_unmet_mh_need`% of youth responses reported a history of unmet need for mental health support.** Out of responses that shared their past mental health treatment access, these responses said they wanted treatment they did not receive.
+**`r perc_youth_unmet_mh_need`% of youth responses reported a history of unmet need for mental health support.** Out of all responses that shared their past mental health treatment access, these responses said they wanted treatment they did not receive.
 
 ```{r showing unmet mental health need, include=FALSE}
 
