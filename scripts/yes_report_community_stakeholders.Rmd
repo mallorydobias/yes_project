@@ -855,14 +855,35 @@ mfq_mean <- data_mfq_plot %>%
 ```{r calculating access to support descriptives, include=FALSE}
 
 # Calculating n youth with unmet mental health needs
-# (no history of support, but they've wanted support)
 
-n_youth_no_support <- data_youth %>%
+n_youth_unmet_mh_need <- data_youth %>%
   select(dem_receive_support) %>%
   filter(dem_receive_support == "no, but I have wanted to get support before") %>%
   nrow()
 
+# Calculating n youth with data on past mental health access
+
+n_youth_past_support <- data_youth %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+         str_detect(dem_receive_support, "yes, I have gotten support in the past")) %>%
+  nrow()
+
 # Calculating perc youth with history of unmet mh needs
+# (perc no history of support, but they've wanted support;
+# out of those who didn't get and did get support in the past)
+
+perc_youth_unmet_mh_need <- round((n_youth_unmet_mh_need / n_youth_past_support)*100, 2)
+
+# Calculating n youth with no history of mh support
+
+n_youth_no_support <- data_youth %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+        dem_receive_support == "no, and I have not wanted to get support before") %>%
+  nrow()
+
+# Calculating perc of this sample who had never accessed support
 
 perc_youth_no_support <- round((n_youth_no_support / n_started_survey)*100, 2)
 
@@ -1996,6 +2017,59 @@ plot_mfq <- ggplot(data_mfq_plot, aes(x = mfq_total, fill = mfq_category)) +  # 
   labs(x = "depression score", y = "frequency")
 
 plot_mfq
+
+```
+
+## Access to Support
+
+**`r perc_youth_unmet_mh_need`% of youth responses reported a history of unmet need for mental health support.** Out of responses that shared their past mental health treatment access, these responses said they wanted treatment they did not receive.
+
+```{r showing unmet mental health need, include=FALSE}
+
+perc_youth_no_support
+
+```
+
+```{r setting up to plot access to support, include=FALSE}
+
+# Creating df for plot
+
+data_access_plot <- data_youth %>%
+  select(dem_receive_support) %>%
+  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, ",no")) %>% # dropping multiple conflicting responses
+  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, "now") & 
+           !str_detect(dem_receive_support, "not wanted")) %>% # dropping irrelevant responses
+  mutate(dem_receive_support = str_replace(dem_receive_support, "yes, I have gotten support in the past", "yes, past support"),
+         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no past support (but wanted it)"))
+  
+# Setting a group order
+
+custom_order <- c("no past support (but wanted it)", "yes, past support")
+
+# Convert to a factor with the specified order
+
+data_access_plot_mutated <- data_access_plot %>%
+  mutate(dem_receive_support = factor(data_access_plot$dem_receive_support, levels = custom_order))
+
+```
+
+```{r plotting access to support, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Plotting 
+
+plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +  
+  geom_histogram(stat="count", fill = "#4E2A84", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+        # axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
+                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor;
+                                  Plot does not include missing values'")) +
+  labs(x = "", y = "frequency")
+
+plot_access
 
 ```
 
