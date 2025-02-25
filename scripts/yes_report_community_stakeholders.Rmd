@@ -2083,8 +2083,6 @@ rempsyc::nice_table(gender_tallies)
 
 ## Race/Ethnicity
 
-Race/Ethnicity of all YES responses from youth, where race and ethnicity were collected according to U.S. guidelines (n = `r n_race_denominator`). 
-
 ```{r adding missing values to race vars, include=FALSE}
 
 ## Accounting for missing values across all race variables
@@ -2106,6 +2104,8 @@ data_youth_race <- data_youth %>%
 n_race_denominator <- nrow(data_youth_race)
 
 ```
+
+Race/Ethnicity of all YES responses from youth, where race and ethnicity were collected according to U.S. guidelines (n = `r n_race_denominator`). 
 
 ```{r calculating race tallies, include=FALSE}
 
