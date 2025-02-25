@@ -908,7 +908,7 @@ We share results from three of our open-access SSIs, currently offered on our [P
 + **Project CARE**: A self-compassion activity, where youth learn steps to be kinder to themselves
 + **Project Personality**: A growth mindset activity, where youth learn about their power to change
 
-```{r, out.width = "350px", out.height = "120px", include=TRUE, echo=FALSE}
+```{r, out.width = "700px", out.height = "240px", include=TRUE, echo=FALSE}
 
 knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/all_ssis_logo.png")
 
@@ -919,6 +919,11 @@ All three SSIs show improvements in key mental health outcomes, from before to a
 + **Reduced hopelessness** (e.g., less thinking that the future is dark and unlikely to improve)
 + **Increased agency** (e.g., increased belief in one's capability to reach goals and solve problems) 
 + **Reduced self-hate** (e.g., less feelings of shame and disgust with oneself)
+
+Compared to before completing an activity...
+
++ **`r perc_pp_lot_little_less_hopeless`-`r perc_abc_lot_little_less_hopeless`% were "a lot" or "a little" less hopeless**
++ **`r perc_pp_lot_little_more_prob`-`r perc_abc_lot_little_more_prob`% were "a lot" or "a little" more able to solve problems**
 
 ```{r plot setup, include=FALSE, warning=FALSE}
 
@@ -936,18 +941,6 @@ font_add_google(name = "Noto Sans",
 showtext::showtext_auto()
 
 ```
-
-## ABC Project
-
-```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
-
-knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_abc_graphic.png")
-
-```
-
-For those who chose the **ABC Project** with data at both time points:
-
-+ **hopelessness decreased** from pre to post abc, dz = `r abc_bhs_dz_value`.
 
 ```{r t test results abc bhs, echo=FALSE}
 
@@ -1054,8 +1047,6 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 ```
 
-+ **agency increased** from pre to post abc, dz = `r abc_shs_dz_value`.
-
 ```{r t test results abc shs, echo=FALSE}
 
 # t_abc_shs # full results here
@@ -1100,8 +1091,6 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
   labs(x = "Agency", y = " ")
 
 ```
-
-+ **self-hate decreased** from pre to post abc, dz = `r abc_hate_dz_value`.
 
 ```{r t test results abc hate, echo=FALSE}
 
@@ -1184,15 +1173,13 @@ perc_abc_lot_little_less_hopeless <- round((n_abc_lot_little_less_hopeless / n_a
 
 ```
 
-Of those who answered this question, **`r perc_abc_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-ABC.**
-
 ```{r printing abc change hopelessness, include=FALSE}
 
 perc_abc_lot_little_less_hopeless
 
 ```
 
-```{r plotting abc change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting abc change hopelessness, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1247,15 +1234,13 @@ perc_abc_lot_little_more_prob <- round((n_abc_lot_little_more_prob / n_abc_answe
 
 ```
 
-Of those who answered this question, **`r perc_abc_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-ABC.**
-
 ```{r printing abc change problem solving, include=FALSE}
 
 perc_abc_lot_little_more_prob
 
 ```
 
-```{r plotting abc change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting abc change problem solving, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1294,18 +1279,6 @@ plot_abc_change_prob <- ggplot(data_abc_plot_change_prob_mutated, aes(x = perc_c
 plot_abc_change_prob
 
 ```
-
-## Project CARE
-
-```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
-
-knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_care_graphic.png")
-
-```
-
-For those who chose **Project CARE** with data at both time points:
-
-+ **hopelessness decreased** from pre to post care, dz = `r care_bhs_dz_value`.
 
 ```{r t test results care bhs, echo=FALSE}
 
@@ -1352,8 +1325,6 @@ plot_care_bhs <- plot_data_bhs_care_function %>%
 
 ```
 
-+ **agency increased** from pre to post care, dz = `r care_shs_dz_value`.
-
 ```{r t test results care shs, echo=FALSE}
 
 # t_care_shs # full results here
@@ -1398,8 +1369,6 @@ plot_care_shs <- plot_data_shs_care_function %>%
   labs(x = "Agency", y = " ")
 
 ```
-
-+ **self-hate decreased** from pre to post care, dz = `r care_hate_dz_value`.
 
 ```{r t test results care hate, echo=FALSE}
 
@@ -1482,15 +1451,13 @@ perc_care_lot_little_less_hopeless <- round((n_care_lot_little_less_hopeless / n
 
 ```
 
-Of those who answered this question, **`r perc_care_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-CARE.**
-
 ```{r printing care change hopelessness, include=FALSE}
 
 perc_care_lot_little_less_hopeless
 
 ```
 
-```{r plotting care change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting care change hopelessness, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1545,15 +1512,13 @@ perc_care_lot_little_more_prob <- round((n_care_lot_little_more_prob / n_care_an
 
 ```
 
-Of those who answered this question, **`r perc_care_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-CARE.**
-
 ```{r printing care change problem solving, include=FALSE}
 
 perc_care_lot_little_more_prob
 
 ```
 
-```{r plotting care change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting care change problem solving, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1592,18 +1557,6 @@ plot_care_change_prob <- ggplot(data_care_plot_change_prob_mutated, aes(x = perc
 plot_care_change_prob
 
 ```
-
-## Project Personality
-
-```{r, out.width = "260px", out.height = "240px", include=TRUE, echo=FALSE}
-
-knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_pp_graphic.png")
-
-```
-
-For those who chose **Project Personality** with data at both time points:
-
-+ **hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
 
 ```{r t test results pp bhs, echo=FALSE}
 
@@ -1650,8 +1603,6 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
 
 ```
 
-+ **agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
-
 ```{r t test results pp shs, echo=FALSE}
 
 # t_pp_shs # full results here
@@ -1696,8 +1647,6 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
   labs(x = "Agency", y = " ")
 
 ```
-
-+ **self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
 
 ```{r t test results pp hate, echo=FALSE}
 
@@ -1780,15 +1729,13 @@ perc_pp_lot_little_less_hopeless <- round((n_pp_lot_little_less_hopeless / n_pp_
 
 ```
 
-Of those who answered this question, **`r perc_pp_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-Project Personality.**
-
 ```{r printing pp change hopelessness, include=FALSE}
 
 perc_pp_lot_little_less_hopeless
 
 ```
 
-```{r plotting pp change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+```{r plotting pp change hopelessness, warning=FALSE, message=FALSE, include=FALSE}
 
 # Creating df
 
@@ -1842,8 +1789,6 @@ n_pp_answered_prob <- data_youth_pp %>%
 perc_pp_lot_little_more_prob <- round((n_pp_lot_little_more_prob / n_pp_answered_prob)*100, 2)
 
 ```
-
-Of those who answered this question, **`r perc_pp_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-Project Personality.**
 
 ```{r printing pp change problem solving, include=FALSE}
 
@@ -1901,7 +1846,7 @@ library(patchwork)
 plots_all <- plots_abc / plots_care / plots_pp  + 
   plot_annotation(
     title = "Outcomes before and after all SSIs",
-    caption = "hopelessness, agency, self-hate before + after ABC (green), CARE (red), and Project Personality (blue)"
+    caption = "hopelessness, agency, self-hate before + after ABC (green/top), CARE (red/middle), and Project Personality (blue/bottom)"
   )
 
 # Show the combined plot
