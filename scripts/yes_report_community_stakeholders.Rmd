@@ -911,11 +911,11 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/lsm
 
 # Summary
 
-**We develop digital, evidence-based youth mental health supports that make an impact at scale.** Each "Single-Session Intervention", or SSI, is designed as a standalone experience; in ~30-minutes, youth walk away with a concrete lesson, skill, or plan to make a difference for their mental health. We [published Project YES](https://www.schleiderlab.org/yes.html), an online platform to share our SSIs publicly.
+**We develop digital, evidence-based youth mental health supports that make an impact at scale.** Each "Single-Session Intervention", or SSI, is designed as a standalone experience; in ~20-minutes, youth walk away with a concrete lesson, skill, or plan to make a difference for their mental health. We [published Project YES](https://www.schleiderlab.org/yes.html), an online platform to share our SSIs publicly.
 
 **We reach youth who would otherwise go undetected and under-supported.** Everything is self-led, available online, 100% free, and anonymous. For youth experiencing acute concerns, we can offer personalized referrals to local and approved resources. Accessibility is our priority.
 
-**We maximize the impact 30 minutes can make.** By focusing on core principles of evidence-based mental health intervention and psychotherapies (e.g., "you are capable of change", "your thoughts and feelings are connected"), we make the most of limited time. 
+**We maximize the impact 20 minutes can make.** By focusing on core principles of evidence-based mental health intervention and psychotherapies (e.g., "you are capable of change", "your thoughts and feelings are connected"), we make the most of limited time. 
 
 **Our work is backed by scientific research.** In gold standard [randomized controlled trials](https://www.nature.com/articles/s41562-021-01235-0), our interventions improve key mental health outcomes, like reducing hopelessness and boosting youth's sense of agency, right away. They also reduce mental health symptoms three months later.
 
@@ -1924,6 +1924,8 @@ age_tallies <- data_youth_age %>%
 rempsyc::nice_table(age_tallies)
 
 ```
+
+Note: We collected these data using slightly different age categories over time; this explains the overlap in some age groups above. 
 
 ## Race/Ethnicity
 
