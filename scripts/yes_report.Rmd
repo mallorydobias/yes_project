@@ -1490,7 +1490,7 @@ perc_youth_no_support
 
 ```
 
-+ **`r perc_youth_no_support_w_depression`% zero access to mental health treatment AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
++ **`r perc_youth_no_support_w_depression`% report zero access to mental health treatment AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
 
 ```{r showing no access to support and depression, include=FALSE}
 
