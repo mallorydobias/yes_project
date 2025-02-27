@@ -854,15 +854,15 @@ mfq_mean <- data_mfq_plot %>%
 
 ```{r calculating access to support descriptives, include=FALSE}
 
-# Calculating n youth with unmet mental health needs
-# (no history of support, but they've wanted support)
+# Calculating n youth with no history of formal supports
 
 n_youth_no_support <- data_youth %>%
   select(dem_receive_support) %>%
-  filter(dem_receive_support == "no, but I have wanted to get support before") %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" | 
+         dem_receive_support == "no, and I have not wanted to get support before") %>%
   nrow()
 
-# Calculating perc youth with history of unmet mh needs
+# Calculating perc youth with no history of mh treatment
 
 perc_youth_no_support <- round((n_youth_no_support / n_started_survey)*100, 2)
 
@@ -909,8 +909,8 @@ Across all survey starts (n = `r n_started_survey`):
 + `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
 + Race and ethnicity are measured differently across surveys (see below)
 + `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
-+ `r perc_youth_no_support`% report never accessing mh support despite wanting it
-+ `r perc_youth_no_support_w_depression`% report no history of mh support access AND elevated depression symptoms
++ `r perc_youth_no_support`% report never accessing formal mental health support
++ `r perc_youth_no_support_w_depression`% report no history of formal mental health support treatment AND elevated depression symptoms
 + By far, most responses in this data heard about YES in school
 
 Of cases with data at both time points:
@@ -1482,7 +1482,7 @@ plot_mfq
 
 Across all survey starts: 
 
-+ **`r perc_youth_no_support`% never accessed mental health support,** despite wanting to.
++ **`r perc_youth_no_support`% report never accessing formal mental health treatment.**
 
 ```{r showing unmet mental health need, include=FALSE}
 
@@ -1490,7 +1490,7 @@ perc_youth_no_support
 
 ```
 
-+ **`r perc_youth_no_support_w_depression`% never accessed mental health support AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
++ **`r perc_youth_no_support_w_depression`% zero access to mental health treatment AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
 
 ```{r showing no access to support and depression, include=FALSE}
 
@@ -1504,15 +1504,20 @@ perc_youth_no_support_w_depression
 
 data_access_plot <- data_youth %>%
   select(dem_receive_support) %>%
-  filter(!is.na(dem_receive_support) & !str_detect(dem_receive_support, ",no")) %>% # dropping multiple conflicting responses 
+  # filter(!str_detect(dem_receive_support, ",no")) %>% # dropping a single conflicting response + nas
   mutate(dem_receive_support = str_replace(dem_receive_support, "yes, I am getting support now", "yes (now)"),
          dem_receive_support = str_replace(dem_receive_support, "yes, I have gotten support in the past", "yes (past)"),
          dem_receive_support = str_replace(dem_receive_support, "no, and I have not wanted to get support before", "no (never wanted it)"),
-         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no (has wanted it)"))
+         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no (has wanted it)")) %>%
+  mutate(dem_receive_support = case_when(is.na(dem_receive_support) ~ "missing",
+                                         TRUE ~ dem_receive_support))
+
+table(data_access_plot)
   
 # Setting a group order
 
-custom_order <- c("no (never wanted it)", "no (has wanted it)", "yes (now)", "yes (past)", "yes (now),yes (past)")
+custom_order <- c("no (never wanted it)", "no (has wanted it)", "yes (now)", "yes (past)", 
+                  "yes (now),yes (past)", "yes (now),no (never wanted it)", "missing")
 
 # Convert to a factor with the specified order
 
@@ -1521,12 +1526,21 @@ data_access_plot_mutated <- data_access_plot %>%
 
 ```
 
-```{r plotting access to support, echo=FALSE}
+```{r plotting access to support, echo=FALSE, warning=FALSE, message=FALSE}
 
-# Plotting 
+# Calculating percentage frequency for text annotation
+
+data_access_plot_perc <- data_access_plot_mutated %>%
+  count(dem_receive_support) %>%
+  mutate(perc = n / sum(n) * 100)
+
+# Plotting
 
 plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +  
-  geom_histogram(stat="count", fill = "#4E2A84", alpha = 0.8) +  
+  geom_histogram(stat = "count", fill = "#4E2A84", alpha = 0.8) +  
+  geom_text(data = data_access_plot_perc, aes(x = dem_receive_support, y = n, 
+                                              label = paste0(round(perc, 2), "%")), 
+            vjust = -0.5, size = 3.5) +  # Adding percentage labels
   theme_light() +
   theme(legend.position = "none",
         title = element_text(size = 10),
@@ -1535,7 +1549,8 @@ plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +
   plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
                   caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor;
                                   Plot does not include missing values'")) +
-  labs(x = "", y = "frequency")
+  labs(x = "", y = "Frequency") +
+  ylim(0, 1750)  # Extending the y-axis limit
 
 plot_access
 
