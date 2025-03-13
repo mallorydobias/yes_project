@@ -493,6 +493,102 @@ test_mutate_count %>%
 
 ```
 
+Cleaning volunteer_questionnaires_yn
+
+```{r mutating volunteer qs var for future joins, include=FALSE}
+
+data_questionnaires_yn_cleaned <- data_ssi_choice_cleaned %>%
+  mutate(volunteer_questionnaires_yn = case_when(volunteer_questionnaires_yn == "Evet" ~ "Yes",
+                                                 volunteer_questionnaires_yn == "Hayır" ~ "No",
+                                                 TRUE ~ volunteer_questionnaires_yn))
+
+```
+
+```{r writing a function to setup future mutation checks, include=FALSE}
+
+# Custom function to compare value counts before and after mutation
+prep_mutation_check <- function(data_pre, data_post, var) {
+  
+  # Step 1: Create pre-mutation counts
+  test_pre <- data_pre %>%
+    select(var) %>%
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_pre"), everything())  # Rename columns for pre-mutation
+  
+  # Step 2: Create post-mutation counts
+  test_post <- data_post %>%
+    select(var) %>%
+    mutate(across(all_of(var), ~ factor(., levels = unique(.)))) %>%  # Convert to factor
+    group_by(across(all_of(var))) %>%  # Group by the specified variable
+    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
+    arrange(desc(count)) %>%  # Arrange in descending order
+    rename_with(~ paste0(., "_post"), everything())  # Rename columns for post-mutation
+  
+  # Step 3: Combine pre and post counts into one dataframe for comparison
+  test_comparison <- bind_cols(test_pre, test_post)
+  
+  return(test_comparison)
+}
+
+```
+
+```{r testing function to setup future mutation checks, include=FALSE}
+
+# Example usage:
+# Assuming `data_ssi_choice_cleaned` is the pre-mutation dataframe
+# and `data_questionnaires_yn_cleaned` is the post-mutation dataframe,
+# and you want to compare the value counts of "volunteer_questionnaires_yn":
+
+test_mutate <- prep_mutation_check(data_ssi_choice_cleaned, data_questionnaires_yn_cleaned, "volunteer_questionnaires_yn") # same output as test_mfq_mutate above
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r volunteer qs response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Cleaning dem_receive_support
+
+```{r mutating support var for future joins, include=FALSE}
+
+data_support_cleaned <- data_questionnaires_yn_cleaned %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, şu anda destek alıyorum", "yes, I am getting support now")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, geçmişte destek aldım", "yes, I have gotten support in the past")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır, ama geçmişte destek almak istedim", "no, but I have wanted to get support before")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır ve geçmişte destek almak istemedim", "no, and I have not wanted to get support before"))
+
+```
+
+```{r testing mutation support var, include=FALSE}
+
+# Checking mutation
+
+test_mutate <- prep_mutation_check(data_questionnaires_yn_cleaned, data_support_cleaned, "dem_receive_support") # same output as test_mfq_mutate above
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r mfq response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
 ## Calculating Composites
 
 ### Depression
@@ -555,36 +651,6 @@ test_mfq_post <- data_mfq_mutated %>%
 # creating overall df for comparison
 
 test_mfq_mutate <- cbind(test_mfq_pre, test_mfq_post)
-
-```
-
-```{r writing a function to setup future mutation checks, include=FALSE}
-
-# Custom function to compare value counts before and after mutation
-prep_mutation_check <- function(data_pre, data_post, var) {
-  
-  # Step 1: Create pre-mutation counts
-  test_pre <- data_pre %>%
-    select(var) %>%
-    group_by(across(all_of(var))) %>%  # Group by the specified variable
-    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
-    arrange(desc(count)) %>%  # Arrange in descending order
-    rename_with(~ paste0(., "_pre"), everything())  # Rename columns for pre-mutation
-  
-  # Step 2: Create post-mutation counts
-  test_post <- data_post %>%
-    select(var) %>%
-    mutate(across(all_of(var), ~ factor(., levels = unique(.)))) %>%  # Convert to factor
-    group_by(across(all_of(var))) %>%  # Group by the specified variable
-    summarize(count = n(), .groups = "drop") %>%  # Count occurrences
-    arrange(desc(count)) %>%  # Arrange in descending order
-    rename_with(~ paste0(., "_post"), everything())  # Rename columns for post-mutation
-  
-  # Step 3: Combine pre and post counts into one dataframe for comparison
-  test_comparison <- bind_cols(test_pre, test_post)
-  
-  return(test_comparison)
-}
 
 ```
 
