@@ -1043,8 +1043,8 @@ Calculating program feedback scores using the Program feedback scale (measured p
 ## Pulling pfs variables
 
 # vars_pfs <- data_hate_scored %>%
-#   select(contains("pfs") & -contains("like") & 
-#            -contains("change") & 
+#   select(contains("pfs") & -contains("like") &
+#            -contains("change") &
 #            -contains("more") &
 #            -contains("tim")) %>%
 #   head() %>%
@@ -1064,11 +1064,11 @@ data_pfs_mutated <- data_hate_scored %>%
                -contains("more") &
                -contains("tim"),
                 ~ case_when(
-                    . == "Really Disagree" ~ 1,
-                    . == "Disagree" ~ 2,
-                    . == "Neutral" ~ 3,
-                    . == "Agree" ~ 4,
-                    . == "Really Agree" ~ 5,
+                    . == "Hiç katılmıyorum" ~ 1,
+                    . == "Katılmıyorum" ~ 2,
+                    . == "Ne katılıyorum, ne katılmıyorum" ~ 3,
+                    . == "Katılıyorum" ~ 4,
+                    . == "Tamamen katılıyorum" ~ 5,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
  
