@@ -624,12 +624,11 @@ Cleaning dem_sex
 
 ```{r mutating sex var for future joins, include=FALSE}
 
-data_age_cleaned$dem_sex
-
 data_sex_cleaned <- data_age_cleaned %>%
-  mutate(dem_age = case_when(dem_age == "10 veya altı" ~ "10 or younger",
-                             dem_age == "18 veya üzeri" ~ "18 or older",
-                             TRUE ~ dem_age))
+  mutate(dem_sex = case_when(dem_sex == "Erkek" ~ "Male",
+                             dem_sex == "Kadın" ~ "Female",
+                             dem_sex == "Diğer" ~ "Other",
+                             TRUE ~ dem_sex))
 
 ```
 
