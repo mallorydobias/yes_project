@@ -800,10 +800,10 @@ Calculating hope using the 3-item pathways subscale from the State Hope Scale (m
 
 ## Pulling shs variables
 
-# vars_shs <- data_bhs_scored %>%
-#   select(contains("shs")) %>%
-#   head() %>%
-#   print()
+vars_shs <- data_bhs_scored %>%
+  select(contains("shs")) %>%
+  head() %>%
+  print()
 
 ```
 
@@ -816,14 +816,14 @@ Mutating shs character values to numeric values
 data_shs_mutated <- data_bhs_scored %>%
   mutate(across(contains("shs_") & -contains("tim"), 
                 ~ case_when(
-                    . == "Definitely False" ~ 1,
-                    . == "Mostly False" ~ 2,
-                    . == "Somewhat False" ~ 3,
-                    . == "Slightly False" ~ 4,
-                    . == "Slightly True" ~ 5,
-                    . == "Somewhat True" ~ 6,
-                    . == "Mostly True" ~ 7,
-                    . == "Definitely True" ~ 8,
+                    . == "Kesinlikle Yanlış" ~ 1,
+                    . == "Büyük Ölçüde Yanlış" ~ 2,
+                    . == "Kısmen Yanlış" ~ 3,
+                    . == "Biraz Yanlış" ~ 4,
+                    . == "Biraz Doğru" ~ 5,
+                    . == "Kısmen Doğru" ~ 6,
+                    . == "Büyük Ölçüde Doğru" ~ 7,
+                    . == "Kesinlikle Doğru" ~ 8,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
  
@@ -862,6 +862,7 @@ test_mutate %>%
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
 ```
+
 Calculating shs row means
 
 ```{r calculating shs scores}
