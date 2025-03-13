@@ -577,8 +577,6 @@ data_support_cleaned <- data_questionnaires_yn_cleaned %>%
 
 test_mutate <- prep_mutation_check(data_questionnaires_yn_cleaned, data_support_cleaned, "dem_receive_support")
 
-## will use the prep_mutation_check() function to set up mutation checks moving forward
-
 ```
 
 Checking response counts are identical from pre to post mutation
@@ -607,8 +605,6 @@ data_age_cleaned <- data_support_cleaned %>%
 # Checking mutation
 
 test_mutate <- prep_mutation_check(data_support_cleaned, data_age_cleaned, "dem_age")
-
-## will use the prep_mutation_check() function to set up mutation checks moving forward
 
 ```
 
@@ -640,8 +636,6 @@ data_sex_cleaned <- data_age_cleaned %>%
 
 test_mutate <- prep_mutation_check(data_age_cleaned, data_sex_cleaned, "dem_sex")
 
-## will use the prep_mutation_check() function to set up mutation checks moving forward
-
 ```
 
 Checking response counts are identical from pre to post mutation
@@ -656,7 +650,7 @@ test_mutate %>%
 
 Cleaning ssi_prev_completed
 
-```{r mutating sex var for future joins, include=FALSE}
+```{r mutating prev completed var for future joins, include=FALSE}
 
 data_prev_completed_translated <- data_sex_cleaned %>%
   mutate(ssi_prev_completed = case_when(ssi_prev_completed == "Evet" ~ "Yes",
@@ -665,21 +659,61 @@ data_prev_completed_translated <- data_sex_cleaned %>%
 
 ```
 
-```{r testing mutation sex var, include=FALSE}
+```{r testing mutation prev completed var, include=FALSE}
 
 # Checking mutation
 
 test_mutate <- prep_mutation_check(data_sex_cleaned, data_prev_completed_translated, "ssi_prev_completed")
 
-## will use the prep_mutation_check() function to set up mutation checks moving forward
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r prev completed counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Cleaning commit vars
+
+```{r mutating commit vars for future joins, include=FALSE}
+
+data_commits_cleaned <- data_prev_completed_translated %>%
+  mutate(across(contains("commit"), 
+                ~ case_when(. == "Evet" ~ "Yes",
+                            . == "Hayır" ~ "No",
+                            TRUE ~ .)))
+
+```
+
+```{r testing mutation commit vars, include=FALSE}
+
+# Checking mutation
+
+test_mutate_abc <- prep_mutation_check(data_prev_completed_translated, data_commits_cleaned, "abc_commit")
+
+test_mutate_care <- prep_mutation_check(data_prev_completed_translated, data_commits_cleaned, "proj_care_commit")
+
+test_mutate_pp <- prep_mutation_check(data_prev_completed_translated, data_commits_cleaned, "proj_pers_commit")
 
 ```
 
 Checking response counts are identical from pre to post mutation
 
-```{r sex counts validation, validate = TRUE}
+```{r commit vars counts validation, validate = TRUE}
 
-test_mutate %>%
+test_mutate_abc %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+test_mutate_care %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+test_mutate_pp %>%
   pointblank::col_vals_equal(vars(count_pre), 
                              vars(count_post)) # passes if response counts are identical pre to post mutation
 
