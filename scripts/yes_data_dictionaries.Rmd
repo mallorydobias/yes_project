@@ -87,6 +87,7 @@ var_labels <- c(response_id = "id, qualtrics-generated",
                 end_date = "date response closed",
                 perc_progress = "percent survey complete, qualtrics-generated",
                 finished = "true/false, is response 100% complete",
+                q_recaptcha_score = "qualtrics recaptcha score, d07 only",
                 ssi_choice = "ssi chosen",
                 ssi_source = "embedded data, source of response",
                 volunteer_questionnaires_yn = "yes/no, did they agree to optional questionnaires, d05/d09/d16 only",
@@ -348,7 +349,7 @@ data_dictionary <- datadictionary::create_dictionary(data_for_dictionary, var_la
 ## Defining the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_english_data_dictionary.csv"
+file_name <- "yes_all_languages_data_dictionary.csv"
 full_path <- file.path(folder_path, file_name)
 
 write.csv(data_dictionary, full_path, row.names = FALSE)
