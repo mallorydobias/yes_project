@@ -924,18 +924,18 @@ test_post_shs_calc %>%
 
 ### Self-Hate
 
-Calculating self-hate using a 3-item version of the Self-Hate Scale (measured pre and post SSI). Row mean scores range from 1 to 6, where 1 = not at all true for me, and 6 = very true for me. Source (abbreviated scale): https://mental.jmir.org/2020/6/e20513. Source (full scale): https://doi.org/10.1016/j.jad.2018.11.047 
+Calculating self-hate using a 3-item version of the Self-Hate Scale (measured pre and post SSI). Row mean scores range from 1 to 7, where 1 = not at all true for me, and 7 = very true for me. Source (abbreviated scale): https://mental.jmir.org/2020/6/e20513. Source (full scale): https://doi.org/10.1016/j.jad.2018.11.047 
 
-NOTE: The original scale is a 7-point Likert scale, we've used 6-point Likert scales for items in this data and in the original YES data. 
+NOTE: While we've used 6-point Likert scales for items in our English data and in the original YES data, we use the full 7-point Likert scale items here. 
 
 ```{r pulling selfhate values, include=FALSE}
 
 ## Pulling selfhate variables
 
-# vars_hate <- data_shs_scored %>%
-#   select(contains("self_hate")) %>%
-#   head() %>%
-#   print()
+vars_hate <- data_shs_scored %>%
+  select(contains("self_hate")) %>%
+  head() %>%
+  print()
 
 ```
 
@@ -946,7 +946,18 @@ Mutating hate character values to numeric values
 ## Converting number character values from sliding scale to numeric values
 
 data_hate_mutated <- data_shs_scored %>%
-  mutate(across(contains("self_hate") & where(is.character), as.numeric))
+  mutate(across(contains("self_hate"), 
+                ~ case_when(
+                  . == "Benim için hiç uygun değil" ~ "1",
+                  . == "2" ~ "2",
+                  . == "3" ~ "3",
+                  . == "4" ~ "4",
+                  . == "5" ~ "5",
+                  . == "6" ~ "6",
+                  . == "Benim için tamamen uygun" ~ "7",
+                  TRUE ~ NA_character_))) %>%
+  mutate(across(contains("self_hate"), 
+                ~ as.numeric(.)))
 
 ```
 
