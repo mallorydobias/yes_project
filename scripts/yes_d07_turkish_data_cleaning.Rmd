@@ -719,6 +719,48 @@ test_mutate_pp %>%
 
 ```
 
+Cleaning perc_change vars
+
+```{r mutating perc change vars for future joins, include=FALSE}
+
+data_perc_change_cleaned <- data_commits_cleaned %>%
+  mutate(perc_change_hope = case_when(perc_change_hope == "Çok daha fazla umutsuz" ~ "Much more hopeless",
+                                      perc_change_hope == "Biraz daha fazla umutsuz" ~ "A little more hopeless",
+                                      perc_change_hope == "Aynı derecede umutsuz" ~ "The same amount of hopeless",
+                                      perc_change_hope == "Biraz daha az umutsuz" ~ "A little less hopeless",
+                                      perc_change_hope == "Çok daha az umutsuz" ~ "A lot less hopeless")) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "Problem çözmede çok daha az becerikli" ~ "Much less able to solve the problems",
+                                      perc_change_prob == "Problem çözmede biraz daha az becerikli" ~ "A little less able to solve the problems",
+                                      perc_change_prob == "Problem çözmede aynı beceride" ~ "The same amount able to solve the problems",
+                                      perc_change_prob == "Problem çözmede biraz daha fazla becerikli" ~ "A little more able to solve the problems",
+                                      perc_change_prob == "Problem çözmede çok daha fazla becerikli" ~ "A lot more able to solve the problems"))
+
+```
+
+```{r testing mutation prev completed var, include=FALSE}
+
+# Checking mutation
+
+test_mutate_hopeless <- prep_mutation_check(data_commits_cleaned, data_perc_change_cleaned, "perc_change_hope")
+
+test_mutate_prob <- prep_mutation_check(data_commits_cleaned, data_perc_change_cleaned, "perc_change_prob")
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r prev completed counts validation, validate = TRUE}
+
+test_mutate_hopeless %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+test_mutate_prob %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
 ## Calculating Composites
 
 ### Depression
