@@ -507,9 +507,9 @@ Mutating mfq character values to numeric values
 data_mfq_mutated <- data_ssi_choice_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
-                    . == "Not True" ~ 0,
-                    . == "Sometimes" ~ 1,
-                    . == "True" ~ 2,
+                    . == "Doğru değil" ~ 0,
+                    . == "Bazen" ~ 1,
+                    . == "Doğru" ~ 2,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
 
