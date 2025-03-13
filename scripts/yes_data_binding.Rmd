@@ -475,11 +475,27 @@ unique_cols_d16 %>%
 
 ```
 
+Fixing ssi var factor options in english data
+
+```{r fixing factor options in ssi vars for english data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+english_data_mutated <- english_data_bound %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed))
+
+```
+
 Reorganizing column order in english data
 
 ```{r reorganizing cols english data}
 
-english_data_reorged <- english_data_bound %>%
+english_data_reorged <- english_data_mutated %>%
   select(response_id, language, data_id, contains("date"),
          perc_progress, finished, ssi_choice, ssi_source,
          starts_with("volunteer_") & !contains("tim"),
@@ -531,7 +547,7 @@ english_data_reorged <- english_data_bound %>%
 
 ## creating data frames of names pre and post reorg for comparison
 
-pre_reorg_names <- english_data_bound %>%
+pre_reorg_names <- english_data_mutated %>%
   names() # names pre
 
 post_reorg_names <- english_data_reorged %>%
@@ -563,11 +579,27 @@ n_cols_dropped # true if no columns were dropped by reorg
 
 ```
 
+Fixing ssi var factor options in turkish data
+
+```{r fixing factor options in ssi vars for turkish data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+turkish_data_mutated <- d07_data %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed))
+
+```
+
 Reorganizing column order in turkish data (no binding necessary)
 
 ```{r reorganizing cols turkish data}
 
-turkish_data_reorged <- d07_data %>%
+turkish_data_reorged <- turkish_data_mutated %>%
   select(response_id, language, data_id, contains("date"),
          perc_progress, finished, q_recaptcha_score, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
@@ -617,7 +649,7 @@ turkish_data_reorged <- d07_data %>%
 
 ## creating data frames of names pre and post reorg for comparison
 
-pre_reorg_names <- d07_data %>%
+pre_reorg_names <- turkish_data_mutated %>%
   names() # names pre
 
 post_reorg_names <- turkish_data_reorged %>%
@@ -649,11 +681,27 @@ n_cols_dropped # true if no columns were dropped by reorg
 
 ```
 
+Fixing ssi var factor options in all data
+
+```{r fixing factor options in ssi vars for all data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+all_data_mutated <- all_data_bound %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed))
+
+```
+
 Reorganizing cols in all data df
 
 ```{r reorganizing cols all data}
 
-all_data_reorged <- all_data_bound %>%
+all_data_reorged <- all_data_mutated %>%
   select(response_id, language, data_id, contains("date"),
          perc_progress, finished, q_recaptcha_score, ssi_choice, ssi_source,
          starts_with("volunteer_") & !contains("tim"),
