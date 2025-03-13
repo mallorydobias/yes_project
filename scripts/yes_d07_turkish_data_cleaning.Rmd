@@ -407,14 +407,12 @@ Creating separate prev_completed variables for easier counting
 
 ## Creating separate prev_completed variables for easier counting
 
-data_prev_completed_cleaned <- data_gender_other_cleaned %>%
-  mutate(ssi_prev_completed_abc = case_when(str_detect(ssi_prev_completed_name, "A.B.C.") ~ "yes",
+data_prev_completed_cleaned <- data_dated %>%
+  mutate(ssi_prev_completed_abc = case_when(str_detect(ssi_prev_completed_name, "Proje 3: Eylem Değişim Getirir") ~ "yes",
                                             TRUE ~ NA_character_),
-         ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "C.A.R.E.") ~ "yes",
+         ssi_prev_completed_care = case_when(str_detect(ssi_prev_completed_name, "Proje 2: Kendini Sevmek Ne işe Yarar?") ~ "yes",
                                             TRUE ~ NA_character_),
-         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Project Personality") ~ "yes",
-                                            TRUE ~ NA_character_),
-         ssi_prev_completed_rise = case_when(str_detect(ssi_prev_completed_name, "RISE") ~ "yes",
+         ssi_prev_completed_pp = case_when(str_detect(ssi_prev_completed_name, "Proje 1: Beynimiz ve Biz") ~ "yes",
                                             TRUE ~ NA_character_)) %>%
   select(-ssi_prev_completed_name)
   
@@ -424,8 +422,8 @@ data_prev_completed_cleaned <- data_gender_other_cleaned %>%
 
 ## Creating data frames of ids of folks who previously completed ABC
 
-test_pre_mutate_count <- data_gender_other_cleaned %>%
-  filter(str_detect(ssi_prev_completed_name, "A.B.C.")) %>%
+test_pre_mutate_count <- data_dated %>%
+  filter(str_detect(ssi_prev_completed_name, "Proje 3: Eylem Değişim Getirir")) %>%
   select(pre_response_id = response_id) # ids of ABC participants pre mutation
 
 test_post_mutate_count <- data_prev_completed_cleaned %>%
@@ -450,24 +448,17 @@ test_mutate_count %>%
 
 ```
 
-Combining the ssi_choice and ssi_choose vars
+Combining the ssi_choice var
 
 ```{r combining ssi_choice and ssi_chose}
 
 ## Cleaning ssi_choice variable
 
 data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
-  mutate(ssi_choice = case_when(str_detect(ssi_choice, "A.B.C") ~ "ABC Project",
-                                str_detect(ssi_choice, "C.A.R.E") ~ "Project CARE",
-                                str_detect(ssi_choice, "Personality") ~ "Project Personality",
-                                str_detect(ssi_choice, "RISE") ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  mutate(ssi_choice = case_when(ssi_choose == "abc" ~ "ABC Project",
-                                ssi_choose == "care" ~ "Project CARE",
-                                ssi_choose == "pp" ~ "Project Personality",
-                                ssi_choose == "rise" ~ "Project RISE",
-                                TRUE ~ ssi_choice)) %>%
-  select(-ssi_choose)
+  mutate(ssi_choice = case_when(str_detect(ssi_choice, "Proje 3: Eylem Değişim Getirir") ~ "ABC Project",
+                                str_detect(ssi_choice, "Proje 2: Kendini Sevmek Ne işe Yarar?") ~ "Project CARE",
+                                str_detect(ssi_choice, "Proje 1: Beynimiz ve Biz") ~ "Project Personality",
+                                TRUE ~ ssi_choice))
 
 ```
 
@@ -476,7 +467,7 @@ data_ssi_choice_cleaned <- data_prev_completed_cleaned %>%
 ## Creating data frames of ids of folks who chose an ssi
 
 test_pre_mutate_count <- data_prev_completed_cleaned %>%
-  filter(!is.na(ssi_choice) | !is.na(ssi_choose)) %>%
+  filter(!is.na(ssi_choice)) %>%
   select(pre_response_id = response_id) # ids of non na responses to choice vars pre mutation
 
 test_post_mutate_count <- data_ssi_choice_cleaned %>%
