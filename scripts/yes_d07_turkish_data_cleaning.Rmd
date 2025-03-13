@@ -573,7 +573,7 @@ data_support_cleaned <- data_questionnaires_yn_cleaned %>%
 
 # Checking mutation
 
-test_mutate <- prep_mutation_check(data_questionnaires_yn_cleaned, data_support_cleaned, "dem_receive_support") # same output as test_mfq_mutate above
+test_mutate <- prep_mutation_check(data_questionnaires_yn_cleaned, data_support_cleaned, "dem_receive_support")
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
@@ -581,7 +581,71 @@ test_mutate <- prep_mutation_check(data_questionnaires_yn_cleaned, data_support_
 
 Checking response counts are identical from pre to post mutation
 
-```{r mfq response counts validation, validate = TRUE}
+```{r support response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Cleaning dem_age
+
+```{r mutating age var for future joins, include=FALSE}
+
+data_age_cleaned <- data_support_cleaned %>%
+  mutate(dem_age = case_when(dem_age == "10 veya altı" ~ "10 or younger",
+                             dem_age == "18 veya üzeri" ~ "18 or older",
+                             TRUE ~ dem_age))
+
+```
+
+```{r testing mutation age var, include=FALSE}
+
+# Checking mutation
+
+test_mutate <- prep_mutation_check(data_support_cleaned, data_age_cleaned, "dem_age")
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r age response counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Cleaning dem_sex
+
+```{r mutating sex var for future joins, include=FALSE}
+
+data_age_cleaned$dem_sex
+
+data_sex_cleaned <- data_age_cleaned %>%
+  mutate(dem_age = case_when(dem_age == "10 veya altı" ~ "10 or younger",
+                             dem_age == "18 veya üzeri" ~ "18 or older",
+                             TRUE ~ dem_age))
+
+```
+
+```{r testing mutation sex var, include=FALSE}
+
+# Checking mutation
+
+test_mutate <- prep_mutation_check(data_age_cleaned, data_sex_cleaned, "dem_sex")
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r sex counts validation, validate = TRUE}
 
 test_mutate %>%
   pointblank::col_vals_equal(vars(count_pre), 
