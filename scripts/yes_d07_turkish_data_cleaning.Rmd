@@ -402,6 +402,8 @@ test_dates %>%
 
 ```
 
+## Translating Factors
+
 Creating separate prev_completed variables for easier counting
 
 ```{r cleaning prev_completed values}
@@ -637,6 +639,37 @@ data_sex_cleaned <- data_age_cleaned %>%
 # Checking mutation
 
 test_mutate <- prep_mutation_check(data_age_cleaned, data_sex_cleaned, "dem_sex")
+
+## will use the prep_mutation_check() function to set up mutation checks moving forward
+
+```
+
+Checking response counts are identical from pre to post mutation
+
+```{r sex counts validation, validate = TRUE}
+
+test_mutate %>%
+  pointblank::col_vals_equal(vars(count_pre), 
+                             vars(count_post)) # passes if response counts are identical pre to post mutation
+
+```
+
+Cleaning ssi_prev_completed
+
+```{r mutating sex var for future joins, include=FALSE}
+
+data_prev_completed_translated <- data_sex_cleaned %>%
+  mutate(ssi_prev_completed = case_when(ssi_prev_completed == "Evet" ~ "Yes",
+                                        ssi_prev_completed == "Hayır" ~ "No",
+                                        TRUE ~ ssi_prev_completed))
+
+```
+
+```{r testing mutation sex var, include=FALSE}
+
+# Checking mutation
+
+test_mutate <- prep_mutation_check(data_sex_cleaned, data_prev_completed_translated, "ssi_prev_completed")
 
 ## will use the prep_mutation_check() function to set up mutation checks moving forward
 
