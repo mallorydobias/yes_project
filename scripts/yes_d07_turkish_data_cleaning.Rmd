@@ -773,7 +773,7 @@ Mutating mfq character values to numeric values
 
 ## Mutating character values to numeric across multiple mfq columns 
 
-data_mfq_mutated <- data_ssi_choice_cleaned %>%
+data_mfq_mutated <- data_perc_change_cleaned %>%
   mutate(across(starts_with("mfq_") & -contains("tim"), 
                 ~ case_when(
                     . == "Doğru değil" ~ 0,
