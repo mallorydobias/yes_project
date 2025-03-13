@@ -662,10 +662,12 @@ Calculating hopelessness using the 4-item Beck's Hopelessness Scale (measured pr
 
 ## Pulling mfq variables
 
-# vars_bhs <- data_mfq_scored %>%
-#   select(contains("bhs")) %>%
-#   head() %>%
-#   print()
+vars_bhs <- data_mfq_scored %>%
+  select(contains("bhs")) %>%
+  head() %>%
+  print()
+
+table(vars_bhs$pre_bhs_4)
 
 ```
 
@@ -678,10 +680,10 @@ Mutating bhs character values to numeric values
 data_bhs_mutated <- data_mfq_scored %>%
   mutate(across(contains("bhs_") & -contains("tim"), 
                 ~ case_when(
-                    . == "Absolutely disagree" ~ 0,
-                    . == "Somewhat disagree" ~ 1,
-                    . == "Somewhat agree" ~ 2,
-                    . == "Absolutely agree" ~ 3,
+                    . == "Kesinlikle katılmıyorum" ~ 0,
+                    . == "Kısmen katılmıyorum" ~ 1,
+                    . == "Kısmen katılıyorum" ~ 2,
+                    . == "Kesinlikle katılıyorum" ~ 3,
                     TRUE ~ NA_real_ # Handle other cases with NA
                 )))
 
@@ -718,6 +720,16 @@ Checking bhs response counts are identical from pre to post mutation
 test_mutate %>%
   pointblank::col_vals_equal(vars(count_pre), 
                              vars(count_post)) # passes if response counts are identical pre to post mutation
+
+# test_pre_bhs <- data_bhs_mutated %>%
+#   filter(pre_bhs_1 == 3) %>%
+#   select(response_id)
+# 
+# test_post_bhs <- data_mfq_scored %>%
+#   filter(pre_bhs_1 == "Kesinlikle katılıyorum") %>%
+#   select(response_id)
+# 
+# identical(test_pre_bhs, test_post_bhs) # also passes visual specific count inspection
 
 ```
 
