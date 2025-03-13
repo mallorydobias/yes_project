@@ -279,7 +279,8 @@ Renaming individual items for clarity
 ## Renaming individual vars for clarity
 
 data_items_named <- data_prog_named %>%
-  rename(pre_perceived_control = pre_control_1, 
+  rename(dem_receive_support = dem_receive_suppor,
+         pre_perceived_control = pre_control_1, 
          post_perceived_control = post_control_1,
          perc_progress = progress, 
          volunteer_questionnaires_yn = volunteer,
@@ -1176,8 +1177,7 @@ data_col_dropped <- data_pfs_scored %>%
   select(-status, -contains("duration"), -contains("recipient"), -contains("external"), -contains("distribution"), 
          -recorded_date, -user_language) %>% # dropping unnecessary qualtrics metadata
   select(-sc0, -sc1, -sc2) %>% # dropping scale scores calculated within qualtrics
-  select(-questionnaires) %>% # dropping col redundant with volunteer col
-  select(-dem_race_ethnicity, -dem_gender_identity) # dropping outdated cols cleaned above
+  select(-questionnaires) # dropping col redundant with volunteer col
 
 ```
 
@@ -1186,8 +1186,10 @@ Adding cols to document language and data source
 ```{r adding cols}
 
 data_col_added <- data_col_dropped %>%
-  mutate(language = "english",
-         data_id = "d09")
+  mutate(language = "turkish",
+         data_id = "d07")
+
+# glimpse(data_col_added)
 
 ```
 
@@ -1199,7 +1201,7 @@ Reorganizing column order to place important columns first, and then to follow c
 
 data_reorged <- data_col_added %>%
   select(response_id, language, data_id, contains("date"), ip_address, starts_with("location"),
-         perc_progress, finished, ssi_source, ssi_choice,
+         perc_progress, finished, q_recaptcha_score, ssi_choice,
          starts_with("volunteer_") & !contains("tim"),
          dem_hear_proj, dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
          starts_with("dem_gender_") & !contains("tim"),
@@ -1292,11 +1294,9 @@ data_classes_mutated <- data_reorged %>%
          volunteer_questionnaires_yn = as.factor(volunteer_questionnaires_yn),
          pre_perceived_control = as.numeric(pre_perceived_control),
          post_perceived_control = as.numeric(post_perceived_control),
-         ssi_source = as.factor(ssi_source),
          ssi_choice = as.factor(ssi_choice),
          ssi_started = as.factor(ssi_started),
-         ssi_completed = as.factor(ssi_completed),
-         advice_permission = as.factor(advice_permission)) %>%
+         ssi_completed = as.factor(ssi_completed)) %>%
   mutate(across(contains("date"), as.Date)) %>%
   mutate(across(matches("^dem_.*") & !matches("why|hear|text"), as.factor)) %>%
   mutate(across(contains("times_completed"), as.numeric)) %>%
@@ -1319,7 +1319,7 @@ data <- data_classes_mutated
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_d09_english_clean.Rds"
+file_name <- "yes_data_d07_turkish_clean.Rds"
 full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
