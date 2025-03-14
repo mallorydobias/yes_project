@@ -675,7 +675,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses all data (youth and adults) from our Turkish YES survey (data_ids: d07). Overall, due to limited sample size, quantitative results are not super reliable. SSIs are completed between ~35 and 60% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) may or may not improve from before to after finishing an SSI (non-significant paired t-test results could be due to a lack of effect, or due to a low n). SSIs receive ratings between 4 and 5 out of 5, where 5 is the highest approval rating.
+**Executive Summary**: This report uses all data (youth and adults) from our Turkish YES survey (data_ids: d07). Overall, due to limited sample size, quantitative results are not super reliable. SSIs are completed between ~35 and 60% of the time they are started. Some clinical outcomes may improve from before to after completing an SSI (hopelessness, agency), however low n's mean our analyses are best conducted in the overall sample (vs by SSI). SSIs receive ratings between 4 and 5 out of 5, where 5 is the highest approval rating.
 
 **Full Summary**:
 
