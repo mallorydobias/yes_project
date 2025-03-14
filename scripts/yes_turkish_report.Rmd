@@ -696,8 +696,8 @@ Across all survey starts (n = `r n_started_survey`):
 
 Of cases with data at both time points:
 
-+ Hopelessness decreased, agency increased, and there was no evidence self-hate changed from pre to post SSI (dzs: `r all_dz_values`)
-+ We calculated changes pre to post SSI (vs by SSI) given limited sample sizes (e.g., df = `r d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$df`)
++ Hopelessness decreased, agency increased, and self-hate did not change from pre to post SSI (dzs: `r all_dz_values`)
++ We calculated pre to post changes overall (vs by SSI), given limited sample sizes (e.g., dfs ~ `r d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$df`)
 + We plotted individual outcome trajectories within each SSI, for visibility
 
 Of the cases where someone chose an SSI:
@@ -1125,6 +1125,7 @@ data_t_all_bhs <- broom::tidy(t_all_bhs) %>%
   select(all_test, t, df, p.value, dz)
 
 ```
+
 + **agency increased** from pre to post SSI, dz = `r all_shs_dz_value`.
 
 ```{r t test results all shs, echo=FALSE}
@@ -1142,9 +1143,10 @@ data_t_all_shs <- broom::tidy(t_all_shs) %>%
   select(all_test, t, df, p.value, dz)
 
 ```
-+ **self-hate decreased** from pre to post SSI, dz = `r all_hate_dz_value`.
 
-```{r t test results all hate, echo=FALSE}
++ **no evidence self-hate decreased** from pre to post SSI, dz = `r all_hate_dz_value`.
+
+```{r t test results all hate, include=FALSE}
 
 t_all_hate # full results here
 
