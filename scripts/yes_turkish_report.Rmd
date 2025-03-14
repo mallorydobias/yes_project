@@ -1094,7 +1094,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 For those who chose the **ABC Project** with data at both time points:
 
-+ **hopelessness decreased** from pre to post abc, dz = `r abc_bhs_dz_value`.
++ **No evidence hopelessness decreased** from pre to post abc, dz = `r abc_bhs_dz_value`.
 
 ```{r t test results abc bhs, echo=FALSE}
 
@@ -1117,8 +1117,8 @@ data_t_abc_bhs <- broom::tidy(t_abc_bhs) %>%
 ## Selecting pre and post vars for abc
 
 pre_post_bhs_abc <- data %>% 
-  filter(str_detect(ssi_started, "A.B.C.")) %>%
-  dplyr::select(pre_bhs_mean, post_bhs_mean)
+  filter(str_detect(ssi_started, "ABC")) %>%
+  dplyr::select(response_id, pre_bhs_mean, post_bhs_mean)
 
 # Converting to long data format
 
@@ -1141,24 +1141,23 @@ plot_data_bhs_abc <- pre_post_bhs_abc_long %>%
 ## Writing a function for future plot setup
 
 process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label) {
-  # Select pre and post variables based on the ssi string
+  # Select pre, post variables, and response_id based on the ssi string
   pre_post_outcome <- data %>%
     filter(str_detect(ssi_started, ssi_string)) %>%
-    dplyr::select(contains(pre_var), 
-                  contains(post_var))
+    dplyr::select(response_id, contains(pre_var), contains(post_var))  # Include response_id
   
   # Convert to long data format
   pre_post_outcome_long <- pre_post_outcome %>%
     pivot_longer(cols = contains("mean"), 
                  names_to = "timing", 
-                 values_to = outcome_label)
+                 values_to = outcome_label)  # Long format conversion
   
   # Mutate 'timing' to label pre/post as 'Before'/'After'
   plot_data <- pre_post_outcome_long %>%
     mutate(timing = case_when(
       str_detect(timing, "pre") ~ "Before",
       str_detect(timing, "post") ~ "After",
-      is.na(timing) ~ NA_character_
+      TRUE ~ NA_character_
     ))
   
   return(plot_data)
@@ -1170,7 +1169,7 @@ process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label
 
 ## Running plot setup function
 
-plot_data_bhs_abc_function <- process_plot_data(data, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+plot_data_bhs_abc_function <- process_plot_data(data, "ABC", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
 
 ```
 
@@ -1182,26 +1181,33 @@ identical(plot_data_bhs_abc, plot_data_bhs_abc_function) # true if processed dat
 
 ```{r visualizing pre-post bhs abc, include=FALSE, warning=FALSE}
 
-## Plotting
-
 plot_abc_bhs <- plot_data_bhs_abc_function %>%
-  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
-  geom_density_ridges(alpha = 0.4,
-                      jittered_points = TRUE,
-                      position = "raincloud") +
-  scale_fill_manual(values = c("#32A2A0", "grey")) +
-  scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
+  # Ensure data is sorted by participant and timing
+  arrange(response_id, timing) %>%
+  group_by(response_id) %>%
+  # Use case_when to assign colors based on score change (increase or decrease)
+  mutate(line_color = case_when(
+    hopelessness[timing == "After"] > hopelessness[timing == "Before"] ~ "grey",  # If After > Before, set color to grey
+    hopelessness[timing == "After"] < hopelessness[timing == "Before"] ~ "#32A2A0",  # If After < Before, set color to blue
+    TRUE ~ "grey"  # Default case (in case of ties or missing values)
+  )) %>%
+  ungroup() %>%
+  ggplot(aes(x = timing, y = hopelessness, group = response_id, color = line_color)) +  # Use line_color for coloring lines
+  geom_line(alpha = .7, size = 1.1) +  # Increase size to make the lines thicker (adjust the value as needed)
+  geom_point(size = 2) +  # Add points to highlight individual data points
+  scale_color_manual(values = c("#32A2A0" = "#32A2A0", "grey" = "grey")) +  # Set color for decreased and increased scores
   theme_light() +
-  theme(legend.position = "none",
+  theme(legend.position = "none",  # Remove legend, as it's not needed for this plot
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Hopelessness", y = " ")
+  labs(x = "", y = "Mean Hopelessness", title = "") +
+  scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
+  guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
 
 ```
 
-+ **agency increased** from pre to post abc, dz = `r abc_shs_dz_value`.
++ **No evidence agency increased** from pre to post abc, dz = `r abc_shs_dz_value`.
 
 ```{r t test results abc shs, echo=FALSE}
 
@@ -1223,32 +1229,39 @@ data_t_abc_shs <- broom::tidy(t_abc_shs) %>%
 
 ## Running plot setup function
 
-plot_data_shs_abc_function <- process_plot_data(data, "A.B.C.", "pre_shs_mean", "post_shs_mean", "hope")
+plot_data_shs_abc_function <- process_plot_data(data, "ABC", "pre_shs_mean", "post_shs_mean", "hope")
 
 ```
 
-```{r visualizing pre-post shs abc, include=FALSE, warning=FALSE}
-
-## Plotting
+```{r visualizing pre-post shs abc, include=FALSE, warning=FALSE, message=FALSE}
 
 plot_abc_shs <- plot_data_shs_abc_function %>%
-  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
-  geom_density_ridges(alpha = 0.4,
-                      jittered_points = TRUE,
-                      position = "raincloud") +
-  scale_fill_manual(values = c("#32A2A0", "grey")) +
-  scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
+  # Ensure data is sorted by participant and timing
+  arrange(response_id, timing) %>%
+  group_by(response_id) %>%
+  # Use case_when to assign colors based on score change (increase or decrease)
+  mutate(line_color = case_when(
+    hope[timing == "After"] < hope[timing == "Before"] ~ "grey",  # If After < Before, set color to grey
+    hope[timing == "After"] > hope[timing == "Before"] ~ "#32A2A0",  # If After > Before, set color to blue
+    TRUE ~ "grey"  # Default case (in case of ties or missing values)
+  )) %>%
+  ungroup() %>%
+  ggplot(aes(x = timing, y = hope, group = response_id, color = line_color)) +  # Use line_color for coloring lines
+  geom_line(alpha = .7, size = 1.1) +  # Increase size to make the lines thicker (adjust the value as needed)
+  geom_point(size = 2) +  # Add points to highlight individual data points
+  scale_color_manual(values = c("#32A2A0" = "#32A2A0", "grey" = "grey")) +  # Set color for decreased and increased scores
   theme_light() +
-  theme(legend.position = "none",
+  theme(legend.position = "none",  # Remove legend, as it's not needed for this plot
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Agency", y = " ")
+  labs(x = "", y = "Mean Hope", title = "") +
+  scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
+  guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
 
 ```
 
-+ **self-hate decreased** from pre to post abc, dz = `r abc_hate_dz_value`.
++ **No evidence self-hate decreased** from pre to post abc, dz = `r abc_hate_dz_value`.
 
 ```{r t test results abc hate, echo=FALSE}
 
@@ -1270,30 +1283,38 @@ data_t_abc_hate <- broom::tidy(t_abc_hate) %>%
 
 ## Running plot setup function
 
-plot_data_hate_abc_function <- process_plot_data(data, "A.B.C.", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+plot_data_hate_abc_function <- process_plot_data(data, "ABC", "pre_self_hate_mean", "post_self_hate_mean", "hate")
 
 ```
 
-```{r visualizing pre-post hate abc, include=FALSE, warning=FALSE}
-
-## Plotting
+```{r visualizing pre-post hate abc, include=FALSE, warning=FALSE, message=FALSE}
 
 plot_abc_hate <- plot_data_hate_abc_function %>%
-  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
-  geom_density_ridges(alpha = 0.4,
-                      jittered_points = TRUE,
-                      position = "raincloud") +
-  scale_fill_manual(values = c("#32A2A0", "grey")) +
-  scale_color_manual(values = c("#32A2A0", "grey")) +
-  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  # Ensure data is sorted by participant and timing
+  arrange(response_id, timing) %>%
+  group_by(response_id) %>%
+  # Use case_when to assign colors based on score change (increase or decrease)
+  mutate(line_color = case_when(
+    hate[timing == "After"] > hate[timing == "Before"] ~ "grey",  # If After > Before, set color to grey
+    hate[timing == "After"] < hate[timing == "Before"] ~ "#32A2A0",  # If After < Before, set color to blue
+    TRUE ~ "grey"  # Default case (in case of ties or missing values)
+  )) %>%
+  ungroup() %>%
+  ggplot(aes(x = timing, y = hate, group = response_id, color = line_color)) +  # Use line_color for coloring lines
+  geom_line(alpha = .7, size = 1.1) +  # Increase size to make the lines thicker (adjust the value as needed)
+  geom_point(size = 2) +  # Add points to highlight individual data points
+  scale_color_manual(values = c("#32A2A0" = "#32A2A0", "grey" = "grey")) +  # Set color for decreased and increased scores
   theme_light() +
-  theme(legend.position = "none",
+  theme(legend.position = "none",  # Remove legend, as it's not needed for this plot
         text = element_text(family = "noto sans"),
         title = element_text(size = 10),
         plot.background = element_rect(fill = "white")) +
-  labs(x = "Self-Hate", y = " ")
+  labs(x = "", y = "Mean Self-Hate", title = "") +
+  scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
+  guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
 
 ```
+
 
 Paired t-test results for ABC:
 
@@ -1314,9 +1335,9 @@ rempsyc::nice_table(t_results_abc)
 ## Plotting all pre post outcomes for abc
 
 plots_abc <- plot_abc_bhs + plot_abc_shs + plot_abc_hate +
-  plot_annotation(title = "Outcomes before vs after ABC Project",
+  plot_annotation(title = "Individual outcome trajectories from before to after ABC Project",
                   theme = theme(plot.title = element_text(hjust = 0.5)),
-                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  caption = "Green lines within each plot reflect improvements in hopelessness, agency, self-hate.
                   Left plot = hopelessness scores (BHS) before and after ABC;
                   Middle plot = agency scores (SHS) before and after ABC;
                   Right plot = self-hate scores before and after ABC.")
@@ -1778,7 +1799,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 For those who chose **Project Personality** with data at both time points:
 
-+ **hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
++ **No evidence hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
 
 ```{r t test results pp bhs, echo=FALSE}
 
@@ -1825,7 +1846,7 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
 
 ```
 
-+ **agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
++ **No evidence agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
 
 ```{r t test results pp shs, echo=FALSE}
 
@@ -1872,7 +1893,7 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
 
 ```
 
-+ **self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
++ **No evidence self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
 
 ```{r t test results pp hate, echo=FALSE}
 
@@ -1918,6 +1939,23 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
   labs(x = "Self-Hate", y = " ")
 
 ```
+
+```{r}
+
+plot_pp_hate <- plot_data_hate_pp_function %>%
+  ggplot(aes(x = hate, y = timing, color = timing)) +  # 'id' represents individual or group
+  geom_line(alpha = 0.7) +  # Use geom_line for spaghetti plot
+  scale_color_manual(values = c("#3F9CF5", "grey")) +
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
 
 Paired t-test results for Project Personality:
 
