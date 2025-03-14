@@ -1,0 +1,4297 @@
+---
+title: "YES Report (Turkish)"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
+```
+
+```{r packages, include=FALSE}
+
+## Loading packages
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+if(!require(tidyverse)){install.packages('tidyverse')}
+library(tidyverse)
+
+if(!require(showtext)){install.packages('showtext')}
+library(showtext)
+
+if(!require(patchwork)){install.packages('patchwork')}
+library(patchwork)
+
+if(!require(stats)){install.packages('stats')}
+library(stats)
+
+if(!require(MOTE)){install.packages('MOTE')}
+library(MOTE)
+
+if(!require(rempsyc)){install.packages('rempsyc')}
+library(rempsyc)
+
+if(!require(rmarkdown)){install.packages('rmarkdown')}
+library(rmarkdown)
+
+if(!require(officer)){install.packages('officer')}
+library(officer)
+
+if(!require(flextable)){install.packages('flextable')}
+library(flextable)
+
+if(!require(ggridges)){install.packages('ggridges')}
+library(ggridges)
+
+if(!require(ggplot2)){install.packages('ggplot2')}
+library(ggplot2)
+
+if(!require(broom)){install.packages('broom')}
+library(broom)
+
+if(!require(tidytext)){install.packages('tidytext')}
+library(tidytext)
+
+```
+
+```{r note, include=FALSE}
+
+## The next several chunks setup the data for our analysis and 
+## calculate values that are required for the summary
+
+```
+
+```{r reading in data, include=FALSE}
+
+## Reading in cleaned survey data
+
+library(here) # places working directory at root of project folder
+
+data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # directing to data from project folder root
+
+# head(data) # looks good
+
+```
+
+```{r filtering to youth only data for analysis, include=FALSE}
+
+## Filtering to youth only for our analysis - commenting this out for now
+
+# data_youth <- data %>%
+#   filter(dem_age != "18 or older" &
+#          dem_age != "17 or older" &
+#          dem_age != "16-20" &
+#          dem_age != "21-25" &   
+#          dem_age != "26-30" & 
+#          dem_age != "31-35" &  
+#          dem_age != "36-40" & 
+#          dem_age != "41-45" & 
+#          dem_age != "46-50" & 
+#          dem_age != "51-55" & 
+#          dem_age != "56-60" & 
+#          dem_age != "61-65" & 
+#          dem_age != "66-70" & 
+#          dem_age != "71-75" & 
+#          dem_age != "76-80" &
+#          dem_age != "81-85" &
+#          dem_age != "86-90" &
+#          dem_age != "91-95" &
+#          dem_age != "96-100" &
+#          dem_age != "101 or older")
+# 
+# ## Checking that data come from youth
+# 
+# data_youth %>%
+#   select(data_id, dem_age) %>%
+#   group_by(dem_age) %>%
+#   tally()
+# 
+# ## Checking what ages were like before this drop
+# 
+# data %>%
+#   select(data_id, dem_age) %>%
+#   group_by(dem_age) %>%
+#   tally()
+
+```
+
+```{r calculating n milestones, include=FALSE}
+
+## Calculating n milestones
+
+n_started_survey <- data %>%
+  tally() # started the survey
+
+n_chose_any_ssi <- data %>%
+  filter(!is.na(ssi_choice)) %>%
+  tally() # chose any ssi
+
+n_chose_abc <- data %>%
+  filter(str_detect(ssi_choice, "ABC")) %>%
+  tally() # chose abc
+
+n_chose_care <- data %>%
+  filter(str_detect(ssi_choice, "CARE")) %>%
+  tally() # chose care
+  
+n_chose_pp <- data %>%
+  filter(str_detect(ssi_choice, "Personality")) %>%
+  tally() # chose pp
+
+n_chose_rise <- data %>%
+  filter(str_detect(ssi_choice, "RISE")) %>%
+  tally() # chose pp
+
+## Checking that all dfs have values in the ssi_choice column (d03 not present because no age item)
+
+data %>%
+  select(data_id, ssi_choice) %>%
+  filter(!is.na(ssi_choice)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r calculating perc milestones, include=FALSE}
+
+## Percent of cases who chose an ssi, of those who started the survey
+
+perc_chose_any_ssi <- round((n_chose_any_ssi/n_started_survey)*100, 2)
+
+## Percent of cases who chose abc, of those who chose any ssi
+
+perc_chose_abc <- round((n_chose_abc/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose care, of those who chose any ssi
+
+perc_chose_care <- round((n_chose_care/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose pp, of those who chose any ssi
+
+perc_chose_pp <- round((n_chose_pp/n_chose_any_ssi)*100, 2)
+
+## Percent of cases who chose pp, of those who chose any ssi
+
+perc_chose_rise <- round((n_chose_rise/n_chose_any_ssi)*100, 2)
+
+```
+
+```{r calculating perc complete of those who started for abc, include=FALSE}
+
+n_started_abc <- data %>%
+  filter(str_detect(ssi_choice, "ABC")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_abc <- data %>%
+  filter(str_detect(ssi_choice, "ABC")) %>% # filtering to those who chose this ssi
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
+
+## Checking that all dfs have values in these columns (d03 not present because no age item)
+
+data %>%
+  select(data_id, ssi_started) %>%
+  filter(!is.na(ssi_started)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data %>%
+  select(data_id, ssi_completed) %>%
+  filter(!is.na(ssi_completed)) %>%
+  group_by(data_id) %>%
+  tally()
+
+# data %>%
+#   filter(data_id == "d05") %>%
+#   select(data_id, ssi_completed, dem_age) # d05 has no ssi_started responses from youth
+
+```
+
+```{r writing custom function for perc completed ssi, include=FALSE}
+
+# Define the custom function
+filter_and_summarize_ssi <- function(data, filter_string, started_var_name, completed_var_name) {
+  # Filter for those who started the SSI and assign globally
+  assign(started_var_name, data %>%
+           filter(str_detect(ssi_choice, filter_string)) %>%
+           filter(!is.na(ssi_started)) %>%
+           tally(), envir = .GlobalEnv)
+  
+  # Filter for those who completed the SSI and save variables to global environment
+  assign(completed_var_name, data %>%
+           filter(str_detect(ssi_choice, filter_string)) %>%
+           filter(!is.na(ssi_completed)) %>%
+           tally(), envir = .GlobalEnv)
+  
+  # Calculate percentage completed and save variables to global environment
+  perc_completed_name <- paste0("perc_completed_", tolower(gsub("\\.", "", filter_string)))
+  assign(perc_completed_name, round((get(completed_var_name, envir = .GlobalEnv) / get(started_var_name, envir = .GlobalEnv)) * 100, 2), envir = .GlobalEnv)
+  
+  # Return the results as a list
+  list(
+    started = get(started_var_name, envir = .GlobalEnv),
+    completed = get(completed_var_name, envir = .GlobalEnv),
+    perc_completed = get(perc_completed_name, envir = .GlobalEnv)
+  )
+}
+
+```
+
+```{r using custom function for perc completed abc, include=FALSE}
+
+# Testing custom function for perc completion on abc
+results <- filter_and_summarize_ssi(data, "ABC", "n_started_abc", "n_completed_abc")
+print(results)
+
+# Later, you can access n_started_abc, n_completed_abc, and perc_completed_abc from the global environment:
+print(n_started_abc)
+print(n_completed_abc)
+print(perc_completed_abc)
+
+```
+
+```{r using custom function for perc completed care, include=FALSE}
+
+# Testing custom function for perc completion on care
+results <- filter_and_summarize_ssi(data, "CARE", "n_started_care", "n_completed_care")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_care)
+print(n_completed_care)
+print(perc_completed_care)
+
+```
+
+```{r using custom function for perc completed pp, include=FALSE}
+
+# Testing custom function for perc completion on pp
+results <- filter_and_summarize_ssi(data, "Personality", "n_started_pp", "n_completed_pp")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_pp)
+print(n_completed_pp)
+print(perc_completed_personality)
+
+```
+
+```{r using custom function for perc completed rise, include=FALSE}
+
+# Testing custom function for perc completion on rise
+results <- filter_and_summarize_ssi(data, "RISE", "n_started_rise", "n_completed_rise")
+print(results)
+
+# Later, you can access these vars from the global environment:
+print(n_started_rise)
+print(n_completed_rise)
+print(perc_completed_rise)
+
+```
+
+```{r calculating perc complete of those who started any ssi, include=FALSE}
+
+n_started_any_ssi <- data %>%
+  filter(!is.na(ssi_started)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_started) %>%
+  tally()
+
+n_completed_any_ssi <- data %>%
+  filter(!is.na(ssi_completed)) %>% # filtering to those who started an ssi
+  select(ssi_choice, ssi_completed) %>%
+  tally()
+
+perc_completed_any_ssi <- round((n_completed_any_ssi / n_started_any_ssi) * 100, 2)
+
+```
+
+```{r calculating perc agreed to questionnaires, include=FALSE}
+
+n_agreed_questionnaires <- data %>%
+  filter(volunteer_questionnaires_yn == "Yes") %>% # filtering to those who agreed
+  select(volunteer_questionnaires_yn) %>%
+  tally()
+
+n_answered_questionnaires_item <- data %>%
+  filter(!is.na(volunteer_questionnaires_yn)) %>% # filtering to those who answered the question
+  select(volunteer_questionnaires_yn) %>%
+  tally()
+
+perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2) # percent agreed, of those who were asked
+
+## Checking that all dfs have values in this columns (d03 not present because no age item, d02 does not have volunteer item)
+
+data %>%
+  select(data_id, volunteer_questionnaires_yn) %>%
+  filter(!is.na(volunteer_questionnaires_yn)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r calculating aggregated pfs mean overall, include=FALSE}
+
+## Calculating overall pfs mean, across all ssis
+
+m_pfs_overall <- round(mean(data$pfs_mean, na.rm = TRUE), 2)
+
+## Checking that all dfs have values in this column (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data %>%
+  select(data_id, pfs_mean) %>%
+  filter(!is.na(pfs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r calculating aggregated pfs mean for abc, include=FALSE}
+
+## Pulling only abc responses
+
+data_abc <- data %>%
+  filter(str_detect(ssi_choice, "ABC")) # filtering to those who chose abc
+
+## Calculating overall pfs mean for abc
+
+m_pfs_abc <- round(mean(data_abc$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for care, include=FALSE}
+
+## Pulling only care responses
+
+data_care <- data %>%
+  filter(str_detect(ssi_choice, "CARE")) # filtering to those who chose care
+
+## Calculating overall pfs mean for care
+
+m_pfs_care <- round(mean(data_care$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for pp, include=FALSE}
+
+## Pulling only pp responses
+
+data_pp <- data %>%
+  filter(str_detect(ssi_choice, "Personality")) # filtering to those who chose pp
+
+## Calculating overall pfs mean for pp
+
+m_pfs_pp <- round(mean(data_pp$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r calculating aggregated pfs mean for rise, include=FALSE}
+
+## Pulling only rise responses
+
+data_rise <- data %>%
+  filter(str_detect(ssi_choice, "RISE")) # filtering to those who chose rise
+
+## Calculating overall pfs mean for rise
+
+m_pfs_rise <- round(mean(data_rise$pfs_mean, na.rm = TRUE), 2)
+
+```
+
+```{r t test bhs abc, include=FALSE}
+
+## Trying this once before writing a function
+
+library(stats)
+
+## Computing paired t-test
+
+t_abc_bhs <- t.test(data_abc$post_bhs_mean, data_abc$pre_bhs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_bhs_p_value <- t_abc_bhs$p.value
+
+## Saving t-value for effect size calc
+
+abc_bhs_t_value <- t_abc_bhs$statistic
+
+## Saving n pairs for effect size calc
+
+abc_bhs_n_pairs <- data_abc %>%
+  filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
+  select(post_bhs_mean, pre_bhs_mean) %>%
+  nrow()
+
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data %>%
+  select(data_id, pre_bhs_mean) %>%
+  filter(!is.na(pre_bhs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data %>%
+  select(data_id, post_bhs_mean) %>%
+  filter(!is.na(post_bhs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r t test effect size bhs abc, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_bhs_dz_value <- round(d.dep.t.diff.t(abc_bhs_t_value, abc_bhs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test shs abc, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_abc_shs <- t.test(data_abc$post_shs_mean, data_abc$pre_shs_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_shs_p_value <- t_abc_shs$p.value
+
+## Saving t-value for effect size calc
+
+abc_shs_t_value <- t_abc_shs$statistic
+
+## Saving n pairs for effect size calc 
+
+abc_shs_n_pairs <- data_abc %>%
+  filter(!is.na(post_shs_mean) & !is.na(pre_shs_mean)) %>%
+  select(post_shs_mean, pre_shs_mean) %>%
+  nrow()
+
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data %>%
+  select(data_id, pre_shs_mean) %>%
+  filter(!is.na(pre_shs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data %>%
+  select(data_id, post_shs_mean) %>%
+  filter(!is.na(post_shs_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r t test effect size shs abc, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_shs_dz_value <- round(d.dep.t.diff.t(abc_shs_t_value, abc_shs_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r t test hate abc, include=FALSE}
+
+library(stats)
+
+## Computing paired t-test
+
+t_abc_hate <- t.test(data_abc$post_self_hate_mean, data_abc$pre_self_hate_mean, paired = TRUE)
+
+## Saving p-value for report
+
+abc_hate_p_value <- t_abc_hate$p.value
+
+## Saving t-value for effect size calc
+
+abc_hate_t_value <- t_abc_hate$statistic
+
+## Saving n pairs for effect size calc 
+
+abc_hate_n_pairs <- data_abc %>%
+  filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
+  select(post_self_hate_mean, pre_self_hate_mean) %>%
+  nrow()
+
+## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
+
+data %>%
+  select(data_id, pre_self_hate_mean) %>%
+  filter(!is.na(pre_self_hate_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+data %>%
+  select(data_id, post_self_hate_mean) %>%
+  filter(!is.na(post_self_hate_mean)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r t test effect size hate abc, include=FALSE}
+
+library(MOTE)
+
+##  Calculating dz effect size, paired t-test
+
+abc_hate_dz_value <- round(d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$d, 2)
+
+```
+
+```{r abc effect sizes list, include=FALSE}
+
+## Saving dz values for report
+
+abc_dz_values <- c(abc_bhs_dz_value, abc_shs_dz_value, abc_hate_dz_value)
+
+```
+
+```{r writing custom paired t-test function, include=FALSE}
+
+library(tidyverse)
+library(MOTE)
+library(stats)
+
+# Define the custom function
+run_paired_t_test <- function(data, pre_col, post_col, prefix) {
+  
+  # Construct variable names dynamically for storage in global environment
+  t_test_name <- paste0("t_", prefix)
+  p_value_name <- paste0(prefix, "_p_value")
+  t_value_name <- paste0(prefix, "_t_value")
+  n_pairs_name <- paste0(prefix, "_n_pairs")
+  dz_value_name <- paste0(prefix, "_dz_value")
+  
+  # Conduct the paired t-test
+  t_test_result <- t.test(data[[post_col]], data[[pre_col]], paired = TRUE)
+  
+  # Save t-test results globally
+  assign(t_test_name, t_test_result, envir = .GlobalEnv)
+  
+  # Save p-value and t-value globally
+  assign(p_value_name, t_test_result$p.value, envir = .GlobalEnv)
+  assign(t_value_name, t_test_result$statistic, envir = .GlobalEnv)
+  
+  # Calculate number of valid pairs (non-NA values in both columns)
+  n_pairs <- data %>%
+    filter(!is.na(.[[post_col]]) & !is.na(.[[pre_col]])) %>%
+    nrow()
+  assign(n_pairs_name, n_pairs, envir = .GlobalEnv)
+  
+  # Calculate the effect size (dz) and save it globally
+  dz_value <- round(d.dep.t.diff.t(t_test_result$statistic, n_pairs, a = 0.05)$d, 2)
+  assign(dz_value_name, dz_value, envir = .GlobalEnv)
+  
+  # Return a list of the calculated values
+  return(list(
+    t_test_result = get(t_test_name),
+    p_value = get(p_value_name),
+    t_value = get(t_value_name),
+    n_pairs = get(n_pairs_name),
+    dz_value = get(dz_value_name)
+  ))
+}
+
+```
+
+```{r running t tests for abc using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data_abc, "pre_bhs_mean", "post_bhs_mean", "abc_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data_abc, "pre_shs_mean", "post_shs_mean", "abc_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data_abc, "pre_self_hate_mean", "post_self_hate_mean", "abc_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+abc_dz_values <- c(abc_bhs_dz_value, abc_shs_dz_value, abc_hate_dz_value)
+print(abc_dz_values)
+
+```
+
+```{r running t tests for care using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data_care, "pre_bhs_mean", "post_bhs_mean", "care_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data_care, "pre_shs_mean", "post_shs_mean", "care_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data_care, "pre_self_hate_mean", "post_self_hate_mean", "care_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+care_dz_values <- c(care_bhs_dz_value, care_shs_dz_value, care_hate_dz_value) # not including non-significant outcome results
+print(care_dz_values)
+
+```
+
+```{r running t tests for pp using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data_pp, "pre_bhs_mean", "post_bhs_mean", "pp_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data_pp, "pre_shs_mean", "post_shs_mean", "pp_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data_pp, "pre_self_hate_mean", "post_self_hate_mean", "pp_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) # not including non-significant outcome results
+print(pp_dz_values)
+
+```
+
+```{r running t tests for rise using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data_rise, "pre_bhs_mean", "post_bhs_mean", "rise_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data_rise, "pre_shs_mean", "post_shs_mean", "rise_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data_rise, "pre_self_hate_mean", "post_self_hate_mean", "rise_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+rise_dz_values <- c(rise_bhs_dz_value, rise_shs_dz_value, rise_hate_dz_value) 
+print(rise_dz_values)
+
+```
+
+```{r gender identity differs from sex, include=FALSE}
+
+## Tallying number of cases where gender identity is different from sex assigned at birth
+
+n_gender_differs_from_sex <- data %>%
+  filter(dem_gender_diff_sex == "Yes") %>%
+  tally()
+
+## Tallying number of cases where gender identity aligns with assigned sex
+
+n_gender_same_as_sex <- data %>%
+  filter(dem_gender_diff_sex == "No") %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who started the survey
+
+perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_survey)*100,2)
+
+perc_gender_same_as_sex <- round((n_gender_same_as_sex / n_started_survey)*100,2)
+
+## Checking that all dfs have values in this column (d03 no age var)
+
+data %>%
+  select(data_id, dem_gender_diff_sex) %>%
+  filter(!is.na(dem_gender_diff_sex)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r perc sexual minority, include=FALSE}
+
+## Tallying number of cases where gender identity is different from sex assigned at birth
+
+n_sex_minority <- data %>%
+  select(dem_sex_orientation) %>%
+  filter(!is.na(dem_sex_orientation) & 
+           dem_sex_orientation != "Heterosexual/Straight" &
+           dem_sex_orientation != "I do not want to respond") %>%
+  tally()
+
+## Tallying n straight folks
+
+n_sex_straight <- data %>%
+  select(dem_sex_orientation) %>%
+  filter(dem_sex_orientation == "Heterosexual/Straight") %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who started the survey
+
+perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
+
+perc_sex_straight <- round((n_sex_straight / n_started_survey)*100,2)
+
+## Checking that all dfs have values in this column (d03 no age var)
+
+data %>%
+  select(data_id, dem_sex_orientation) %>%
+  filter(!is.na(dem_sex_orientation)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r perc racial minority, include=FALSE}
+
+## Tallying number of cases where racial identity is not white or missing
+
+n_racial_minority <- data %>%
+  select(contains("dem_race"), -contains("white"), -contains("hisp")) %>%
+  filter(if_any(c(dem_race_asian, dem_race_black, dem_race_other), ~ . == "yes")) %>%
+  tally()
+
+## Tallying number of cases where ethnic identity is latine/hispanic
+
+n_racial_latine_hisp <- data %>%
+  filter(dem_race_latin_hisp == "yes") %>%
+  tally()
+
+## Tallying number of cases where racial identity is white
+
+n_racial_white <- data %>%
+  filter(dem_race_white == "yes") %>%
+  tally()
+
+## Calculating percentage of these cases, of everyone who started the survey
+
+perc_racial_minority <- round((n_racial_minority / n_started_survey)*100,2)
+
+perc_racial_latine_hisp <- round((n_racial_latine_hisp / n_started_survey)*100,2)
+
+perc_racial_white <- round((n_racial_white / n_started_survey)*100,2)
+
+## Checking that all dfs have values in this column (d03 no dem vars, d05 contains middle east specific ethnicity items)
+
+data %>%
+  select(data_id, dem_race_white) %>%
+  filter(!is.na(dem_race_white)) %>%
+  group_by(data_id) %>%
+  tally()
+
+```
+
+```{r calculating mfq descriptives, include=FALSE}
+
+# Calculating n youth with elevated depression
+
+n_youth_elev_dep <- data %>%
+  select(mfq_total) %>%
+  filter(mfq_total >= 12) %>%
+  nrow()
+
+# Calculating perc youth with elevated depression
+
+perc_youth_elev_dep <- round((n_youth_elev_dep / n_started_survey)*100, 2)
+
+# Creating data frame
+
+data_mfq_plot <- data %>%
+  select(mfq_total) %>%
+  filter(!is.na(mfq_total))
+
+mfq_mean <- data_mfq_plot %>%
+  summarize(mfq_mean = round(mean(mfq_total, na.rm = TRUE), 2))
+
+```
+
+```{r calculating access to support descriptives, include=FALSE}
+
+# Calculating n youth with no history of formal supports
+
+n_youth_no_support <- data %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" | 
+         dem_receive_support == "no, and I have not wanted to get support before") %>%
+  nrow()
+
+# Calculating perc youth with no history of mh treatment
+
+perc_youth_no_support <- round((n_youth_no_support / n_started_survey)*100, 2)
+
+# Calculating n youth with elevated depressive symptoms
+# and with no history of support
+
+n_youth_no_support_w_depression <- data %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+         dem_receive_support == "no, and I have not wanted to get support before") %>%
+  filter(mfq_total >= 12) %>%
+  select(dem_receive_support, mfq_total) %>%
+  nrow()
+
+# Calculating perc youth with depression, without support
+
+perc_youth_no_support_w_depression <- round((n_youth_no_support_w_depression / n_started_survey)*100, 2)
+
+```
+
+```{r, out.width = "350px", out.height = "290px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_lsmh_graphic.png")
+
+```
+
+# Summary
+
+**Executive Summary**: This report uses youth data (under 18) from all English-speaking YES surveys (data_ids: d01, d02, d03, d05, d09, d16). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+
+**Full Summary**:
+
+Looking at YES engagement:
+
++ Our YES survey was started `r n_started_survey` times
++ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires when asked
++ Not all cases were asked if they would like to complete questionnaires (e.g., San Antonio data)
++ `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
+
+Across all survey starts (n = `r n_started_survey`):
+
++ There's lots of missing demographic data, given optional questionnaires and drop-offs
++ Ages range from <10 to 17 (categorical data only)
++ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
++ `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
++ Race and ethnicity are measured differently across surveys (see below)
++ `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
++ `r perc_youth_no_support`% report never accessing formal mental health support
++ `r perc_youth_no_support_w_depression`% report no history of formal mental health support treatment AND elevated depression symptoms
++ By far, most responses in this data heard about YES in school
+
+Of cases with data at both time points:
+
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
++ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
+
+Of the cases where someone chose an SSI:
+
++ `r perc_chose_abc`% chose ABC
++ `r perc_chose_care`% chose CARE
++ `r perc_chose_pp`% chose Project Personality
++ `r perc_chose_rise`% chose RISE, although this ssi was likely added to the survey later
+
+Of cases where someone started an SSI:
+
++ `r perc_completed_any_ssi`% of cases completed an SSI (n = `r n_completed_any_ssi`) after starting one (n = `r n_started_any_ssi`)
++ `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
++ `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
++ `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
++ `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
++ We have no evidence that adding the "commit to finish this SSI" item has increased completion rates overall
+
+Drop-off is highest on pages with writing exercises:
+
++ More than 1 in 4 people drop from one page to the next during Project Personality's first writing exercise
+
+Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
+
++ ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
++ CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
++ Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
++ RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
+
+# Questionnaire Completion
+
+**Youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**, when asked.
+
+```{r perc agreed questionnaires, include=FALSE}
+
+perc_agreed_questionnaires
+
+```
+
+# Sample Characteristics
+
+## Data Source
+
+Data source(s), of all responses:
+
+```{r prepping for data tally, include=FALSE}
+
+data_data_source <- data %>%
+  select(data_id)
+
+```
+
+```{r calculating data tally, include=FALSE}
+
+## Prepping dataframe with data tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+data_source_tallies <- data_data_source %>%
+  group_by(data_id) %>%
+  tally() %>%
+  ungroup() %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / nrow(data_data_source) * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  mutate(notes = case_when(data_id == "d01" ~ "original English YES",
+                           data_id == "d02" ~ "San Antonio English with Q's",
+                           data_id == "d05" ~ "YES Middle East English",
+                           data_id == "d09" ~ "current YES English",
+                           data_id == "d16" ~ "temporary YES English during move")) %>%
+  select(data_id, notes, count, percentage) %>%
+  rename(n = count, "%" = percentage)
+
+```
+
+```{r printing data tally, echo=FALSE}
+
+rempsyc::nice_table(data_source_tallies)
+
+```
+
+## Age
+
+Age(s), of all survey starts from youth (n = `r n_started_survey`). 
+
+```{r prepping for age tally, include=FALSE}
+
+data_age <- data %>%
+  select(dem_age)
+
+```
+
+```{r calculating age tally, include=FALSE}
+
+## Prepping dataframe with age tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+age_tallies <- data_age %>%
+  select(age = dem_age) %>%
+  group_by(age) %>%
+  tally() %>%
+  ungroup() %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+```
+
+```{r printing age tally, echo=FALSE}
+
+rempsyc::nice_table(age_tallies)
+
+```
+
+## Gender
+
+**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** Gender(s), of all survey starts from youth (n = `r n_started_survey`): 
+
+```{r combining sex and gender data, include=FALSE}
+
+## Imputing gender identity data for folks who answered gender does not differ from sex
+## Only folks who reported gender differs from sex were asked gender identity item
+
+data_gender <- data %>%
+  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
+         TRUE ~ dem_gender_girl_woman)) %>%
+  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
+         TRUE ~ dem_gender_boy_man)) %>%
+  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
+         TRUE ~ dem_gender_intersex)) %>%
+  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
+  mutate(dem_gender_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r custom demographic count function, include=FALSE}
+
+# Custom function to tally yeses in each demographic column 
+
+count_yes_responses <- function(data) {
+  # Ensure n_agreed_questionnaires exists in the global environment
+  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
+    stop("n_agreed_questionnaires is not defined in the global environment")
+  }
+  
+  data %>%
+    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rowwise() %>%
+    mutate(percentage = count / n_started_survey * 100) %>% 
+    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+    unnest(cols = c(percentage))  # Ensure percentage column is not nested
+}
+
+```
+
+```{r calculating gender tally, include=FALSE}
+
+# Using custom function to print gender variable counts
+
+gender_tallies <- count_yes_responses(data_gender) %>%
+  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
+  rename(gender_identity = variable) %>%
+  rename("%" = n) %>%
+  rename(n = count) %>%
+  mutate(gender_identity = str_replace(gender_identity, "girl_woman", "Girl/Woman"),
+         gender_identity = str_replace(gender_identity, "boy_man", "Boy/Man"),
+         gender_identity = str_replace(gender_identity, "missing", "Missing"),
+         gender_identity = str_replace(gender_identity, "nonbinary", "Nonbinary"),
+         gender_identity = str_replace(gender_identity, "unsure", "Unsure"),
+         gender_identity = str_replace(gender_identity, "other", "Another gender not listed"),
+         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male trans/FTM"),
+         gender_identity = str_replace(gender_identity, "trans", "Transgender"),
+         gender_identity = str_replace(gender_identity, "genderqueer", "Genderqueer"),
+         gender_identity = str_replace(gender_identity, "androgynous", "Androgynous"),
+         gender_identity = str_replace(gender_identity, "agender", "Agender"),
+         gender_identity = str_replace(gender_identity, "Transgender_masc", "Trans masculine"),
+         gender_identity = str_replace(gender_identity, "two_spirited", "Two-spirited"),
+         gender_identity = str_replace(gender_identity, "third_gender", "Third gender"),
+         gender_identity = str_replace(gender_identity, "intersex", "Intersex"),
+         gender_identity = str_replace(gender_identity, "expansive", "Gender expansive"),
+         gender_identity = str_replace(gender_identity, "mtf_Transgender", "Male to female transgender/MTF"),
+         gender_identity = str_replace(gender_identity, "Transgender_fem", "Trans feminine")) %>%
+  arrange(-n)
+
+```
+
+```{r printing gender tally, echo=FALSE}
+
+rempsyc::nice_table(gender_tallies)
+
+```
+
+```{r perc gender differs from sex, include=FALSE}
+
+perc_gender_differs_from_sex
+
+```
+
+## Sexual Orientation
+
+**`r perc_sex_minority`% of responses endorsed a sexual orientation other than heterosexual.** Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`): 
+
+```{r calculating sex orientation tallies, include=FALSE}
+
+## Prepping dataframe with sexual orientation tallies; renaming is a bit weird here once % is calculated
+## No need to add missing values here, since only one variable
+
+sex_orientation_tallies <- data %>%
+  select(sex_orientation = dem_sex_orientation) %>%
+  mutate(sex_orientation = case_when(is.na(sex_orientation) ~ "Missing",
+                                     TRUE ~ sex_orientation)) %>%
+  group_by(sex_orientation) %>%
+  tally() %>%
+  ungroup() %>%
+  arrange(-n) %>%
+  rename(count = n) %>%
+  rowwise() %>%
+  mutate(percentage = count / n_started_survey * 100) %>%
+  mutate(percentage = round(percentage, 2)) %>%
+  unnest(cols = c(percentage)) %>%
+  rename(n = count, "%" = n)
+
+table(data$dem_sex_orientation)
+
+```
+
+```{r printing sex orientation tally, echo=FALSE}
+
+rempsyc::nice_table(sex_orientation_tallies)
+
+```
+
+```{r printing perc sexual minority, include=FALSE}
+
+perc_sex_minority
+
+```
+
+## Race/Ethnicity
+
+```{r adding missing values to race vars, include=FALSE}
+
+## Accounting for missing values across all race variables
+
+data_race <- data %>%
+  filter(data_id != "d05") %>% # not counting d05 responses as missing data
+  select(contains("race")) %>%
+  mutate(dem_race_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r calculating race denominator, include=FALSE}
+
+# saving custom denominator value
+
+n_race_denominator <- nrow(data_race)
+
+```
+
+Race/ethnicities, of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
+
+Races/ethnicities (non-d05):
+
+```{r calculating race tallies, include=FALSE}
+
+## Calculating race tallies
+
+race_tallies <- data_race %>%
+  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+  pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+  rowwise() %>%
+  mutate(percentage = count / n_race_denominator * 100) %>% 
+  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
+  mutate(variable = str_replace(variable, "dem_race_", "")) %>%
+  rename(racial_ethnic_identity = variable) %>%
+  rename(n = count) %>%
+  rename("%" = percentage) %>%
+  arrange(-n) %>%
+  mutate(racial_ethnic_identity = case_when(racial_ethnic_identity == "missing" ~ "Missing",
+                                     racial_ethnic_identity == "white" ~ "White",
+                                     racial_ethnic_identity == "latin_hisp" ~ "Latine/Hispanic",
+                                     racial_ethnic_identity == "asian" ~ "Asian",
+                                     racial_ethnic_identity == "black" ~ "Black",
+                                     racial_ethnic_identity == "other" ~ "Another racial/ethnic identity not listed",
+                                     TRUE ~ racial_ethnic_identity))
+
+```
+
+```{r printing race tally, echo=FALSE}
+
+rempsyc::nice_table(race_tallies)
+
+```
+
+```{r adding missing values to ethnicity vars, include=FALSE}
+
+## Accounting for missing values across all race variables
+
+data_ethnicity <- data %>%
+  filter(data_id == "d05") %>%
+  select(starts_with("dem_ethnicity_") & -contains("text")) %>%
+  mutate(dem_ethnicity_missing = case_when(
+    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
+    TRUE ~ "no"  # Otherwise, mark as "no"
+  ))
+
+```
+
+```{r calculating ethnicity denominator, include=FALSE}
+
+# saving custom denominator value
+
+n_ethnicity_denominator <- nrow(data_ethnicity)
+
+```
+
+Now, we'll take a look at ethnicity as measured in d05. (n = `r n_ethnicity_denominator`, from d05 only). These options were only available to responders to the Middle East yes survey.
+
+Races/ethnicities (d05):
+
+```{r calculating ethnicity tally, include=FALSE}
+
+# Using custom function to print race variable counts
+
+ethnicity_tallies <- data_ethnicity %>%
+  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
+  pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+  rowwise() %>%
+  mutate(percentage = (count / n_ethnicity_denominator) * 100) %>% 
+  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
+  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
+  mutate(variable = str_replace(variable, "dem_ethnicity_", "")) %>%
+  rename(ethnic_identity_middle_east = variable) %>%
+  rename(n = count) %>%
+  rename("%" = percentage) %>%
+  arrange(-n) %>%
+  mutate(ethnic_identity_middle_east = case_when(ethnic_identity_middle_east == "missing" ~ "Missing",
+                                     ethnic_identity_middle_east == "israeli" ~ "Israeli",
+                                     ethnic_identity_middle_east == "african" ~ "African (Ethiopian)",
+                                     ethnic_identity_middle_east == "mid_eastern" ~ "Middle Eastern or Mediterranean",
+                                     ethnic_identity_middle_east == "european_n_am" ~ "European or North American",
+                                     ethnic_identity_middle_east == "s_central_am" ~ "South or Central American",
+                                     ethnic_identity_middle_east == "ussr_e_european" ~ "Former Soviet Union or Eastern European",
+                                     ethnic_identity_middle_east == "ne_asian" ~ "Northeast Asian",
+                                     ethnic_identity_middle_east == "other" ~ "Another ethnicity not listed",
+                                     TRUE ~ ethnic_identity_middle_east))
+
+```
+
+```{r printing ethnicity tally, echo=FALSE}
+
+rempsyc::nice_table(ethnicity_tallies)
+
+```
+
+```{r setting up age for demographics table to word, include=FALSE}
+
+## Here I start setting up demographic variables to 
+## create a combined flextable that can be exported
+## to a word document
+
+# Specified character string for the new row
+new_row <- tibble(
+  `age` = "Age",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+age_tallies_for_table <- bind_rows(new_row, age_tallies) %>%
+  rename(Demographics = age)
+
+# View updated data frame
+age_tallies_for_table
+
+```
+
+```{r setting up gender for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `gender_identity` = "Gender Identity",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+gender_tallies_for_table <- bind_rows(new_row, gender_tallies) %>%
+  rename(Demographics = gender_identity)
+
+# View updated data frame
+gender_tallies_for_table
+
+```
+
+```{r setting up sexual orientation for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `sex_orientation` = "Sexual Orientation",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+sex_orientation_tallies_for_table <- bind_rows(new_row, sex_orientation_tallies) %>%
+  rename(Demographics = sex_orientation)
+
+# View updated data frame
+sex_orientation_tallies_for_table
+
+```
+
+```{r setting up race for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `racial_ethnic_identity` = "Racial/Ethnic Identity",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+race_tallies_for_table <- bind_rows(new_row, race_tallies) %>%
+  rename(Demographics = racial_ethnic_identity)
+
+# View updated data frame
+race_tallies_for_table
+
+```
+
+```{r setting up ethnicity for demographics table to word, include=FALSE}
+
+# Specified character string for the new row
+new_row <- tibble(
+  `ethnic_identity_middle_east` = "Ethnic Identity Middle East",
+  `n` = NA_integer_,
+  `%` = NA_real_
+)
+
+# Insert new row at position #1
+ethnicity_tallies_for_table <- bind_rows(new_row, ethnicity_tallies) %>%
+  rename(Demographics = ethnic_identity_middle_east)
+
+# View updated data frame
+ethnicity_tallies_for_table
+
+```
+
+```{r creating combined df for demographics table, include=FALSE}
+
+demographics_tallies <- bind_rows(age_tallies_for_table,
+                          gender_tallies_for_table,
+                          sex_orientation_tallies_for_table,
+                          race_tallies_for_table,
+                          ethnicity_tallies_for_table)
+
+```
+
+```{r creating demo flextable, include=FALSE}
+
+# Create a flextable directly from tallies
+flextable_output <- flextable::flextable(demographics_tallies)
+
+```
+
+```{r formatting demo flextable, include=FALSE}
+
+# Applying indents within demographic variable categories
+
+flextable_age_formatted <- padding(flextable_output, i=2:8, padding.left = 20)
+
+flextable_gender_formatted <- padding(flextable_age_formatted, i=10:27, padding.left = 20)
+
+flextable_sex_orientation_formatted <- padding(flextable_gender_formatted, i=29:41, padding.left = 20)
+
+flextable_race_formatted <- padding(flextable_sex_orientation_formatted, i=43:48, padding.left = 20)
+
+flextable_ethnicity_formatted <- padding(flextable_race_formatted, i=50:58, padding.left = 20)
+
+# Autofitting columns
+
+flextable_all_demographics <- flextable::autofit(flextable_ethnicity_formatted)
+
+```
+
+```{r exporting demo flextable to word, include=FALSE}
+
+# Create a Word document
+doc <- officer::read_docx()
+
+# Add the flextable to the document
+doc <- flextable::body_add_flextable(doc, value = flextable_all_demographics)
+
+# Specify root directory
+tables_folder <- here("tables")
+
+# Create "tables" folder if it doesn't exist
+if (!dir.exists(tables_folder)) {
+  dir.create(tables_folder)
+}
+  
+# Save the document to the "tables" folder in your project root
+print(doc, target = file.path(tables_folder, "demographics_table.docx"))
+
+```
+
+## Depression Scores
+
+**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
+
+```{r calculating proportion of teens elevated depression, include=FALSE}
+
+perc_youth_elev_dep
+
+```
+
+```{r plotting mfq, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Convert mfq_category to a factor
+
+data_mfq_plot$mfq_category <- as.factor((data_mfq_plot$mfq_total >= 12))
+
+# Plotting mfq
+plot_mfq <- ggplot(data_mfq_plot, aes(x = mfq_total, fill = mfq_category)) +  # conditional fill
+  geom_histogram(binwidth = 1, alpha = 0.8) +
+  scale_fill_manual(values = c("FALSE" = "#836EAA", "TRUE" = "#4E2A84")) +  # color for <12 and >=12
+  geom_vline(aes(xintercept = mfq_mean$mfq_mean), color = "black", linetype = "solid", size = 0.5) +  # line
+  scale_x_continuous(limits = c(0, 26)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  plot_annotation(title = "Depression scale scores (MFQ) for all youth",
+                  caption = paste("Higher scores (further right) mean greater depressive symptoms. 
+                  Scores of 12 or higher suggest possible depression (dark purple); mean =", round(mfq_mean$mfq_mean, 2), "(solid line).")) +
+  labs(x = "depression score", y = "frequency")
+
+plot_mfq
+
+```
+
+## Access to Support
+
+Across all survey starts: 
+
++ **`r perc_youth_no_support`% report never accessing formal mental health treatment.**
+
+```{r showing unmet mental health need, include=FALSE}
+
+perc_youth_no_support
+
+```
+
++ **`r perc_youth_no_support_w_depression`% report zero access to mental health treatment AND had elevated depressive symptoms** (MFQ score of 12 or higher). 
+
+```{r showing no access to support and depression, include=FALSE}
+
+perc_youth_no_support_w_depression
+
+```
+
+```{r setting up to plot access to support, include=FALSE}
+
+# Creating df for plot
+
+data_access_plot <- data %>%
+  select(dem_receive_support) %>%
+  # filter(!str_detect(dem_receive_support, ",no")) %>% # dropping a single conflicting response + nas
+  mutate(dem_receive_support = str_replace(dem_receive_support, "yes, I am getting support now", "yes (now)"),
+         dem_receive_support = str_replace(dem_receive_support, "yes, I have gotten support in the past", "yes (past)"),
+         dem_receive_support = str_replace(dem_receive_support, "no, and I have not wanted to get support before", "no (never wanted it)"),
+         dem_receive_support = str_replace(dem_receive_support, "no, but I have wanted to get support before", "no (has wanted it)")) %>%
+  mutate(dem_receive_support = case_when(is.na(dem_receive_support) ~ "missing",
+                                         TRUE ~ dem_receive_support))
+
+table(data_access_plot)
+  
+# Setting a group order
+
+custom_order <- c("no (never wanted it)", "no (has wanted it)", "yes (now)", "yes (past)", 
+                  "yes (now),yes (past)", "yes (now),no (never wanted it)", "missing")
+
+# Convert to a factor with the specified order
+
+data_access_plot_mutated <- data_access_plot %>%
+  mutate(dem_receive_support = factor(data_access_plot$dem_receive_support, levels = custom_order))
+
+```
+
+```{r plotting access to support, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Calculating percentage frequency for text annotation
+
+data_access_plot_perc <- data_access_plot_mutated %>%
+  count(dem_receive_support) %>%
+  mutate(perc = n / sum(n) * 100)
+
+# Plotting
+
+plot_access <- ggplot(data_access_plot_mutated, aes(x = dem_receive_support)) +  
+  geom_histogram(stat = "count", fill = "#4E2A84", alpha = 0.8) +  
+  geom_text(data = data_access_plot_perc, aes(x = dem_receive_support, y = n, 
+                                              label = paste0(round(perc, 2), "%")), 
+            vjust = -0.5, size = 3.5) +  # Adding percentage labels
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Have you gotten support for your emotional or mental health before?",
+                  caption = paste("This question defined support as 'professional therapy, seeing a counselor, or seeing a doctor;
+                                  Plot does not include missing values'")) +
+  labs(x = "", y = "Frequency") +
+  ylim(0, 1750)  # Extending the y-axis limit
+
+plot_access
+
+```
+
+## Heard About YES From
+
+```{r removing stop words, include=FALSE}
+
+library(tidytext)
+
+data(stop_words)
+
+## Tokenize the text data into individual words and remove stop words
+
+# heard about yes from
+
+heard_from_does_tidytext <- data %>%
+  # Selecting the question
+  select(dem_hear_proj) %>%
+  # Tokenize the text
+  unnest_tokens(word, dem_hear_proj) %>%
+  # Remove stop words
+  anti_join(stop_words, by = "word") %>%
+  na.omit()
+
+# why interested in yes
+
+interested_bc_tidytext <- data %>%
+  # Selecting the question
+  select(dem_why_interest) %>%
+  # Tokenize the text
+  unnest_tokens(word, dem_why_interest) %>%
+  # Remove stop words
+  anti_join(stop_words, by = "word") %>%
+  na.omit()
+
+```
+
+Here, we plot the most common words in a qualitative question about where they'd heard about yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
+
+```{r plotting common words heard about yes from, echo=FALSE}
+
+## Creating plot
+
+heard_from_does_tidytext %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "#CCC4DF") +
+  xlab(NULL) +
+  theme_light() +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "white")) +
+  labs(y = "Number of Times Each Word Appeared", title = "Most Common Words, How They Heard About YES") +
+  coord_flip()
+
+```
+
+## Interest in YES Because
+
+Here, we plot the most common words in a qualitative question about why they were interested in yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
+
+```{r plotting common words interested in yes because, echo=FALSE}
+
+## Creating plot
+
+interested_bc_tidytext %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "#9380B6") +
+  xlab(NULL) +
+  theme_light() +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "white")) +
+  labs(y = "Number of Times Each Word Appeared", title = "Most Common Words, Interested in YES Because") +
+  coord_flip()
+
+```
+
+# Clinical Outcomes 
+
+```{r plot setup, include=FALSE, warning=FALSE}
+
+## Loading required packages
+
+library(tidyverse)
+library(ggridges)
+library(showtext)
+
+## Setting up fonts
+
+font_add_google(name = "Noto Sans",
+                family = "noto sans")
+
+showtext::showtext_auto()
+
+```
+
+## ABC Project
+
+```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_abc_graphic.png")
+
+```
+
+For those who chose the **ABC Project** with data at both time points:
+
++ **hopelessness decreased** from pre to post abc, dz = `r abc_bhs_dz_value`.
+
+```{r t test results abc bhs, echo=FALSE}
+
+# t_abc_bhs # full results here
+
+# Pulling table values
+
+data_t_abc_bhs <- broom::tidy(t_abc_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_bhs_dz_value,
+         abc_test = "Hopelessness") %>%
+  select(abc_test, t, df, p.value, dz)
+
+```
+
+```{r visualizing pre-post bhs abc setup, include=FALSE}
+
+## Selecting pre and post vars for abc
+
+pre_post_bhs_abc <- data %>% 
+  filter(str_detect(ssi_started, "A.B.C.")) %>%
+  dplyr::select(pre_bhs_mean, post_bhs_mean)
+
+# Converting to long data format
+
+pre_post_bhs_abc_long <- pivot_longer(pre_post_bhs_abc, 
+                                           cols = contains("mean"), 
+                                           names_to = "timing", 
+                                           values_to = "hopelessness")
+
+##  Renaming for plot
+
+plot_data_bhs_abc <- pre_post_bhs_abc_long %>% 
+  mutate(timing = case_when(str_detect(timing, "pre") ~ "Before",
+         str_detect(timing, "post") ~ "After",
+         is.na(timing) ~ NA_character_))
+
+```
+
+```{r writing plot function for future plots, include=FALSE}
+
+## Writing a function for future plot setup
+
+process_plot_data <- function(data, ssi_string, pre_var, post_var, outcome_label) {
+  # Select pre and post variables based on the ssi string
+  pre_post_outcome <- data %>%
+    filter(str_detect(ssi_started, ssi_string)) %>%
+    dplyr::select(contains(pre_var), 
+                  contains(post_var))
+  
+  # Convert to long data format
+  pre_post_outcome_long <- pre_post_outcome %>%
+    pivot_longer(cols = contains("mean"), 
+                 names_to = "timing", 
+                 values_to = outcome_label)
+  
+  # Mutate 'timing' to label pre/post as 'Before'/'After'
+  plot_data <- pre_post_outcome_long %>%
+    mutate(timing = case_when(
+      str_detect(timing, "pre") ~ "Before",
+      str_detect(timing, "post") ~ "After",
+      is.na(timing) ~ NA_character_
+    ))
+  
+  return(plot_data)
+}
+
+```
+
+```{r running custom plot function on abc bhs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_bhs_abc_function <- process_plot_data(data, "A.B.C.", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r checking data frames are identical with and without function, include=FALSE}
+
+identical(plot_data_bhs_abc, plot_data_bhs_abc_function) # true if processed data is identical using function
+
+```
+
+```{r visualizing pre-post bhs abc, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_abc_bhs <- plot_data_bhs_abc_function %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ")
+
+```
+
++ **agency increased** from pre to post abc, dz = `r abc_shs_dz_value`.
+
+```{r t test results abc shs, echo=FALSE}
+
+# t_abc_shs # full results here
+
+# Pulling table values
+
+data_t_abc_shs <- broom::tidy(t_abc_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_shs_dz_value,
+         abc_test = "Agency") %>%
+  select(abc_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on abc shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_abc_function <- process_plot_data(data, "A.B.C.", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs abc, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_abc_shs <- plot_data_shs_abc_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Agency", y = " ")
+
+```
+
++ **self-hate decreased** from pre to post abc, dz = `r abc_hate_dz_value`.
+
+```{r t test results abc hate, echo=FALSE}
+
+# t_abc_hate # full results here
+
+# Pulling table values
+
+data_t_abc_hate <- broom::tidy(t_abc_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = abc_hate_dz_value,
+         abc_test = "Self-Hate") %>%
+  select(abc_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on abc hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_abc_function <- process_plot_data(data, "A.B.C.", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate abc, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_abc_hate <- plot_data_hate_abc_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#32A2A0", "grey")) +
+  scale_color_manual(values = c("#32A2A0", "grey")) +
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Paired t-test results for ABC:
+
+```{r all abc t results, echo=FALSE}
+
+# Combining t results
+
+t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_abc)
+
+```
+
+```{r combining abc pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Plotting all pre post outcomes for abc
+
+plots_abc <- plot_abc_bhs + plot_abc_shs + plot_abc_hate +
+  plot_annotation(title = "Outcomes before vs after ABC Project",
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after ABC;
+                  Middle plot = agency scores (SHS) before and after ABC;
+                  Right plot = self-hate scores before and after ABC.")
+
+plots_abc
+
+```
+
+```{r change abc hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_abc_lot_little_less_hopeless <- data_abc %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_abc_answered_hopeless <- data_abc %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_abc_lot_little_less_hopeless <- round((n_abc_lot_little_less_hopeless / n_abc_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_abc_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-ABC.**
+
+```{r printing abc change hopelessness, include=FALSE}
+
+perc_abc_lot_little_less_hopeless
+
+```
+
+```{r plotting abc change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_abc_plot_change_hope <- data_abc %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_abc_plot_change_hope_mutated <- data_abc_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_abc_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_abc_change_hopeless <- ggplot(data_abc_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#32A2A0", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (ABC Project), how hopeless do you feel right now?") +
+  labs(x = "", y = "frequency")
+
+plot_abc_change_hopeless
+
+```
+
+```{r change abc problem solving, include=FALSE}
+
+# Calculating number a lot or little more able to solve problems
+
+n_abc_lot_little_more_prob <- data_abc %>%
+  filter(perc_change_prob == "A lot more able to solve the problems" | 
+           perc_change_prob == "A little more able to solve the problems") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_abc_answered_prob <- data_abc %>%
+  filter(!is.na(perc_change_prob)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_abc_lot_little_more_prob <- round((n_abc_lot_little_more_prob / n_abc_answered_prob)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_abc_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-ABC.**
+
+```{r printing abc change problem solving, include=FALSE}
+
+perc_abc_lot_little_more_prob
+
+```
+
+```{r plotting abc change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_abc_plot_change_prob <- data_abc %>%
+  filter(!is.na(perc_change_prob)) %>%
+  select(perc_change_prob) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "A lot more able to solve the problems" ~ "A lot more able",
+                                      perc_change_prob == "A little more able to solve the problems" ~ "A little more able",
+                                      perc_change_prob == "The same amount able to solve the problems" ~ "The same amount able",
+                                      perc_change_prob == "A little less able to solve the problems" ~ "A little less able",
+                                      perc_change_prob == "Much less able to solve the problems" ~ "Much less able",
+                                      TRUE ~ perc_change_prob))
+
+# Setting a group order
+
+custom_order <- c("A lot more able", "A little more able", "The same amount able", 
+                  "A little less able", "Much less able")
+
+# Convert to a factor with the specified order
+
+data_abc_plot_change_prob_mutated <- data_abc_plot_change_prob %>%
+  mutate(perc_change_prob = factor(data_abc_plot_change_prob$perc_change_prob, levels = custom_order))
+
+# Plotting 
+
+plot_abc_change_prob <- ggplot(data_abc_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
+  geom_histogram(stat="count", fill = "#32A2A0", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (ABC Project), how able are you to solve your problems?") +
+  labs(x = "", y = "frequency")
+
+plot_abc_change_prob
+
+```
+
+## Project CARE
+
+```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_care_graphic.png")
+
+```
+
+For those who chose **Project CARE** with data at both time points:
+
++ **hopelessness decreased** from pre to post care, dz = `r care_bhs_dz_value`.
+
+```{r t test results care bhs, echo=FALSE}
+
+# t_care_bhs # full results here
+
+# Pulling table values
+
+data_t_care_bhs <- broom::tidy(t_care_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = care_bhs_dz_value,
+         care_test = "Hopelessness") %>%
+  select(care_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on care bhs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_bhs_care_function <- process_plot_data(data, "C.A.R.E", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r visualizing pre-post bhs care, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_care_bhs <- plot_data_bhs_care_function %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#A52B4D", "grey")) +
+  scale_color_manual(values = c("#A52B4D", "grey")) +
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ")
+
+```
+
++ **agency increased** from pre to post care, dz = `r care_shs_dz_value`.
+
+```{r t test results care shs, echo=FALSE}
+
+# t_care_shs # full results here
+
+# Pulling table values
+
+data_t_care_shs <- broom::tidy(t_care_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = care_shs_dz_value,
+         care_test = "Agency") %>%
+  select(care_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on care shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_care_function <- process_plot_data(data, "C.A.R.E", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs care, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_care_shs <- plot_data_shs_care_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#A52B4D", "grey")) +
+  scale_color_manual(values = c("#A52B4D", "grey")) +
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Agency", y = " ")
+
+```
+
++ **self-hate decreased** from pre to post care, dz = `r care_hate_dz_value`.
+
+```{r t test results care hate, echo=FALSE}
+
+# t_care_hate # full results here
+
+# Pulling table values
+
+data_t_care_hate <- broom::tidy(t_care_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = care_hate_dz_value,
+         care_test = "Self-Hate") %>%
+  select(care_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on care hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_care_function <- process_plot_data(data, "C.A.R.E", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate care, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_care_hate <- plot_data_hate_care_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#A52B4D", "grey")) +
+  scale_color_manual(values = c("#A52B4D", "grey")) +
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Paired t-test results for CARE:
+
+```{r all care t results, echo=FALSE}
+
+# Combining t results
+
+t_results_care <- bind_rows(data_t_care_bhs, data_t_care_shs, data_t_care_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_care)
+
+```
+
+```{r combining care pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Plotting all pre post outcomes for care
+
+plots_care <- plot_care_bhs + plot_care_shs + plot_care_hate +
+  plot_annotation(title = "Outcomes before vs after Project CARE",
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after CARE;
+                  Middle plot = agency scores (SHS) before and after CARE;
+                  Right plot = self-hate scores before and after CARE.")
+
+plots_care
+
+```
+
+```{r change care hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_care_lot_little_less_hopeless <- data_care %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_care_answered_hopeless <- data_care %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_care_lot_little_less_hopeless <- round((n_care_lot_little_less_hopeless / n_care_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_care_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-CARE.**
+
+```{r printing care change hopelessness, include=FALSE}
+
+perc_care_lot_little_less_hopeless
+
+```
+
+```{r plotting care change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_care_plot_change_hope <- data_care %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_care_plot_change_hope_mutated <- data_care_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_care_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_care_change_hopeless <- ggplot(data_care_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#A52B4D", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project CARE), how hopeless do you feel right now?") +
+  labs(x = "", y = "frequency")
+
+plot_care_change_hopeless
+
+```
+
+```{r change care problem solving, include=FALSE}
+
+# Calculating number a lot or little more able to solve problems
+
+n_care_lot_little_more_prob <- data_care %>%
+  filter(perc_change_prob == "A lot more able to solve the problems" | 
+           perc_change_prob == "A little more able to solve the problems") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_care_answered_prob <- data_care %>%
+  filter(!is.na(perc_change_prob)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_care_lot_little_more_prob <- round((n_care_lot_little_more_prob / n_care_answered_prob)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_care_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-CARE.**
+
+```{r printing care change problem solving, include=FALSE}
+
+perc_care_lot_little_more_prob
+
+```
+
+```{r plotting care change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_care_plot_change_prob <- data_care %>%
+  filter(!is.na(perc_change_prob)) %>%
+  select(perc_change_prob) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "A lot more able to solve the problems" ~ "A lot more able",
+                                      perc_change_prob == "A little more able to solve the problems" ~ "A little more able",
+                                      perc_change_prob == "The same amount able to solve the problems" ~ "The same amount able",
+                                      perc_change_prob == "A little less able to solve the problems" ~ "A little less able",
+                                      perc_change_prob == "Much less able to solve the problems" ~ "Much less able",
+                                      TRUE ~ perc_change_prob))
+
+# Setting a group order
+
+custom_order <- c("A lot more able", "A little more able", "The same amount able", 
+                  "A little less able", "Much less able")
+
+# Convert to a factor with the specified order
+
+data_care_plot_change_prob_mutated <- data_care_plot_change_prob %>%
+  mutate(perc_change_prob = factor(data_care_plot_change_prob$perc_change_prob, levels = custom_order))
+
+# Plotting 
+
+plot_care_change_prob <- ggplot(data_care_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
+  geom_histogram(stat="count", fill = "#A52B4D", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project CARE), how able are you to solve your problems?") +
+  labs(x = "", y = "frequency")
+
+plot_care_change_prob
+
+```
+
+## Project Personality
+
+```{r, out.width = "260px", out.height = "240px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_pp_graphic.png")
+
+```
+
+For those who chose **Project Personality** with data at both time points:
+
++ **hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
+
+```{r t test results pp bhs, echo=FALSE}
+
+# t_pp_bhs # full results here
+
+# Pulling table values
+
+data_t_pp_bhs <- broom::tidy(t_pp_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_bhs_dz_value,
+         pp_test = "Hopelessness") %>%
+  select(pp_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on pp bhs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_bhs_pp_function <- process_plot_data(data, "Personality", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r visualizing pre-post bhs pp, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_pp_bhs <- plot_data_bhs_pp_function %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#3F9CF5", "grey")) +
+  scale_color_manual(values = c("#3F9CF5", "grey")) +
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ")
+
+```
+
++ **agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
+
+```{r t test results pp shs, echo=FALSE}
+
+# t_pp_shs # full results here
+
+# Pulling table values
+
+data_t_pp_shs <- broom::tidy(t_pp_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_shs_dz_value,
+         pp_test = "Agency") %>%
+  select(pp_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on pp shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_pp_function <- process_plot_data(data, "Personality", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs pp, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_pp_shs <- plot_data_shs_pp_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#3F9CF5", "grey")) +
+  scale_color_manual(values = c("#3F9CF5", "grey")) +
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Agency", y = " ")
+
+```
+
++ **self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
+
+```{r t test results pp hate, echo=FALSE}
+
+# t_pp_hate # full results here
+
+# Pulling table values
+
+data_t_pp_hate <- broom::tidy(t_pp_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = pp_hate_dz_value,
+         pp_test = "Self-Hate") %>%
+  select(pp_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on pp hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_pp_function <- process_plot_data(data, "Personality", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate pp, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_pp_hate <- plot_data_hate_pp_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#3F9CF5", "grey")) +
+  scale_color_manual(values = c("#3F9CF5", "grey")) +
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Paired t-test results for Project Personality:
+
+```{r all pp t results, echo=FALSE}
+
+# Combining t results
+
+t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_pp)
+
+```
+
+```{r combining pp pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Plotting all pre post outcomes for pp
+
+plots_pp <- plot_pp_bhs + plot_pp_shs + plot_pp_hate +
+   plot_annotation(title = "Outcomes before vs after Project Personality",
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after Personality;
+                  Middle plot = agency scores (SHS) before and after Personality;
+                  Right plot = self-hate scores before and after Personality.")
+
+plots_pp
+
+```
+
+```{r change pp hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_pp_lot_little_less_hopeless <- data_pp %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_pp_answered_hopeless <- data_pp %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_pp_lot_little_less_hopeless <- round((n_pp_lot_little_less_hopeless / n_pp_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_pp_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-Project Personality.**
+
+```{r printing pp change hopelessness, include=FALSE}
+
+perc_pp_lot_little_less_hopeless
+
+```
+
+```{r plotting pp change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_pp_plot_change_hope <- data_pp %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_pp_plot_change_hope_mutated <- data_pp_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_pp_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_pp_change_hopeless <- ggplot(data_pp_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project Personality), how hopeless do you feel right now?") +
+  labs(x = "", y = "frequency")
+
+plot_pp_change_hopeless
+
+```
+
+```{r change pp problem solving, include=FALSE}
+
+# Calculating number a lot or little more able to solve problems
+
+n_pp_lot_little_more_prob <- data_pp %>%
+  filter(perc_change_prob == "A lot more able to solve the problems" | 
+           perc_change_prob == "A little more able to solve the problems") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_pp_answered_prob <- data_pp %>%
+  filter(!is.na(perc_change_prob)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_pp_lot_little_more_prob <- round((n_pp_lot_little_more_prob / n_pp_answered_prob)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_pp_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-Project Personality.**
+
+```{r printing pp change problem solving, include=FALSE}
+
+perc_pp_lot_little_more_prob
+
+```
+
+```{r plotting pp change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_pp_plot_change_prob <- data_pp %>%
+  filter(!is.na(perc_change_prob)) %>%
+  select(perc_change_prob) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "A lot more able to solve the problems" ~ "A lot more able",
+                                      perc_change_prob == "A little more able to solve the problems" ~ "A little more able",
+                                      perc_change_prob == "The same amount able to solve the problems" ~ "The same amount able",
+                                      perc_change_prob == "A little less able to solve the problems" ~ "A little less able",
+                                      perc_change_prob == "Much less able to solve the problems" ~ "Much less able",
+                                      TRUE ~ perc_change_prob))
+
+# Setting a group order
+
+custom_order <- c("A lot more able", "A little more able", "The same amount able", 
+                  "A little less able", "Much less able")
+
+# Convert to a factor with the specified order
+
+data_pp_plot_change_prob_mutated <- data_pp_plot_change_prob %>%
+  mutate(perc_change_prob = factor(data_pp_plot_change_prob$perc_change_prob, levels = custom_order))
+
+# Plotting 
+
+plot_pp_change_prob <- ggplot(data_pp_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
+  geom_histogram(stat="count", fill = "#3F9CF5", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project Personality), how able are you to solve your problems?") +
+  labs(x = "", y = "frequency")
+
+plot_pp_change_prob
+
+```
+
+## Project RISE
+
+```{r, out.width = "260px", out.height = "240px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_rise_graphic.png")
+
+```
+
+For those who chose **Project RISE** with data at both time points:
+
++ **No evidence that hopelessness decreased** from pre to post rise, dz = `r rise_bhs_dz_value`.
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+
+```{r t test results rise bhs, echo=FALSE}
+
+# t_rise_bhs # full results here
+
+# Pulling table values
+
+data_t_rise_bhs <- broom::tidy(t_rise_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_bhs_dz_value,
+         rise_test = "Hopelessness") %>%
+  select(rise_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on rise bhs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_bhs_rise_function <- process_plot_data(data, "RISE", "pre_bhs_mean", "post_bhs_mean", "hopelessness")
+
+```
+
+```{r visualizing pre-post bhs rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_bhs <- plot_data_bhs_rise_function %>%
+  ggplot(aes(x = hopelessness, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(0, 3)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Hopelessness", y = " ")
+
+```
+
++ **No evidence that agency increased** from pre to post rise, dz = `r rise_shs_dz_value`. 
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`).
+
+```{r t test results rise shs, echo=FALSE}
+
+# t_rise_shs # full results here
+
+# Pulling table values
+
+data_t_rise_shs <- broom::tidy(t_rise_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_shs_dz_value,
+         rise_test = "Agency") %>%
+  select(rise_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on rise shs data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_shs_rise_function <- process_plot_data(data, "RISE", "pre_shs_mean", "post_shs_mean", "hope")
+
+```
+
+```{r visualizing pre-post shs rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_shs <- plot_data_shs_rise_function %>%
+  ggplot(aes(x = hope, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(1, 8)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Agency", y = " ")
+
+```
+
++ **No evidence that self-hate decreased** from pre to post rise, dz = `r rise_hate_dz_value`. 
+    + Note: this test is run in a very small sample size (df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`). 
+
+```{r t test results rise hate, echo=FALSE}
+
+# t_rise_hate # full results here
+
+# Pulling table values
+
+data_t_rise_hate <- broom::tidy(t_rise_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = rise_hate_dz_value,
+         rise_test = "Self-Hate") %>%
+  select(rise_test, t, df, p.value, dz)
+
+```
+
+```{r running custom plot function on rise hate data, include=FALSE}
+
+## Running plot setup function
+
+plot_data_hate_rise_function <- process_plot_data(data, "RISE", "pre_self_hate_mean", "post_self_hate_mean", "hate")
+
+```
+
+```{r visualizing pre-post hate rise, include=FALSE, warning=FALSE}
+
+## Plotting
+
+plot_rise_hate <- plot_data_hate_rise_function %>%
+  ggplot(aes(x = hate, y = timing, fill = timing, color = timing)) +
+  geom_density_ridges(alpha = 0.4,
+                      jittered_points = TRUE,
+                      position = "raincloud") +
+  scale_fill_manual(values = c("#F48151", "grey")) +
+  scale_color_manual(values = c("#F48151", "grey")) +
+  scale_x_continuous(limits = c(1, 7)) +  # Set x-axis limits
+  theme_light() +
+  theme(legend.position = "none",
+        text = element_text(family = "noto sans"),
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white")) +
+  labs(x = "Self-Hate", y = " ")
+
+```
+
+Paired t-test results for Project RISE:
+
+```{r all rise t results, echo=FALSE}
+
+# Combining t results
+
+t_results_rise <- bind_rows(data_t_rise_bhs, data_t_rise_shs, data_t_rise_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_rise)
+
+```
+
+```{r combining rise pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Plotting all pre post outcomes for rise
+
+plots_rise <- plot_rise_bhs + plot_rise_shs + plot_rise_hate +
+  plot_annotation(title = "Outcomes before vs after Project RISE",
+                  theme = theme(plot.title = element_text(hjust = 0.5)),
+                  caption = "Larger values within each plot (further right) are greater hopelessness, agency, self-hate.
+                  Left plot = hopelessness scores (BHS) before and after RISE;
+                  Middle plot = agency scores (SHS) before and after RISE;
+                  Right plot = self-hate scores before and after RISE")
+
+plots_rise
+
+```
+
+```{r change rise hopeless, include=FALSE}
+
+# Calculating number a lot or little less hopeless
+
+n_rise_lot_little_less_hopeless <- data_rise %>%
+  filter(perc_change_hope == "A lot less hopeless" | perc_change_hope == "A little less hopeless") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_rise_answered_hopeless <- data_rise %>%
+  filter(!is.na(perc_change_hope)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_rise_lot_little_less_hopeless <- round((n_rise_lot_little_less_hopeless / n_rise_answered_hopeless)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_rise_lot_little_less_hopeless`% of responses were "a lot" or "a little" less hopeless post-RISE.**
+
+```{r printing rise change hopelessness, include=FALSE}
+
+perc_rise_lot_little_less_hopeless
+
+```
+
+```{r plotting rise change hopelessness, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_rise_plot_change_hope <- data_rise %>%
+  filter(!is.na(perc_change_hope)) %>%
+  select(perc_change_hope)
+
+# Setting a group order
+
+custom_order <- c("A lot less hopeless", "A little less hopeless", "The same amount of hopeless",
+                  "A little more hopeless", "Much more hopeless")
+
+# Convert to a factor with the specified order
+
+data_rise_plot_change_hope_mutated <- data_rise_plot_change_hope %>%
+  mutate(perc_change_hope = factor(data_rise_plot_change_hope$perc_change_hope, levels = custom_order))
+
+# Plotting 
+
+plot_rise_change_hopeless <- ggplot(data_rise_plot_change_hope_mutated, aes(x = perc_change_hope)) +  
+  geom_histogram(stat="count", fill = "#F48151", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project RISE), how hopeless do you feel right now?") +
+  labs(x = "", y = "frequency")
+
+plot_rise_change_hopeless
+
+```
+
+```{r change rise problem solving, include=FALSE}
+
+# Calculating number a lot or little more able to solve problems
+
+n_rise_lot_little_more_prob <- data_rise %>%
+  filter(perc_change_prob == "A lot more able to solve the problems" | 
+           perc_change_prob == "A little more able to solve the problems") %>%
+  nrow()
+
+# Calculating total responses to that item
+
+n_rise_answered_prob <- data_rise %>%
+  filter(!is.na(perc_change_prob)) %>%
+  nrow()
+
+# Calculating percentage who answered a lot or little less hopeless
+
+perc_rise_lot_little_more_prob <- round((n_rise_lot_little_more_prob / n_rise_answered_prob)*100, 2)
+
+```
+
+Of those who answered this question, **`r perc_rise_lot_little_more_prob`% of responses were "a lot" or "a little" more able to solve problems post-RISE.**
+
+```{r printing rise change problem solving, include=FALSE}
+
+perc_rise_lot_little_more_prob
+
+```
+
+```{r plotting rise change problem solving, warning=FALSE, message=FALSE, echo=FALSE}
+
+# Creating df
+
+data_rise_plot_change_prob <- data_rise %>%
+  filter(!is.na(perc_change_prob)) %>%
+  select(perc_change_prob) %>%
+  mutate(perc_change_prob = case_when(perc_change_prob == "A lot more able to solve the problems" ~ "A lot more able",
+                                      perc_change_prob == "A little more able to solve the problems" ~ "A little more able",
+                                      perc_change_prob == "The same amount able to solve the problems" ~ "The same amount able",
+                                      perc_change_prob == "A little less able to solve the problems" ~ "A little less able",
+                                      perc_change_prob == "Much less able to solve the problems" ~ "Much less able",
+                                      TRUE ~ perc_change_prob))
+
+# Setting a group order
+
+custom_order <- c("A lot more able", "A little more able", "The same amount able", 
+                  "A little less able", "Much less able")
+
+# Convert to a factor with the specified order
+
+data_rise_plot_change_prob_mutated <- data_rise_plot_change_prob %>%
+  mutate(perc_change_prob = factor(data_rise_plot_change_prob$perc_change_prob, levels = custom_order))
+
+# Plotting 
+
+plot_rise_change_prob <- ggplot(data_rise_plot_change_prob_mutated, aes(x = perc_change_prob)) +  
+  geom_histogram(stat="count", fill = "#F48151", alpha = 0.8) +  
+  theme_light() +
+  theme(legend.position = "none",
+        title = element_text(size = 10),
+        plot.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  # rotate x-axis labels
+  plot_annotation(title = "Compared to before (Project RISE), how able are you to solve your problems?") +
+  labs(x = "", y = "frequency")
+
+plot_rise_change_prob
+
+```
+
+## All
+
+```{r combining all pre post outcomes plots, echo=FALSE, warning=FALSE, message=FALSE}
+
+library(patchwork)
+
+# Combine the plots vertically
+plots_all <- plots_abc / plots_care / plots_pp / plots_rise  + 
+  plot_annotation(
+    title = "Outcomes before and after all SSIs",
+    caption = "hopelessness, agency, self-hate before + after ABC (green), CARE (red), Project Personality (blue), and RISE (orange)"
+  )
+
+# Show the combined plot
+plots_all
+
+```
+
+# SSI Completion
+
+## By SSI
+
+Here, we pull and plot the number of starts, completions, and completion rate overall and within each SSI.
+
+```{r overall completion rate calc, include=FALSE}
+
+# Calculating completion rates overall
+
+completions_overall <- data %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Any SSI") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r abc completion rate calc, include=FALSE}
+
+# Calculating completion rates abc
+
+completions_abc <- data_abc %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "ABC Project") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r care completion rate calc, include=FALSE}
+
+# Calculating completion rates care
+
+completions_care <- data_care %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project CARE") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r pp completion rate calc, include=FALSE}
+
+# Calculating completion rates pp
+
+completions_pp <- data_pp %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project Personality") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r rise completion rate calc, include=FALSE}
+
+# Calculating completion rates rise
+
+completions_rise <- data_rise %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(ssi_group = "Project RISE") %>%
+  select(ssi_group, everything())
+
+```
+
+```{r binding completion rate rows, include=FALSE}
+
+completions_by_ssi <- bind_rows(completions_overall,
+                                completions_abc,
+                                completions_care,
+                                completions_pp,
+                                completions_rise)
+
+```
+
+```{r printing completion rates table, echo=FALSE}
+
+rempsyc::nice_table(completions_by_ssi)
+
+```
+
+```{r setting up data for bar plot completion rates, include=FALSE}
+
+# Create data for bar plot
+
+data_barplot_abc <- data.frame(
+  ssi = c("ABC Project"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_abc), as.integer(n_completed_abc))
+)
+
+data_barplot_care <- data.frame(
+  ssi = c("Project CARE"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_care), as.integer(n_completed_care))
+)
+
+data_barplot_pp <- data.frame(
+  ssi = c("Project Personality"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_pp), as.integer(n_completed_pp))
+)
+
+data_barplot_rise <- data.frame(
+  ssi = c("Project RISE"),
+  category = c("starters", "completers"),
+  n = c(as.integer(n_started_rise), as.integer(n_completed_rise))
+)
+
+data_barplot_all <- bind_rows(data_barplot_abc, data_barplot_care,
+                              data_barplot_pp, data_barplot_rise)
+
+```
+
+```{r writing plot settings for bar plot completion rates, include=FALSE}
+
+# Define colors for each ssi and category combination
+
+custom_colors <- c(
+  "ABC Project.starters" = "#a4e3e2", "ABC Project.completers" = "#32A2A0",
+  "Project CARE.starters" = "#e69fb3", "Project CARE.completers" = "#A52B4D",
+  "Project Personality.starters" = "#b2d7fb", "Project Personality.completers" = "#3F9CF5",
+  "Project RISE.starters" = "#fbcdb9", "Project RISE.completers" = "#F48151"
+)
+
+# Reorder 'ssi' factor
+data_barplot_all$ssi <- factor(data_barplot_all$ssi, 
+                               levels = c("ABC Project", "Project CARE", "Project Personality", "Project RISE"))
+
+# Reorder 'category' factor to ensure "starters" comes before "completers" within each 'ssi'
+data_barplot_all$category <- fct_relevel(data_barplot_all$category, "starters", "completers")
+
+# Reorder 'interaction(ssi, category)' factor to match the desired order
+data_barplot_all$interaction_ssi_category <- interaction(data_barplot_all$ssi, data_barplot_all$category)
+
+# Ensure the interaction factor levels are in the right order for both bars and the legend
+data_barplot_all$interaction_ssi_category <- factor(data_barplot_all$interaction_ssi_category, 
+                                                    levels = c("ABC Project.starters", "ABC Project.completers",
+                                                               "Project CARE.starters", "Project CARE.completers",
+                                                               "Project Personality.starters", "Project Personality.completers",
+                                                               "Project RISE.starters", "Project RISE.completers"))
+
+```
+
+```{r plotting completion rates, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Bar plot
+
+ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +   
+  geom_bar(position = "identity", stat = "identity") +
+  scale_fill_manual(values = custom_colors) +
+  coord_flip() +  # Flip coordinates to get horizontal bars
+  scale_x_discrete(limits = rev(levels(data_barplot_all$ssi))) +  # Reverse x-axis to fix order after flip
+  theme_minimal() +
+  labs(x = "", y = "n completed vs n started (%)", title = "Completion Rates, by SSI") +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(0, 2250)) +  # Set y-axis max to 200
+  annotate(geom = "text", 
+           x = 4,  # Adjust x to match where you want the text (based on your data)
+           y = 300,  # Adjust y position as needed
+           label = paste(perc_completed_abc, "%"), 
+           color = "black", 
+           size = 4) + # Customize size and color of the annotation
+  annotate(geom = "text", 
+           x = 3,  # Adjust x to match where you want the text (based on your data)
+           y = 290,  # Adjust y position as needed
+           label = paste(perc_completed_care, "%"), 
+           color = "black", 
+           size = 4) + # Customize size and color of the annotation
+  annotate(geom = "text", 
+           x = 2,  # Adjust x to match where you want the text (based on your data)
+           y = 430,  # Adjust y position as needed
+           label = paste(perc_completed_personality, "%"), 
+           color = "black", 
+           size = 4) +
+  annotate(geom = "text", 
+           x = 1,  # Adjust x to match where you want the text (based on your data)
+           y = 290,  # Adjust y position as needed
+           label = paste(perc_completed_rise, "%"), 
+           color = "black", 
+           size = 4) +
+  geom_segment(aes(y = 20, yend = 120, x = 1, xend = 1), 
+               linetype = "solid", color = "black", size = .5)
+
+```
+
+## By Date
+
+Within d02, we have SSI completion rate data before and after introducing commitment items (where teens "commit" to finishing the SSI they chose). Here, we plot SSI completions by date, indicating when the commit items were introduced.
+
+```{r pulling start_date and completion data, include=FALSE}
+
+# Pulling variables
+
+data_commit_by_date <- data %>%
+  select(start_date, abc_commit, proj_care_commit, proj_pers_commit, proj_rise_commit, data_id)
+
+# Pulling earliest start_date with commit data within each data_id
+  
+date_commit_introduced_by_data_id <- data_commit_by_date %>%
+  filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
+  arrange(start_date) %>%
+  group_by(data_id) %>%
+  slice(1)
+
+date_first_observation_per_data_id <- data_commit_by_date %>%
+  arrange(start_date) %>%
+  group_by(data_id) %>%
+  slice(1) 
+
+# Binding these two dfs for comparisons
+
+data_commit_date_bound <- bind_rows(date_commit_introduced_by_data_id, date_first_observation_per_data_id) %>%
+  group_by(data_id) %>%
+  arrange(start_date)
+
+```
+
+```{r comparing first observation by data id vs first commit data by data id, include=FALSE}
+
+data_commit_date_d01 <- data_commit_date_bound %>%
+  filter(data_id == "d01")  # no commit data 
+
+data_commit_date_d02 <- data_commit_date_bound %>%
+  filter(data_id == "d02")  # first observation vs first commit data
+
+data_commit_date_d05 <- data_commit_date_bound %>%
+  filter(data_id == "d05")  # no commit data 
+
+data_commit_date_d09 <- data_commit_date_bound %>%
+  filter(data_id == "d09")  # no pre-commit data 
+
+data_commit_date_d16 <- data_commit_date_bound %>%
+  filter(data_id == "d16")  # no pre-commit data 
+
+```
+
+```{r pulling data points for commit and completions by date plot, include=FALSE}
+
+# d02 is the only data_id with pre and post commitment data
+## (first observation is much earlier than first commit data, 
+## was originally na for all commit vars)
+
+data_completion_by_date_d02 <- data %>%
+  select(start_date, abc_commit, proj_care_commit, proj_pers_commit, 
+         proj_rise_commit, ssi_started, ssi_completed, data_id) %>%
+  filter(data_id == "d02") %>%
+  arrange(start_date)
+
+# Pulling first start_date where commitment qs were introduced 
+
+date_d02_commit_introduced <- data_completion_by_date_d02 %>%
+  filter(!is.na(abc_commit) | !is.na(proj_care_commit) | !is.na(proj_pers_commit) | !is.na(proj_rise_commit)) %>%
+  arrange(start_date) %>%
+  slice(1) %>%
+  select(start_date) %>%
+  pull()
+
+# Creating data to plot ssi completions by start_date
+
+plot_data_completions_per_date <- data_completion_by_date_d02 %>%
+  group_by(start_date) %>%
+  filter(!is.na(ssi_completed)) %>%
+  tally() %>%
+  ungroup()
+
+```
+
+It's clear our San Antonio partners had many students complete an SSI on one day in late Dec of 2021. 
+
+```{r plotting d02 completions by start_date, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Plotting completions (raw)
+
+plot_completions_by_date <- ggplot(plot_data_completions_per_date, aes(x = start_date, y = n)) +   
+  geom_histogram(position = "identity", stat = "identity", fill = "#4E2A84") +
+  theme_minimal() +
+  labs(x = "", y = "n ssis completed", title = "Daily SSI Completions (d02 only)") +
+  theme(legend.position = "none") +
+  geom_vline(xintercept = date_d02_commit_introduced, color = "black", linetype = "dotted") +
+  plot_annotation(caption = paste("Taller bars indicate more completions on a specific date. 
+                  Dotted black line shows the date we introduced 'commit' items to SSIs:", date_d02_commit_introduced,"."))
+
+plot_completions_by_date
+
+```
+
+Here we calculate SSI completion rates before vs after introducing the commit items to d02 (date we added commit item: `r date_d02_commit_introduced`). Given the large number of SSI completions in mid-Dec, we also compare SSI completion rates pre-commitment item to those after the unusual spike in completions. When excluding completions from the SA event period, completion rates look very similar in these data from pre to post adding the commitment item.
+
+We likely get a large completion rate boost due to people in SA encouraging youth to complete an SSI during this mid-Dec window.
+
+```{r completion rate data pre commit item, include=FALSE}
+
+# Calculating completion rate data pre and post commit item
+
+completion_rate_pre_commit <- data_completion_by_date_d02 %>%
+  filter(start_date < date_d02_commit_introduced) %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "before commit item and SA event") %>%
+  select(timing, everything())
+
+completion_rate_post_commit <- data_completion_by_date_d02 %>%
+  filter(start_date > date_d02_commit_introduced) %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "after commit item (including SA event)") %>%
+  select(timing, everything())
+
+completion_rate_post_sa_push <- data_completion_by_date_d02 %>%
+  filter(start_date > "2021-12-17") %>%
+  summarise(
+    ssi_starts = sum(!is.na(ssi_started)),
+    ssi_completions = sum(!is.na(ssi_completed)),
+    completion_rate = round((ssi_completions / ssi_starts) * 100, 2)) %>%
+  mutate(timing = "after commit item (excluding SA event)") %>%
+  select(timing, everything())
+
+# Binding rows
+
+completion_rates_pre_and_post_commit <- bind_rows(completion_rate_pre_commit, 
+                                                  completion_rate_post_commit,
+                                                  completion_rate_post_sa_push)
+
+```
+
+```{r printing completion rate data pre commit item, echo=FALSE}
+
+rempsyc::nice_table(completion_rates_pre_and_post_commit)
+
+```
+
+# Acceptability
+
+## Overall
+
+Project YES helped teens feel less alone, kinder toward themselves, and capable to creating a personal action plan.
+
+```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
+
+knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_quotes.png")
+
+```
+
+```{r calculating pfs item means across all ssis, include=FALSE}
+
+## Calculating individual pfs item means, across all ssis
+
+summary_pfs_enjoyed <- data %>%
+  summarize(mean_value = round(mean(pfs_1, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_1, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "enjoyed",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_understood <- data %>%
+  summarize(mean_value = round(mean(pfs_2, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_2, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "understood",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_easy <- data %>%
+  summarize(mean_value = round(mean(pfs_3, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_3, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "easy to use",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_tried <- data %>%
+  summarize(mean_value = round(mean(pfs_4, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_4, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "tried my hardest",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_helpful <- data %>%
+  summarize(mean_value = round(mean(pfs_5, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_5, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "helpful for others",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_recommend <- data %>%
+  summarize(mean_value = round(mean(pfs_6, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_6, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "recommend to others",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+summary_pfs_agree <- data %>%
+  summarize(mean_value = round(mean(pfs_7, na.rm = TRUE), 2),
+            sd_value = round(sd(pfs_7, na.rm = TRUE), 2)) %>%
+  mutate(pfs_item = "agree with message",
+         mean_value = mean_value,
+         sd_value = sd_value)
+
+```
+
+```{r pulling pfs item means across all ssis into one df, include=FALSE}
+
+## Pulling into one data frame
+
+summary_pfs_overall <- dplyr::bind_rows(
+  summary_pfs_enjoyed, summary_pfs_understood, summary_pfs_easy,
+  summary_pfs_tried, summary_pfs_helpful, summary_pfs_recommend,
+  summary_pfs_agree) %>%
+  select(pfs_item, mean = mean_value, sd = sd_value)
+
+```
+
+Overall PFS scale item descriptives across all SSIs:
+
+```{r printing overall pfs item descriptives across all ssis, echo=FALSE}
+
+summary_pfs_overall
+
+```
+
+```{r creating custom function to calculate pfs item descriptives, include=FALSE}
+
+## I'll use this function to calculate pfs item descriptives for each ssi
+
+# Define the function
+calculate_pfs_item_means <- function(data) {
+  
+  # Create a list of variable names and their corresponding item descriptions
+  pfs_items <- list(
+    pfs_1 = "enjoyed",
+    pfs_2 = "understood",
+    pfs_3 = "easy to use",
+    pfs_4 = "tried my hardest",
+    pfs_5 = "helpful for others",
+    pfs_6 = "recommend to others",
+    pfs_7 = "agree with message"
+  )
+  
+  # Initialize an empty list to store the summaries
+  summaries <- list()
+  
+  # Loop through each item and calculate the mean and sd
+  for (pfs in names(pfs_items)) {
+    summary <- data %>%
+      summarize(mean_value = round(mean(.data[[pfs]], na.rm = TRUE), 2),
+                sd_value = round(sd(.data[[pfs]], na.rm = TRUE), 2)) %>%
+      mutate(pfs_item = pfs_items[[pfs]],
+             mean_value = mean_value,
+             sd_value = sd_value)
+    
+    summaries[[pfs]] <- summary
+  }
+  
+  # Combine all summaries into a single data frame
+  summary_pfs_overall <- bind_rows(summaries) %>%
+    select(pfs_item, mean = mean_value, sd = sd_value)
+  
+  return(summary_pfs_overall)
+}
+
+```
+
+```{r testing custom pfs function, include=FALSE}
+
+# Testing with overall data dataset
+summary_pfs_overall_function <- calculate_pfs_item_means(data)
+
+# Print the overall PFS item descriptives
+summary_pfs_overall_function
+
+# Checking if this works
+identical(summary_pfs_overall, summary_pfs_overall_function) # true if results are identical with and without function
+
+```
+
+```{r creating data for overall pfs ridge plot, include=FALSE}
+
+# Creating data for overall pfs score ridge plot
+
+data_overall_ridge_plot <- data %>%
+  select(ssi_choice, pfs_mean) %>%
+  filter(!is.na(ssi_choice) & !is.na(pfs_mean))
+
+```
+
+## ABC Project
+
+PFS scale item descriptives for abc
+
+```{r pfs item desctiptives for abc, echo=FALSE}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_abc <- calculate_pfs_item_means(data_abc)
+
+## Print descriptives
+
+summary_pfs_abc
+
+```
+
+```{r setting up data for pfs abc ridge plot, include=FALSE}
+
+# Setting up data for ridge plot 
+
+data_abc_ridge_plot <- data_abc %>%
+  select(starts_with("pfs_") & 
+         -contains("like") & -contains("change"), 
+         -contains("mean"), -contains("feedback"), 
+         -contains("tim")) %>%
+  pivot_longer(cols = everything()) %>%
+  rename(pfs_item = name) %>%
+  mutate(pfs_item = case_when(pfs_item == "pfs_1" ~ "enjoyed",
+                              pfs_item == "pfs_2" ~ "understood",
+                              pfs_item == "pfs_3" ~ "easy to use",
+                              pfs_item == "pfs_4" ~ "tried my hardest",
+                              pfs_item == "pfs_5" ~ "helpful for others",
+                              pfs_item == "pfs_6" ~ "recommend to others",
+                              pfs_item == "pfs_7" ~ "agree with message",
+                              TRUE ~ pfs_item))
+
+```
+
+```{r plotting abc pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_abc_ridge_plot_mutated <- data_abc_ridge_plot %>%
+  mutate(pfs_item = factor(data_abc_ridge_plot$pfs_item, levels = custom_order))
+
+# Plotting pfs item scores
+
+plot_abc_pfs_ridge <- ggplot(data_abc_ridge_plot_mutated, aes(x = value, 
+                                                              y = reorder(pfs_item, -as.numeric(pfs_item)),
+                                                              fill = pfs_item, color = pfs_item)) +  
+  geom_density_ridges(alpha = 0.6) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom fill color
+  scale_color_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom color
+  labs(y = "", x = "") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+
+plot_abc_pfs_ridge
+
+```
+
+## Project CARE
+
+PFS scale item descriptives for care
+
+```{r pfs item desctiptives for care, echo=FALSE}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_care <- calculate_pfs_item_means(data_care)
+
+## Print descriptives
+
+summary_pfs_care
+
+```
+
+```{r setting up data for pfs care ridge plot, include=FALSE}
+
+# Setting up data for ridge plot 
+
+data_care_ridge_plot <- data_care %>%
+  select(starts_with("pfs_") & 
+         -contains("like") & -contains("change"), 
+         -contains("mean"), -contains("feedback"), 
+         -contains("tim")) %>%
+  pivot_longer(cols = everything()) %>%
+  rename(pfs_item = name) %>%
+  mutate(pfs_item = case_when(pfs_item == "pfs_1" ~ "enjoyed",
+                              pfs_item == "pfs_2" ~ "understood",
+                              pfs_item == "pfs_3" ~ "easy to use",
+                              pfs_item == "pfs_4" ~ "tried my hardest",
+                              pfs_item == "pfs_5" ~ "helpful for others",
+                              pfs_item == "pfs_6" ~ "recommend to others",
+                              pfs_item == "pfs_7" ~ "agree with message",
+                              TRUE ~ pfs_item))
+
+```
+
+```{r plotting care pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_care_ridge_plot_mutated <- data_care_ridge_plot %>%
+  mutate(pfs_item = factor(data_care_ridge_plot$pfs_item, levels = custom_order))
+
+# Plotting pfs item scores
+
+plot_care_pfs_ridge <- ggplot(data_care_ridge_plot_mutated, aes(x = value, 
+                                                              y = reorder(pfs_item, -as.numeric(pfs_item)),
+                                                              fill = pfs_item, color = pfs_item)) +  
+  geom_density_ridges(alpha = 0.6) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = rep("#A52B4D", length(custom_order))) +  # Custom fill color
+  scale_color_manual(values = rep("#A52B4D", length(custom_order))) +  # Custom color
+  labs(y = "", x = "") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+
+plot_care_pfs_ridge
+
+```
+
+## Project Personality
+
+PFS scale item descriptives for project personality
+
+```{r pfs item desctiptives for pp, echo=FALSE}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_pp <- calculate_pfs_item_means(data_pp)
+
+## Print descriptives
+
+summary_pfs_pp
+
+```
+
+```{r setting up data for pfs pp ridge plot, include=FALSE}
+
+# Setting up data for ridge plot 
+
+data_pp_ridge_plot <- data_pp %>%
+  select(starts_with("pfs_") & 
+         -contains("like") & -contains("change"), 
+         -contains("mean"), -contains("feedback"), 
+         -contains("tim")) %>%
+  pivot_longer(cols = everything()) %>%
+  rename(pfs_item = name) %>%
+  mutate(pfs_item = case_when(pfs_item == "pfs_1" ~ "enjoyed",
+                              pfs_item == "pfs_2" ~ "understood",
+                              pfs_item == "pfs_3" ~ "easy to use",
+                              pfs_item == "pfs_4" ~ "tried my hardest",
+                              pfs_item == "pfs_5" ~ "helpful for others",
+                              pfs_item == "pfs_6" ~ "recommend to others",
+                              pfs_item == "pfs_7" ~ "agree with message",
+                              TRUE ~ pfs_item))
+
+```
+
+```{r plotting pp pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_pp_ridge_plot_mutated <- data_pp_ridge_plot %>%
+  mutate(pfs_item = factor(data_pp_ridge_plot$pfs_item, levels = custom_order))
+
+# Plotting pfs item scores
+
+plot_pp_pfs_ridge <- ggplot(data_pp_ridge_plot_mutated, aes(x = value, 
+                                                              y = reorder(pfs_item, -as.numeric(pfs_item)),
+                                                              fill = pfs_item, color = pfs_item)) +  
+  geom_density_ridges(alpha = 0.6) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = rep("#3F9CF5", length(custom_order))) +  # Custom fill color
+  scale_color_manual(values = rep("#3F9CF5", length(custom_order))) +  # Custom color
+  labs(y = "", x = "") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+
+plot_pp_pfs_ridge
+
+```
+
+## Project RISE
+
+PFS scale item descriptives for rise
+
+```{r pfs item desctiptives for rise, echo=FALSE}
+
+## Running custom function to get pfs item descriptives 
+
+summary_pfs_rise <- calculate_pfs_item_means(data_rise)
+
+## Print descriptives
+
+summary_pfs_rise
+
+```
+
+```{r setting up data for pfs rise ridge plot, include=FALSE}
+
+# Setting up data for ridge plot 
+
+data_rise_ridge_plot <- data_rise %>%
+  select(starts_with("pfs_") & 
+         -contains("like") & -contains("change"), 
+         -contains("mean"), -contains("feedback"), 
+         -contains("tim")) %>%
+  pivot_longer(cols = everything()) %>%
+  rename(pfs_item = name) %>%
+  mutate(pfs_item = case_when(pfs_item == "pfs_1" ~ "enjoyed",
+                              pfs_item == "pfs_2" ~ "understood",
+                              pfs_item == "pfs_3" ~ "easy to use",
+                              pfs_item == "pfs_4" ~ "tried my hardest",
+                              pfs_item == "pfs_5" ~ "helpful for others",
+                              pfs_item == "pfs_6" ~ "recommend to others",
+                              pfs_item == "pfs_7" ~ "agree with message",
+                              TRUE ~ pfs_item))
+
+```
+
+```{r plotting rise pfs items scores, include=FALSE, message=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_rise_ridge_plot_mutated <- data_rise_ridge_plot %>%
+  mutate(pfs_item = factor(data_rise_ridge_plot$pfs_item, levels = custom_order))
+
+# Plotting pfs item scores
+
+plot_rise_pfs_ridge <- ggplot(data_rise_ridge_plot_mutated, aes(x = value, 
+                                                              y = reorder(pfs_item, -as.numeric(pfs_item)),
+                                                              fill = pfs_item, color = pfs_item)) +  
+  geom_density_ridges(alpha = 0.6) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = rep("#F48151", length(custom_order))) +  # Custom fill color
+  scale_color_manual(values = rep("#F48151", length(custom_order))) +  # Custom color
+  labs(y = "", x = "") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+
+plot_rise_pfs_ridge
+
+```
+
+## By SSI
+
+```{r plotting overall pfs mean scores by ssi, include=FALSE, warning=FALSE}
+ 
+# Setting a group order
+
+custom_order <- c("ABC Project", "Project CARE", "Project Personality", "Project RISE")
+
+# Convert ssi_choice to a factor with the specified order
+data_overall_ridge_plot_mutated <- data_overall_ridge_plot %>%
+  mutate(ssi_choice = factor(data_overall_ridge_plot$ssi_choice, levels = custom_order))
+
+# Defining colors for each group
+
+custom_colors <- c("ABC Project" = "#32A2A0", 
+                   "Project CARE" = "#A52B4D", 
+                   "Project Personality" = "#3F9CF5", 
+                   "Project RISE" = "#F48151")
+
+# Plotting pfs mean scores by ssi chosen
+
+plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean, 
+                                                              y = reorder(ssi_choice, -as.numeric(ssi_choice)), 
+                                                              fill = ssi_choice, color = ssi_choice)) +  
+  geom_density_ridges(alpha = 0.8) +
+  theme_ridges() + 
+  theme(legend.position = "none") +
+  scale_fill_manual(values = custom_colors) +
+  scale_color_manual(values = custom_colors) +
+  labs(y = "", x = "PFS Mean Scores") +
+  plot_annotation(title = "PFS Mean Scores by Chosen SSI",
+                  caption = "Overall Program Feedback Scale mean scores by SSI, where higher scores reflect more positive feedback")
+
+```
+
+```{r printing plot overall pfs means by ssi, warning=FALSE, message=FALSE, include=TRUE}
+
+plot_overall_pfs_ridge
+
+```
+
+```{r combining all ridge plots, warning=FALSE, message=FALSE, include=FALSE}
+
+library(patchwork)
+
+# Combine the plots vertically
+plot_all_ridge <- plot_abc_pfs_ridge + plot_care_pfs_ridge + plot_pp_pfs_ridge + plot_rise_pfs_ridge +
+  plot_annotation(
+    title = "PFS Items Scores for Each SSI",
+    caption = "ABC (green), CARE (red), Project Personality (blue), RISE (orange); higher scores reflect greater agreement"
+  )
+
+```
+
+```{r printing ridge plot for all pfs, message=FALSE, warning=FALSE, include=TRUE}
+
+plot_all_ridge
+
+```
+
+```{r setting up data for boxplots, include=FALSE}
+
+data_abc_box_plot <- data_abc_ridge_plot %>%
+  mutate(ssi_choice = "ABC Project")
+
+data_care_box_plot <- data_care_ridge_plot %>%
+  mutate(ssi_choice = "Project CARE")
+
+data_pp_box_plot <- data_pp_ridge_plot %>%
+  mutate(ssi_choice = "Project Personality")
+
+data_rise_box_plot <- data_rise_ridge_plot %>%
+  mutate(ssi_choice = "Project RISE")
+
+data_pfs_boxplot <- bind_rows(data_abc_box_plot,
+                              data_care_box_plot,
+                              data_pp_box_plot,
+                              data_rise_box_plot)
+
+# Setting ssi order
+
+custom_order_ssi <- c("ABC Project", "Project CARE", "Project Personality", "Project RISE")
+
+# Setting pfs order
+
+custom_order_pfs <- c("enjoyed", "understood", "easy to use", "tried my hardest",
+                  "helpful for others", "recommend to others", "agree with message")
+
+# Convert pfs_item to a factor with the specified order
+
+data_pfs_boxplot_mutated <- data_pfs_boxplot %>%
+  mutate(pfs_item = factor(pfs_item, levels = custom_order_pfs),
+         ssi_choice = factor(ssi_choice, levels = custom_order_ssi))
+
+```
+
+```{r creating separate boxplot dfs per pfs item, include=FALSE}
+
+data_pfs_boxplot_sep_1 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "enjoyed")
+
+data_pfs_boxplot_sep_2 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "understood")
+
+data_pfs_boxplot_sep_3 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "easy to use")
+
+data_pfs_boxplot_sep_4 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "tried my hardest")
+
+data_pfs_boxplot_sep_5 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "helpful for others")
+
+data_pfs_boxplot_sep_6 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "recommend to others")
+
+data_pfs_boxplot_sep_7 <- data_pfs_boxplot_mutated %>%
+  filter(pfs_item == "agree with message")
+
+```
+
+```{r creating separate boxplots pfs item, include=FALSE, swarning=FALSE}
+
+# Plotting
+
+plot_boxplot_sep_1 <- ggplot(data_pfs_boxplot_sep_1, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "")
+  
+plot_boxplot_sep_2 <- ggplot(data_pfs_boxplot_sep_2, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_3 <- ggplot(data_pfs_boxplot_sep_3, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_4 <- ggplot(data_pfs_boxplot_sep_4, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_5 <- ggplot(data_pfs_boxplot_sep_5, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_6 <- ggplot(data_pfs_boxplot_sep_6, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "", y = "") +
+                        theme(legend.position = "none")
+
+plot_boxplot_sep_7 <- ggplot(data_pfs_boxplot_sep_7, aes(x=value, 
+                                     y = reorder(pfs_item, -as.numeric(pfs_item)), 
+                                     fill=ssi_choice)) + 
+                        geom_boxplot() +
+                        scale_fill_manual(values = custom_colors) +
+                        labs(x = "pfs item scores", y = "") +
+                        theme(legend.position = "none")
+
+```
+
+```{r creating combined pfs item boxplot, include=FALSE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
+  
+# Combine the plots vertically
+
+plot_all_boxplot <- plot_boxplot_sep_1 / plot_boxplot_sep_2 / plot_boxplot_sep_3 / plot_boxplot_sep_4 /
+  plot_boxplot_sep_5 / plot_boxplot_sep_6 / plot_boxplot_sep_7 +
+  plot_annotation(
+    title = "PFS Items Scores for Each SSI",
+    caption = "ABC (green), CARE (red), Project Personality (blue), RISE (orange); 
+    higher scores reflect greater agreement"
+  )
+
+```
+
+```{r printing combined pfs item boxplot, include=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
+
+plot_all_boxplot
+
+```
+
+# Drop-Offs
+
+## ABC Project
+
+Given extensive display logic, we can't confidently calculate largest page for drop-off in ABC.
+
+```{r selecting abc pages for plot, include=FALSE}
+
+## Selecting only abc pages
+
+data_abc_clicks <- data_abc %>%
+  select(contains("page_submit") & starts_with("abc"))
+
+```
+
+```{r mutating abc pages for count var, include=FALSE}
+
+## Mutating non-NA values to value of 1 (i.e., a page was submitted)
+
+data_abc_clicks_mutated <- data_abc_clicks %>%
+  mutate(across(everything(), ~ case_when(
+    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
+    TRUE ~ NA_real_  # Otherwise, make it NA
+  )))
+
+```
+
+```{r prepping abc page data for plot, include=FALSE}
+
+## Preparing data for plot
+
+data_abc_clicks_plot <- data_abc_clicks_mutated %>%
+    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rename(page = variable, page_submissions = count) %>%
+    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
+                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
+    mutate(page = as.numeric(page)) %>% # Converting to numeric class
+    arrange(page) # Arrange in sequential page order
+
+```
+
+```{r plotting abc page data, include=FALSE}
+
+## Plot page submissions by page
+
+plot_abc_drop <- ggplot(data_abc_clicks_plot, aes(x=page, y=page_submissions)) +
+  geom_area(fill="#32A2A0", alpha=0.4) +
+  geom_line(color="#32A2A0", linewidth=1.1) +
+  theme_light() +
+  ylim(0, 1750) +
+  ggtitle("") +
+  labs(x = "page number",
+       y = "n page submissions") +
+  geom_vline(xintercept = 16, color = "black") +
+  geom_vline(xintercept = 22, color = "black") +
+  geom_vline(xintercept = 43, color = "black") +
+  geom_vline(xintercept = 45, color = "black")
+
+```
+
+```{r abc page plot, include=FALSE}
+
+plot_abc_drop
+
+```
+
+## Project CARE
+
+Counting number of page submissions by page number (looking for drop-off). Pulling largest drop-off point during this SSI.
+
+```{r selecting care pages for plot, include=FALSE}
+
+## Selecting only care pages
+
+data_care_clicks <- data_care %>%
+  select(contains("page_submit") & starts_with("proj_care"))
+
+```
+
+```{r mutating care pages for count var, include=FALSE}
+
+## Mutating non-NA values to value of 1 (i.e., a page was submitted)
+
+data_care_clicks_mutated <- data_care_clicks %>%
+  mutate(across(everything(), ~ case_when(
+    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
+    TRUE ~ NA_real_  # Otherwise, make it NA
+  )))
+
+```
+
+```{r prepping care page data for plot, include=FALSE}
+
+## Preparing data for plot
+
+data_care_clicks_plot <- data_care_clicks_mutated %>%
+    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rename(page = variable, page_submissions = count) %>%
+    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
+                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
+    mutate(page = as.numeric(page)) %>% # Converting to numeric class
+    arrange(page) # Arrange in sequential page order
+
+```
+
+```{r largest drop in submissions care, echo=FALSE}
+
+## Finding the largest drop in page submissions between two pages
+
+largest_drop <- data_care_clicks_plot %>%
+  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
+  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
+  slice_max(drop)                                              # Find the row with the largest drop
+
+## Extracting the associated page values
+
+page_before_drop <- largest_drop$page - 1  # Page before the drop
+page_after_drop <- largest_drop$page       # Page after the drop
+
+## Printing the pages associated with the largest drop
+
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
+
+```
+
+```{r perc largest drop off care, echo=FALSE}
+
+## Calculating largest drop off percentage
+
+# Page submissions before and after drop
+
+submissions_before_drop <- data_care_clicks_plot %>%
+  filter(page == page_before_drop) %>%
+  pull(page_submissions)
+
+# Percentage calculation
+
+perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
+
+## Printing the percent drop associated with the largest drop
+
+cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
+
+```
+
+```{r plotting care page data, include=FALSE}
+
+## Plot page submissions by page
+
+plot_care_drop <- ggplot(data_care_clicks_plot, aes(x=page, y=page_submissions)) +
+  geom_area(fill="#A52B4D", alpha=0.4) +
+  geom_line(color="#A52B4D", linewidth=1.1) +
+  theme_light() +
+  ylim(0, 1750) +
+  ggtitle("") +
+  labs(x = "page number",
+       y = "n page submissions") +
+  geom_vline(xintercept = 4, color = "black") +
+  geom_vline(xintercept = 28, color = "black") +
+  geom_vline(xintercept = 40, color = "black") +
+  geom_vline(xintercept = 42, color = "black") +
+  geom_vline(xintercept = 43, color = "black")
+
+```
+
+```{r care page plot, include=FALSE}
+
+plot_care_drop
+
+```
+
+## Project Personality
+
+Counting number of page submissions by page number (looking for drop-off). Pulling largest drop-off point during this SSI.
+
+```{r selecting pp pages for plot, include=FALSE}
+
+## Selecting only project personality pages
+
+data_pp_clicks <- data_pp %>%
+  select(contains("page_submit") & starts_with("proj_pers"), 
+         -contains("4_tim")) # this time var was on a separate not visible page to participants
+
+```
+
+```{r mutating pp pages for count var, include=FALSE}
+
+## Mutating non-NA values to value of 1 (i.e., a page was submitted)
+
+data_pp_clicks_mutated <- data_pp_clicks %>%
+  mutate(across(everything(), ~ case_when(
+    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
+    TRUE ~ NA_real_  # Otherwise, make it NA
+  )))
+
+```
+
+```{r prepping pp page data for plot, include=FALSE}
+
+## Preparing data for plot
+
+data_pp_clicks_plot <- data_pp_clicks_mutated %>%
+    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
+    pivot_longer(cols = everything(), # Convert to long format
+                 names_to = "variable", 
+                 values_to = "count") %>%
+    rename(page = variable, page_submissions = count) %>%
+    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
+                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
+    mutate(page = as.numeric(page)) %>% # Converting to numeric class
+    arrange(page) # Arrange in sequential page order
+
+```
+
+```{r largest drop in submissions pp, echo=FALSE}
+
+## Finding the largest drop in page submissions between two pages
+
+largest_drop <- data_pp_clicks_plot %>%
+  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
+  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
+  slice_max(drop)                                              # Find the row with the largest drop
+
+## Extracting the associated page values
+
+page_before_drop <- largest_drop$page - 1  # Page before the drop
+page_after_drop <- largest_drop$page       # Page after the drop
+
+## Printing the pages associated with the largest drop
+
+cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
+
+```
+
+```{r perc largest drop off pp, echo=FALSE}
+
+## Calculating largest drop off percentage
+
+# Page submissions before and after drop
+
+submissions_before_drop <- data_pp_clicks_plot %>%
+  filter(page == page_before_drop) %>%
+  pull(page_submissions)
+
+# Percentage calculation
+
+perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
+
+## Printing the percent drop associated with the largest drop
+
+cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
+
+```
+
+```{r plotting pp page data, include=FALSE}
+
+## Saving value for plot arrow
+
+pp_plot_arrow <- data_pp_clicks_plot %>%
+  filter(page == 16) %>%
+  pull(page_submissions)
+
+## Plot Project Personality page submissions by page
+
+plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
+  geom_area(fill="#3F9CF5", alpha=0.4) +
+  geom_line(color="#3F9CF5", linewidth=1.1) +
+  theme_light() +
+  ylim(0, 1750) +
+  ggtitle("") +
+  labs(x = "page number",
+       y = "n page submissions") +
+  geom_vline(xintercept = 16, color = "black") + 
+  geom_vline(xintercept = 30, color = "black") +
+  geom_vline(xintercept = 31, color = "black")
+
+```
+
+```{r pp page plot, include=FALSE}
+
+plot_pp_drop
+
+```
+
+## Project RISE
+
+Project RISE plot is unavailable, as we do not have timing variables on the pages of this intervention.
+
+## All
+
+Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater.
+
+```{r combining all drop plots, warning=FALSE, message=FALSE, include=FALSE}
+
+library(patchwork)
+
+# Combine the plots vertically
+plot_all_drop <- plot_abc_drop + plot_care_drop + plot_pp_drop + 
+  plot_annotation(
+    title = "Number of Page Submissions by Page of Each SSI",
+    caption = "ABC (green/left), CARE (red/middle), Project Personality (blue/right); 
+    Vertical lines are pages with writing exercises."
+  )
+
+```
+
+```{r printing plot for all dropoff, include=TRUE}
+
+plot_all_drop
+
+```
+
+# Knitting
+
+Knitting the report to the outputs folder.
+
+```{r knitting report, include=FALSE}
+
+### This doesn't work
+
+## Setting output directory for knit html reports and knitting
+
+# render(as.character(here("scripts", "yes_report.Rmd")),
+#        output_file = "yes_english_report.html",
+#        output_dir = as.character(here("output")))
+
+### This doesn't work either
+
+# ## Defining the folder and file path
+# 
+# folder_path <- here("outputs")  # Path to my desired folder
+# file_name <- "yes_english_report.html"
+# full_path <- file.path(folder_path, file_name)
+# 
+# ## Kniting to .html report
+# 
+# render(input = "yes_report.Rmd", output_file = file_name, output_dir = full_path)
+
+```
