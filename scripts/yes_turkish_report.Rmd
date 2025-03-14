@@ -701,7 +701,7 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
 # Questionnaire Completion
 
-**Youth agreed to questionnaires > half of the time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)**, when asked.
+**People agreed to questionnaires almost every time (`r perc_agreed_questionnaires`%, n = `r n_agreed_questionnaires`)** they were asked.
 
 ```{r perc agreed questionnaires, include=FALSE}
 
