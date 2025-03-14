@@ -590,14 +590,21 @@ print(pp_dz_values)
 
 # Calculating n youth with elevated depression
 
-n_youth_elev_dep <- data %>%
+n_elev_dep <- data %>%
   select(mfq_total) %>%
   filter(mfq_total >= 12) %>%
   nrow()
 
-# Calculating perc youth with elevated depression
+n_answered_dep <- data %>%
+  select(mfq_total) %>%
+  filter(!is.na(mfq_total)) %>%
+  nrow()
 
-perc_youth_elev_dep <- round((n_youth_elev_dep / n_started_survey)*100, 2)
+# Calculating perc with elevated depression
+
+perc_elev_dep <- round((n_elev_dep / n_started_survey)*100, 2)
+
+perc_elev_dep_of_answered_dep <- round((n_elev_dep / n_answered_dep)*100, 2)
 
 # Creating data frame
 
@@ -683,7 +690,8 @@ Across all survey starts (n = `r n_started_survey`):
 
 + There's lots of missing demographic data, given optional questionnaires and drop-offs
 + Ages range from <10 to over 18 (categorical data only)
-+ `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
++ `r perc_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher) of all survey starts
++ Nearly half (`r perc_elev_dep_of_answered_dep`%) of cases that answered depression questions reported elevated symptoms
 + `r perc_youth_no_support`% report never accessing formal mental health support
 + `r perc_youth_no_support_w_depression`% report no history of formal mental health support treatment AND elevated depression symptoms
 + By far, most responses in this data heard about YES in school
@@ -893,11 +901,13 @@ print(doc, target = file.path(tables_folder, "demographics_table_turkish.docx"))
 
 ## Depression Scores
 
-**Over a quarter of responses (`r perc_youth_elev_dep`%) reported elevated levels of depression symptoms.** Here, we plot depression scale scores (MFQ) across the entire youth sample.
+**Nearly a third of those who started the survey (`r perc_elev_dep`%) reported elevated levels of depression symptoms.** Nearly *half* of all cases (`r perc_elev_dep_of_answered_dep`%) that actually responded to the depression items reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire youth sample.
 
 ```{r calculating proportion of teens elevated depression, include=FALSE}
 
-perc_youth_elev_dep
+perc_elev_dep
+
+perc_elev_dep_of_answered_dep
 
 ```
 
