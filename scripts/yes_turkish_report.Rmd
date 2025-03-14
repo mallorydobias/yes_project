@@ -667,7 +667,6 @@ Looking at YES engagement:
 
 Across all survey starts (n = `r n_started_survey`):
 
-+ There's lots of missing demographic data, given optional questionnaires and drop-offs
 + Ages range from <10 to over 18 (categorical data only)
 + `r perc_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher) of all survey starts
 + Nearly half (`r perc_elev_dep_of_answered_dep`%) of cases that answered depression questions reported elevated symptoms
@@ -1022,7 +1021,7 @@ interested_bc_tidytext <- data %>%
 
 ```
 
-Here, we plot the most common words in a qualitative question about where they'd heard about yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
+Here, we plot the most common words in a qualitative question about where they'd heard about yes. At the moment, we have not removed stop words from the data (as we normally would using the English list of stop words offered in R's tidytext package).
 
 ```{r plotting common words heard about yes from, echo=FALSE}
 
@@ -1045,7 +1044,7 @@ heard_from_does_tidytext %>%
 
 ## Interest in YES Because
 
-Here, we plot the most common words in a qualitative question about why they were interested in yes. Stop words were removed (e.g., "a", "the", "at") before plotting to allow for interpretation.
+Here, we plot the most common words in a qualitative question about why they were interested in yes. At the moment, we have not removed stop words from the data (as we normally would using the English list of stop words offered in R's tidytext package).
 
 ```{r plotting common words interested in yes because, echo=FALSE}
 
@@ -1053,7 +1052,7 @@ Here, we plot the most common words in a qualitative question about why they wer
 
 interested_bc_tidytext %>%
   count(word, sort = TRUE) %>%
-  filter(n > 30) %>%
+  filter(n > 2) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
   geom_col(fill = "#9380B6") +
@@ -2243,27 +2242,25 @@ ggplot(data_barplot_all, aes(x = ssi, y = n, fill = interaction_ssi_category)) +
   theme_minimal() +
   labs(x = "", y = "n completed vs n started (%)", title = "Completion Rates, by SSI") +
   theme(legend.position = "none") + 
-  scale_y_continuous(limits = c(0, 2250)) +  # Set y-axis max to 200
+  scale_y_continuous(limits = c(0, 50)) +  # Set y-axis max to 200
   annotate(geom = "text", 
-           x = 4,  # Adjust x to match where you want the text (based on your data)
-           y = 300,  # Adjust y position as needed
+           x = 3,  # Adjust x to match where you want the text (based on your data)
+           y = 11,  # Adjust y position as needed
            label = paste(perc_completed_abc, "%"), 
            color = "black", 
            size = 4) + # Customize size and color of the annotation
   annotate(geom = "text", 
-           x = 3,  # Adjust x to match where you want the text (based on your data)
-           y = 290,  # Adjust y position as needed
+           x = 2,  # Adjust x to match where you want the text (based on your data)
+           y = 7,  # Adjust y position as needed
            label = paste(perc_completed_care, "%"), 
            color = "black", 
            size = 4) + # Customize size and color of the annotation
   annotate(geom = "text", 
-           x = 2,  # Adjust x to match where you want the text (based on your data)
-           y = 430,  # Adjust y position as needed
+           x = 1,  # Adjust x to match where you want the text (based on your data)
+           y = 7,  # Adjust y position as needed
            label = paste(perc_completed_personality, "%"), 
            color = "black", 
-           size = 4) +
-  geom_segment(aes(y = 20, yend = 120, x = 1, xend = 1), 
-               linetype = "solid", color = "black", size = .5)
+           size = 4)
 
 ```
 
