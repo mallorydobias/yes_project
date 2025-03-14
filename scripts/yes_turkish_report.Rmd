@@ -612,15 +612,36 @@ mfq_mean <- data_mfq_plot %>%
 
 ```{r calculating access to support descriptives, include=FALSE}
 
-# Calculating n youth with no history of formal supports
+# Calculating n youth with unmet mental health needs
+
+n_youth_unmet_mh_need <- data %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before") %>%
+  nrow()
+
+# Calculating n youth with data on past mental health access
+
+n_youth_past_support <- data %>%
+  select(dem_receive_support) %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+         str_detect(dem_receive_support, "yes, I have gotten support in the past")) %>%
+  nrow()
+
+# Calculating perc youth with history of unmet mh needs
+# (perc no history of support, but they've wanted support;
+# out of those who didn't get and did get support in the past)
+
+perc_youth_unmet_mh_need <- round((n_youth_unmet_mh_need / n_youth_past_support)*100, 2)
+
+# Calculating n youth with no history of mh support
 
 n_youth_no_support <- data %>%
   select(dem_receive_support) %>%
-  filter(dem_receive_support == "no, but I have wanted to get support before" | 
-         dem_receive_support == "no, and I have not wanted to get support before") %>%
+  filter(dem_receive_support == "no, but I have wanted to get support before" |
+        dem_receive_support == "no, and I have not wanted to get support before") %>%
   nrow()
 
-# Calculating perc youth with no history of mh treatment
+# Calculating perc of this sample who had never accessed support
 
 perc_youth_no_support <- round((n_youth_no_support / n_started_survey)*100, 2)
 
@@ -648,24 +669,20 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses youth data (under 18) from all English-speaking YES surveys (data_ids: d01, d02, d03, d05, d09, d16). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses all data (youth and adults) from our Turkish YES survey (data_ids: d07). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
 
 **Full Summary**:
 
 Looking at YES engagement:
 
 + Our YES survey was started `r n_started_survey` times
-+ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires when asked
-+ Not all cases were asked if they would like to complete questionnaires (e.g., San Antonio data)
++ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
 + `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
 Across all survey starts (n = `r n_started_survey`):
 
 + There's lots of missing demographic data, given optional questionnaires and drop-offs
-+ Ages range from <10 to 17 (categorical data only)
-+ `r perc_gender_differs_from_sex`% endorse a gender identity that differs from sex assigned at birth (`r perc_gender_same_as_sex`% cis)
-+ `r perc_sex_minority`% endorse a sexual orientation other than heterosexual (`r perc_sex_straight`% heterosexual)
-+ Race and ethnicity are measured differently across surveys (see below)
++ Ages range from <10 to over 18 (categorical data only)
 + `r perc_youth_elev_dep`% report elevated depressive symptoms (MFQ is 12 or higher)
 + `r perc_youth_no_support`% report never accessing formal mental health support
 + `r perc_youth_no_support_w_depression`% report no history of formal mental health support treatment AND elevated depression symptoms
@@ -676,14 +693,12 @@ Of cases with data at both time points:
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
-+ Significance tests could not be run for RISE, given small n (e.g., df = `r d.dep.t.diff.t(rise_hate_t_value, rise_hate_n_pairs, a = 0.05)$df`)
 
 Of the cases where someone chose an SSI:
 
 + `r perc_chose_abc`% chose ABC
 + `r perc_chose_care`% chose CARE
 + `r perc_chose_pp`% chose Project Personality
-+ `r perc_chose_rise`% chose RISE, although this ssi was likely added to the survey later
 
 Of cases where someone started an SSI:
 
@@ -691,8 +706,6 @@ Of cases where someone started an SSI:
 + `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
 + `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
 + `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
-+ `r perc_completed_rise`% of cases completed RISE (n = `r n_completed_rise`) after starting it (n = `r n_started_rise`)
-+ We have no evidence that adding the "commit to finish this SSI" item has increased completion rates overall
 
 Drop-off is highest on pages with writing exercises:
 
@@ -703,7 +716,6 @@ Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 + ABC received an overall acceptability rating of `r m_pfs_abc` out of 5.
 + CARE received an overall acceptability rating of `r m_pfs_care` out of 5.
 + Project Personality received an overall acceptability rating of `r m_pfs_pp` out of 5.
-+ RISE received an overall acceptability rating of `r m_pfs_rise` out of 5.
 
 # Questionnaire Completion
 
@@ -716,47 +728,6 @@ perc_agreed_questionnaires
 ```
 
 # Sample Characteristics
-
-## Data Source
-
-Data source(s), of all responses:
-
-```{r prepping for data tally, include=FALSE}
-
-data_data_source <- data %>%
-  select(data_id)
-
-```
-
-```{r calculating data tally, include=FALSE}
-
-## Prepping dataframe with data tallies; renaming is a bit weird here once % is calculated
-## No need to add missing values here, since only one variable
-
-data_source_tallies <- data_data_source %>%
-  group_by(data_id) %>%
-  tally() %>%
-  ungroup() %>%
-  rename(count = n) %>%
-  rowwise() %>%
-  mutate(percentage = count / nrow(data_data_source) * 100) %>%
-  mutate(percentage = round(percentage, 2)) %>%
-  unnest(cols = c(percentage)) %>%
-  mutate(notes = case_when(data_id == "d01" ~ "original English YES",
-                           data_id == "d02" ~ "San Antonio English with Q's",
-                           data_id == "d05" ~ "YES Middle East English",
-                           data_id == "d09" ~ "current YES English",
-                           data_id == "d16" ~ "temporary YES English during move")) %>%
-  select(data_id, notes, count, percentage) %>%
-  rename(n = count, "%" = percentage)
-
-```
-
-```{r printing data tally, echo=FALSE}
-
-rempsyc::nice_table(data_source_tallies)
-
-```
 
 ## Age
 
@@ -776,6 +747,8 @@ data_age <- data %>%
 
 age_tallies <- data_age %>%
   select(age = dem_age) %>%
+  mutate(age = case_when(is.na(age) ~ "missing",
+                         TRUE ~ age)) %>%
   group_by(age) %>%
   tally() %>%
   ungroup() %>%
@@ -794,113 +767,22 @@ rempsyc::nice_table(age_tallies)
 
 ```
 
-## Gender
+## Sex
 
-**`r perc_gender_differs_from_sex`% of responses endorsed a gender identity different from assigned sex.** Gender(s), of all survey starts from youth (n = `r n_started_survey`): 
+Sex of all survey starts from youth (n = `r n_started_survey`): 
 
 ```{r combining sex and gender data, include=FALSE}
 
 ## Imputing gender identity data for folks who answered gender does not differ from sex
 ## Only folks who reported gender differs from sex were asked gender identity item
 
-data_gender <- data %>%
-  mutate(dem_gender_girl_woman = case_when(dem_gender_diff_sex == "No" & dem_sex == "Female" ~ "yes",
-         TRUE ~ dem_gender_girl_woman)) %>%
-  mutate(dem_gender_boy_man = case_when(dem_gender_diff_sex == "No" & dem_sex == "Male" ~ "yes",
-         TRUE ~ dem_gender_boy_man)) %>%
-  mutate(dem_gender_intersex = case_when(dem_gender_diff_sex == "No" & dem_sex == "Intersex" ~ "yes",
-         TRUE ~ dem_gender_intersex)) %>%
-  select(contains("gender"), -dem_gender_other_text, -dem_gender_diff_sex) %>%
-  mutate(dem_gender_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all gender vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
-
-```
-
-```{r custom demographic count function, include=FALSE}
-
-# Custom function to tally yeses in each demographic column 
-
-count_yes_responses <- function(data) {
-  # Ensure n_agreed_questionnaires exists in the global environment
-  if (!exists("n_agreed_questionnaires", envir = .GlobalEnv)) {
-    stop("n_agreed_questionnaires is not defined in the global environment")
-  }
-  
-  data %>%
-    summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rowwise() %>%
-    mutate(percentage = count / n_started_survey * 100) %>% 
-    mutate(percentage = round(percentage, 2)) %>% # Correct rounding
-    unnest(cols = c(percentage))  # Ensure percentage column is not nested
-}
-
-```
-
-```{r calculating gender tally, include=FALSE}
-
-# Using custom function to print gender variable counts
-
-gender_tallies <- count_yes_responses(data_gender) %>%
-  mutate(variable = str_replace(variable, "dem_gender_", "")) %>%
-  rename(gender_identity = variable) %>%
-  rename("%" = n) %>%
-  rename(n = count) %>%
-  mutate(gender_identity = str_replace(gender_identity, "girl_woman", "Girl/Woman"),
-         gender_identity = str_replace(gender_identity, "boy_man", "Boy/Man"),
-         gender_identity = str_replace(gender_identity, "missing", "Missing"),
-         gender_identity = str_replace(gender_identity, "nonbinary", "Nonbinary"),
-         gender_identity = str_replace(gender_identity, "unsure", "Unsure"),
-         gender_identity = str_replace(gender_identity, "other", "Another gender not listed"),
-         gender_identity = str_replace(gender_identity, "ftm_trans", "Female to male trans/FTM"),
-         gender_identity = str_replace(gender_identity, "trans", "Transgender"),
-         gender_identity = str_replace(gender_identity, "genderqueer", "Genderqueer"),
-         gender_identity = str_replace(gender_identity, "androgynous", "Androgynous"),
-         gender_identity = str_replace(gender_identity, "agender", "Agender"),
-         gender_identity = str_replace(gender_identity, "Transgender_masc", "Trans masculine"),
-         gender_identity = str_replace(gender_identity, "two_spirited", "Two-spirited"),
-         gender_identity = str_replace(gender_identity, "third_gender", "Third gender"),
-         gender_identity = str_replace(gender_identity, "intersex", "Intersex"),
-         gender_identity = str_replace(gender_identity, "expansive", "Gender expansive"),
-         gender_identity = str_replace(gender_identity, "mtf_Transgender", "Male to female transgender/MTF"),
-         gender_identity = str_replace(gender_identity, "Transgender_fem", "Trans feminine")) %>%
-  arrange(-n)
-
-```
-
-```{r printing gender tally, echo=FALSE}
-
-rempsyc::nice_table(gender_tallies)
-
-```
-
-```{r perc gender differs from sex, include=FALSE}
-
-perc_gender_differs_from_sex
-
-```
-
-## Sexual Orientation
-
-**`r perc_sex_minority`% of responses endorsed a sexual orientation other than heterosexual.** Sexual orientation(s), of all survey starts from youth (n = `r n_started_survey`): 
-
-```{r calculating sex orientation tallies, include=FALSE}
-
-## Prepping dataframe with sexual orientation tallies; renaming is a bit weird here once % is calculated
-## No need to add missing values here, since only one variable
-
-sex_orientation_tallies <- data %>%
-  select(sex_orientation = dem_sex_orientation) %>%
-  mutate(sex_orientation = case_when(is.na(sex_orientation) ~ "Missing",
-                                     TRUE ~ sex_orientation)) %>%
-  group_by(sex_orientation) %>%
+sex_tallies <- data %>%
+  select(sex = dem_sex) %>%
+  mutate(sex = case_when(is.na(sex) ~ "missing",
+                         TRUE ~ sex)) %>%
+  group_by(sex) %>%
   tally() %>%
   ungroup() %>%
-  arrange(-n) %>%
   rename(count = n) %>%
   rowwise() %>%
   mutate(percentage = count / n_started_survey * 100) %>%
@@ -908,144 +790,11 @@ sex_orientation_tallies <- data %>%
   unnest(cols = c(percentage)) %>%
   rename(n = count, "%" = n)
 
-table(data$dem_sex_orientation)
-
 ```
 
-```{r printing sex orientation tally, echo=FALSE}
+```{r printing age tally, echo=FALSE}
 
-rempsyc::nice_table(sex_orientation_tallies)
-
-```
-
-```{r printing perc sexual minority, include=FALSE}
-
-perc_sex_minority
-
-```
-
-## Race/Ethnicity
-
-```{r adding missing values to race vars, include=FALSE}
-
-## Accounting for missing values across all race variables
-
-data_race <- data %>%
-  filter(data_id != "d05") %>% # not counting d05 responses as missing data
-  select(contains("race")) %>%
-  mutate(dem_race_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
-
-```
-
-```{r calculating race denominator, include=FALSE}
-
-# saving custom denominator value
-
-n_race_denominator <- nrow(data_race)
-
-```
-
-Race/ethnicities, of the number of survey starts, among responses that do not come from d05 (n = `r n_race_denominator`, from d01/d02/d09/d16), given d05 ethnicity is measured differently. Race/ethnicity is not assessed in d03, so these responses are automatically counted as missing.
-
-Races/ethnicities (non-d05):
-
-```{r calculating race tallies, include=FALSE}
-
-## Calculating race tallies
-
-race_tallies <- data_race %>%
-  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
-  pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-  rowwise() %>%
-  mutate(percentage = count / n_race_denominator * 100) %>% 
-  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
-  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
-  mutate(variable = str_replace(variable, "dem_race_", "")) %>%
-  rename(racial_ethnic_identity = variable) %>%
-  rename(n = count) %>%
-  rename("%" = percentage) %>%
-  arrange(-n) %>%
-  mutate(racial_ethnic_identity = case_when(racial_ethnic_identity == "missing" ~ "Missing",
-                                     racial_ethnic_identity == "white" ~ "White",
-                                     racial_ethnic_identity == "latin_hisp" ~ "Latine/Hispanic",
-                                     racial_ethnic_identity == "asian" ~ "Asian",
-                                     racial_ethnic_identity == "black" ~ "Black",
-                                     racial_ethnic_identity == "other" ~ "Another racial/ethnic identity not listed",
-                                     TRUE ~ racial_ethnic_identity))
-
-```
-
-```{r printing race tally, echo=FALSE}
-
-rempsyc::nice_table(race_tallies)
-
-```
-
-```{r adding missing values to ethnicity vars, include=FALSE}
-
-## Accounting for missing values across all race variables
-
-data_ethnicity <- data %>%
-  filter(data_id == "d05") %>%
-  select(starts_with("dem_ethnicity_") & -contains("text")) %>%
-  mutate(dem_ethnicity_missing = case_when(
-    if_all(everything(), is.na) ~ "yes",  # "yes" if all vars are NA mark as missing
-    TRUE ~ "no"  # Otherwise, mark as "no"
-  ))
-
-```
-
-```{r calculating ethnicity denominator, include=FALSE}
-
-# saving custom denominator value
-
-n_ethnicity_denominator <- nrow(data_ethnicity)
-
-```
-
-Now, we'll take a look at ethnicity as measured in d05. (n = `r n_ethnicity_denominator`, from d05 only). These options were only available to responders to the Middle East yes survey.
-
-Races/ethnicities (d05):
-
-```{r calculating ethnicity tally, include=FALSE}
-
-# Using custom function to print race variable counts
-
-ethnicity_tallies <- data_ethnicity %>%
-  summarise(across(everything(), ~ sum(. == "yes" | . == "Yes", na.rm = TRUE))) %>% # Count "yes" in each column
-  pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-  rowwise() %>%
-  mutate(percentage = (count / n_ethnicity_denominator) * 100) %>% 
-  mutate(percentage = round(percentage, 2)) %>% # Correct rounding
-  unnest(cols = c(percentage)) %>% # Ensure percentage column is not nested
-  mutate(variable = str_replace(variable, "dem_ethnicity_", "")) %>%
-  rename(ethnic_identity_middle_east = variable) %>%
-  rename(n = count) %>%
-  rename("%" = percentage) %>%
-  arrange(-n) %>%
-  mutate(ethnic_identity_middle_east = case_when(ethnic_identity_middle_east == "missing" ~ "Missing",
-                                     ethnic_identity_middle_east == "israeli" ~ "Israeli",
-                                     ethnic_identity_middle_east == "african" ~ "African (Ethiopian)",
-                                     ethnic_identity_middle_east == "mid_eastern" ~ "Middle Eastern or Mediterranean",
-                                     ethnic_identity_middle_east == "european_n_am" ~ "European or North American",
-                                     ethnic_identity_middle_east == "s_central_am" ~ "South or Central American",
-                                     ethnic_identity_middle_east == "ussr_e_european" ~ "Former Soviet Union or Eastern European",
-                                     ethnic_identity_middle_east == "ne_asian" ~ "Northeast Asian",
-                                     ethnic_identity_middle_east == "other" ~ "Another ethnicity not listed",
-                                     TRUE ~ ethnic_identity_middle_east))
-
-```
-
-```{r printing ethnicity tally, echo=FALSE}
-
-rempsyc::nice_table(ethnicity_tallies)
+rempsyc::nice_table(sex_tallies)
 
 ```
 
@@ -1071,85 +820,32 @@ age_tallies_for_table
 
 ```
 
-```{r setting up gender for demographics table to word, include=FALSE}
+```{r setting up sex for demographics table to word, include=FALSE}
+
+## Here I start setting up demographic variables to 
+## create a combined flextable that can be exported
+## to a word document
 
 # Specified character string for the new row
 new_row <- tibble(
-  `gender_identity` = "Gender Identity",
+  `sex` = "Sex",
   `n` = NA_integer_,
   `%` = NA_real_
 )
 
 # Insert new row at position #1
-gender_tallies_for_table <- bind_rows(new_row, gender_tallies) %>%
-  rename(Demographics = gender_identity)
+sex_tallies_for_table <- bind_rows(new_row, sex_tallies) %>%
+  rename(Demographics = sex)
 
 # View updated data frame
-gender_tallies_for_table
-
-```
-
-```{r setting up sexual orientation for demographics table to word, include=FALSE}
-
-# Specified character string for the new row
-new_row <- tibble(
-  `sex_orientation` = "Sexual Orientation",
-  `n` = NA_integer_,
-  `%` = NA_real_
-)
-
-# Insert new row at position #1
-sex_orientation_tallies_for_table <- bind_rows(new_row, sex_orientation_tallies) %>%
-  rename(Demographics = sex_orientation)
-
-# View updated data frame
-sex_orientation_tallies_for_table
-
-```
-
-```{r setting up race for demographics table to word, include=FALSE}
-
-# Specified character string for the new row
-new_row <- tibble(
-  `racial_ethnic_identity` = "Racial/Ethnic Identity",
-  `n` = NA_integer_,
-  `%` = NA_real_
-)
-
-# Insert new row at position #1
-race_tallies_for_table <- bind_rows(new_row, race_tallies) %>%
-  rename(Demographics = racial_ethnic_identity)
-
-# View updated data frame
-race_tallies_for_table
-
-```
-
-```{r setting up ethnicity for demographics table to word, include=FALSE}
-
-# Specified character string for the new row
-new_row <- tibble(
-  `ethnic_identity_middle_east` = "Ethnic Identity Middle East",
-  `n` = NA_integer_,
-  `%` = NA_real_
-)
-
-# Insert new row at position #1
-ethnicity_tallies_for_table <- bind_rows(new_row, ethnicity_tallies) %>%
-  rename(Demographics = ethnic_identity_middle_east)
-
-# View updated data frame
-ethnicity_tallies_for_table
+sex_tallies_for_table
 
 ```
 
 ```{r creating combined df for demographics table, include=FALSE}
 
 demographics_tallies <- bind_rows(age_tallies_for_table,
-                          gender_tallies_for_table,
-                          sex_orientation_tallies_for_table,
-                          race_tallies_for_table,
-                          ethnicity_tallies_for_table)
+                          sex_tallies_for_table)
 
 ```
 
@@ -1164,19 +860,13 @@ flextable_output <- flextable::flextable(demographics_tallies)
 
 # Applying indents within demographic variable categories
 
-flextable_age_formatted <- padding(flextable_output, i=2:8, padding.left = 20)
+flextable_age_formatted <- padding(flextable_output, i=2:7, padding.left = 20)
 
-flextable_gender_formatted <- padding(flextable_age_formatted, i=10:27, padding.left = 20)
-
-flextable_sex_orientation_formatted <- padding(flextable_gender_formatted, i=29:41, padding.left = 20)
-
-flextable_race_formatted <- padding(flextable_sex_orientation_formatted, i=43:48, padding.left = 20)
-
-flextable_ethnicity_formatted <- padding(flextable_race_formatted, i=50:58, padding.left = 20)
+flextable_sex_formatted <- padding(flextable_age_formatted, i=9:12, padding.left = 20)
 
 # Autofitting columns
 
-flextable_all_demographics <- flextable::autofit(flextable_ethnicity_formatted)
+flextable_all_demographics <- flextable::autofit(flextable_sex_formatted)
 
 ```
 
@@ -1197,7 +887,7 @@ if (!dir.exists(tables_folder)) {
 }
   
 # Save the document to the "tables" folder in your project root
-print(doc, target = file.path(tables_folder, "demographics_table.docx"))
+print(doc, target = file.path(tables_folder, "demographics_table_turkish.docx"))
 
 ```
 
