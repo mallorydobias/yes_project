@@ -713,7 +713,7 @@ perc_agreed_questionnaires
 
 ## Age
 
-Age(s), of all survey starts from youth (n = `r n_started_survey`). 
+Age(s), of all survey starts (n = `r n_started_survey`). 
 
 ```{r prepping for age tally, include=FALSE}
 
@@ -751,7 +751,7 @@ rempsyc::nice_table(age_tallies)
 
 ## Sex
 
-Sex of all survey starts from youth (n = `r n_started_survey`): 
+Sex of all survey starts (n = `r n_started_survey`): 
 
 ```{r combining sex and gender data, include=FALSE}
 
