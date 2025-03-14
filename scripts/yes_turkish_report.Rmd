@@ -586,6 +586,26 @@ print(pp_dz_values)
 
 ```
 
+```{r running t tests across all ssis using custom function, include=FALSE}
+
+# BHS
+results_bhs <- run_paired_t_test(data, "pre_bhs_mean", "post_bhs_mean", "all_bhs")
+print(results_bhs)
+
+# SHS
+results_shs <- run_paired_t_test(data, "pre_shs_mean", "post_shs_mean", "all_shs")
+print(results_shs)
+
+# Self-hate
+results_hate <- run_paired_t_test(data, "pre_self_hate_mean", "post_self_hate_mean", "all_hate")
+print(results_hate)
+
+# Combine all dz values into a single vector for reporting
+all_dz_values <- c(all_bhs_dz_value, all_shs_dz_value, all_hate_dz_value) # not including non-significant outcome results
+print(all_dz_values)
+
+```
+
 ```{r calculating mfq descriptives, include=FALSE}
 
 # Calculating n youth with elevated depression
@@ -676,9 +696,9 @@ Across all survey starts (n = `r n_started_survey`):
 
 Of cases with data at both time points:
 
-+ Non-significant effects from pre to post ABC (hopelessness, agency, self-hate) but small ns (e.g., df = `r d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$df`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Non-significant effects from pre to post Project Personality (hopelessness, agency, self-hate) but small ns (e.g., df = `r d.dep.t.diff.t(pp_hate_t_value, pp_hate_n_pairs, a = 0.05)$df`)
++ Hopelessness decreased, agency increased, and there was no evidence self-hate changed from pre to post SSI (dzs: `r all_dz_values`)
++ We calculated changes pre to post SSI (vs by SSI) given limited sample sizes (e.g., df = `r d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$df`)
++ We plotted individual outcome trajectories within each SSI, for visibility
 
 Of the cases where someone chose an SSI:
 
@@ -1084,6 +1104,76 @@ showtext::showtext_auto()
 
 ```
 
+## All
+
+Given small sample sizes within each SSI group, we analyze changes in scores from pre to post SSI (across all SSIs) for hopelessness, agency, and self-hate. Our paired t-tests find:
+
++ **hopelessness decreased** from pre to post SSI, dz = `r all_bhs_dz_value`.
+
+```{r t test results all bhs, echo=FALSE}
+
+# t_all_bhs # full results here
+
+# Pulling table values
+
+data_t_all_bhs <- broom::tidy(t_all_bhs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = all_bhs_dz_value,
+         all_test = "Hopelessness") %>%
+  select(all_test, t, df, p.value, dz)
+
+```
++ **agency increased** from pre to post SSI, dz = `r all_shs_dz_value`.
+
+```{r t test results all shs, echo=FALSE}
+
+# t_all_shs # full results here
+
+# Pulling table values
+
+data_t_all_shs <- broom::tidy(t_all_shs) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = all_shs_dz_value,
+         all_test = "Agency") %>%
+  select(all_test, t, df, p.value, dz)
+
+```
++ **self-hate decreased** from pre to post SSI, dz = `r all_hate_dz_value`.
+
+```{r t test results all hate, echo=FALSE}
+
+t_all_hate # full results here
+
+# Pulling table values
+
+data_t_all_hate <- broom::tidy(t_all_hate) %>%
+  select(statistic, parameter, p.value) %>%
+  rename(df = parameter) %>%
+  mutate(t = round(statistic, 2)) %>%
+  mutate(dz = all_hate_dz_value,
+         all_test = "Self-Hate") %>%
+  select(all_test, t, df, p.value, dz)
+
+```
+
+Paired t-test results for all SSIs:
+
+```{r all t results, echo=FALSE}
+
+# Combining t results
+
+t_results_all <- bind_rows(data_t_all_bhs, data_t_all_shs, data_t_all_hate)
+
+# Now, use nice_table for all abc results
+
+rempsyc::nice_table(t_results_all)
+
+```
+
 ## ABC Project
 
 ```{r, out.width = "260px", out.height = "250px", include=TRUE, echo=FALSE}
@@ -1092,25 +1182,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-For those who chose the **ABC Project** with data at both time points:
-
-+ **No evidence hopelessness decreased** from pre to post abc, dz = `r abc_bhs_dz_value`.
-
-```{r t test results abc bhs, echo=FALSE}
-
-# t_abc_bhs # full results here
-
-# Pulling table values
-
-data_t_abc_bhs <- broom::tidy(t_abc_bhs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = abc_bhs_dz_value,
-         abc_test = "Hopelessness") %>%
-  select(abc_test, t, df, p.value, dz)
-
-```
+For those who chose the **ABC Project** with data at both time points, we plot individual outcome trajectories.
 
 ```{r visualizing pre-post bhs abc setup, include=FALSE}
 
@@ -1207,24 +1279,6 @@ plot_abc_bhs <- plot_data_bhs_abc_function %>%
 
 ```
 
-+ **No evidence agency increased** from pre to post abc, dz = `r abc_shs_dz_value`.
-
-```{r t test results abc shs, echo=FALSE}
-
-# t_abc_shs # full results here
-
-# Pulling table values
-
-data_t_abc_shs <- broom::tidy(t_abc_shs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = abc_shs_dz_value,
-         abc_test = "Agency") %>%
-  select(abc_test, t, df, p.value, dz)
-
-```
-
 ```{r running custom plot function on abc shs data, include=FALSE}
 
 ## Running plot setup function
@@ -1261,24 +1315,6 @@ plot_abc_shs <- plot_data_shs_abc_function %>%
 
 ```
 
-+ **No evidence self-hate decreased** from pre to post abc, dz = `r abc_hate_dz_value`.
-
-```{r t test results abc hate, echo=FALSE}
-
-# t_abc_hate # full results here
-
-# Pulling table values
-
-data_t_abc_hate <- broom::tidy(t_abc_hate) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = abc_hate_dz_value,
-         abc_test = "Self-Hate") %>%
-  select(abc_test, t, df, p.value, dz)
-
-```
-
 ```{r running custom plot function on abc hate data, include=FALSE}
 
 ## Running plot setup function
@@ -1312,21 +1348,6 @@ plot_abc_hate <- plot_data_hate_abc_function %>%
   labs(x = "", y = "Mean Self-Hate", title = "") +
   scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
   guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
-
-```
-
-
-Paired t-test results for ABC:
-
-```{r all abc t results, echo=FALSE}
-
-# Combining t results
-
-t_results_abc <- bind_rows(data_t_abc_bhs, data_t_abc_shs, data_t_abc_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_abc)
 
 ```
 
@@ -1485,25 +1506,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-For those who chose **Project CARE** with data at both time points:
-
-+ **hopelessness decreased** from pre to post care, dz = `r care_bhs_dz_value`.
-
-```{r t test results care bhs, echo=FALSE}
-
-# t_care_bhs # full results here
-
-# Pulling table values
-
-data_t_care_bhs <- broom::tidy(t_care_bhs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = care_bhs_dz_value,
-         care_test = "Hopelessness") %>%
-  select(care_test, t, df, p.value, dz)
-
-```
+For those who chose **Project CARE** with data at both time points, we plot individual outcome trajectories.
 
 ```{r running custom plot function on care bhs data, include=FALSE}
 
@@ -1538,24 +1541,6 @@ plot_care_bhs <- plot_data_bhs_care_function %>%
   labs(x = "", y = "Mean Hopelessness", title = "") +
   scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
   guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
-
-```
-
-+ **agency increased** from pre to post care, dz = `r care_shs_dz_value`.
-
-```{r t test results care shs, echo=FALSE}
-
-# t_care_shs # full results here
-
-# Pulling table values
-
-data_t_care_shs <- broom::tidy(t_care_shs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = care_shs_dz_value,
-         care_test = "Agency") %>%
-  select(care_test, t, df, p.value, dz)
 
 ```
 
@@ -1595,24 +1580,6 @@ plot_care_shs <- plot_data_shs_care_function %>%
 
 ```
 
-+ **self-hate decreased** from pre to post care, dz = `r care_hate_dz_value`.
-
-```{r t test results care hate, echo=FALSE}
-
-# t_care_hate # full results here
-
-# Pulling table values
-
-data_t_care_hate <- broom::tidy(t_care_hate) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = care_hate_dz_value,
-         care_test = "Self-Hate") %>%
-  select(care_test, t, df, p.value, dz)
-
-```
-
 ```{r running custom plot function on care hate data, include=FALSE}
 
 ## Running plot setup function
@@ -1646,20 +1613,6 @@ plot_care_hate <- plot_data_hate_care_function %>%
   labs(x = "", y = "Mean Self-Hate", title = "") +
   scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
   guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
-
-```
-
-Paired t-test results for CARE:
-
-```{r all care t results, echo=FALSE}
-
-# Combining t results
-
-t_results_care <- bind_rows(data_t_care_bhs, data_t_care_shs, data_t_care_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_care)
 
 ```
 
@@ -1818,25 +1771,7 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 ```
 
-For those who chose **Project Personality** with data at both time points:
-
-+ **No evidence hopelessness decreased** from pre to post project personality, dz = `r pp_bhs_dz_value`.
-
-```{r t test results pp bhs, echo=FALSE}
-
-# t_pp_bhs # full results here
-
-# Pulling table values
-
-data_t_pp_bhs <- broom::tidy(t_pp_bhs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = pp_bhs_dz_value,
-         pp_test = "Hopelessness") %>%
-  select(pp_test, t, df, p.value, dz)
-
-```
+For those who chose **Project Personality** with data at both time points, we plot individual outcome trajectories.
 
 ```{r running custom plot function on pp bhs data, include=FALSE}
 
@@ -1871,24 +1806,6 @@ plot_pp_bhs <- plot_data_bhs_pp_function %>%
   labs(x = "", y = "Mean Hopelessness", title = "") +
   scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
   guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
-
-```
-
-+ **No evidence agency increased** from pre to post project personality, dz = `r pp_shs_dz_value`.
-
-```{r t test results pp shs, echo=FALSE}
-
-# t_pp_shs # full results here
-
-# Pulling table values
-
-data_t_pp_shs <- broom::tidy(t_pp_shs) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = pp_shs_dz_value,
-         pp_test = "Agency") %>%
-  select(pp_test, t, df, p.value, dz)
 
 ```
 
@@ -1928,24 +1845,6 @@ plot_pp_shs <- plot_data_shs_pp_function %>%
 
 ```
 
-+ **No evidence self-hate decreased** from pre to post project personality, dz = `r pp_hate_dz_value`.
-
-```{r t test results pp hate, echo=FALSE}
-
-# t_pp_hate # full results here
-
-# Pulling table values
-
-data_t_pp_hate <- broom::tidy(t_pp_hate) %>%
-  select(statistic, parameter, p.value) %>%
-  rename(df = parameter) %>%
-  mutate(t = round(statistic, 2)) %>%
-  mutate(dz = pp_hate_dz_value,
-         pp_test = "Self-Hate") %>%
-  select(pp_test, t, df, p.value, dz)
-
-```
-
 ```{r running custom plot function on pp hate data, include=FALSE}
 
 ## Running plot setup function
@@ -1979,20 +1878,6 @@ plot_pp_hate <- plot_data_hate_pp_function %>%
   labs(x = "", y = "Mean Self-Hate", title = "") +
   scale_x_discrete(limits = c("Before", "After")) +  # Ensure "Before" and "After" are ordered on x-axis
   guides(color = guide_legend(reverse = TRUE))  # Adjust the color guide position
-
-```
-
-Paired t-test results for Project Personality:
-
-```{r all pp t results, echo=FALSE}
-
-# Combining t results
-
-t_results_pp <- bind_rows(data_t_pp_bhs, data_t_pp_shs, data_t_pp_hate)
-
-# Now, use nice_table for all abc results
-
-rempsyc::nice_table(t_results_pp)
 
 ```
 
