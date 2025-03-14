@@ -875,7 +875,7 @@ print(doc, target = file.path(tables_folder, "demographics_table_turkish.docx"))
 
 ## Depression Scores
 
-**Nearly a third of those who started the survey (`r perc_elev_dep`%) reported elevated levels of depression symptoms.** Nearly *half* of all cases (`r perc_elev_dep_of_answered_dep`%) that actually responded to the depression items reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire youth sample.
+**Nearly a third of those who started the survey (`r perc_elev_dep`%) reported elevated levels of depression symptoms.** Nearly *half* of all cases (`r perc_elev_dep_of_answered_dep`%) that actually responded to the depression items reported elevated levels of depression symptoms. Here, we plot depression scale scores (MFQ) across the entire sample.
 
 ```{r calculating proportion of teens elevated depression, include=FALSE}
 
