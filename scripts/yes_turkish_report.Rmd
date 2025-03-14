@@ -2409,14 +2409,6 @@ plot_completions_by_date
 
 ## Overall
 
-Project YES helped teens feel less alone, kinder toward themselves, and capable to creating a personal action plan.
-
-```{r, out.width = "600px", out.height = "600px", include=TRUE, echo=FALSE}
-
-knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes_quotes.png")
-
-```
-
 ```{r calculating pfs item means across all ssis, include=FALSE}
 
 ## Calculating individual pfs item means, across all ssis
