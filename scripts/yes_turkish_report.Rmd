@@ -655,14 +655,14 @@ knitr::include_graphics("/Users/mallorydobias/Documents/R/yes_project/images/yes
 
 # Summary
 
-**Executive Summary**: This report uses all data (youth and adults) from our Turkish YES survey (data_ids: d07). SSIs are completed ~40-50% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) improve from before to after finishing an SSI. SSIs receive ratings between 3 and 4 out of 5, where 5 is the highest approval rating. Lots of drop-off happens when SSIs introduce writing exercises.
+**Executive Summary**: This report uses all data (youth and adults) from our Turkish YES survey (data_ids: d07). Overall, due to limited sample size, quantitative results are not super reliable. SSIs are completed between ~35 and 60% of the time they are started. Clinical outcomes (e.g., hopelessness, agency, self-hate) may or may not improve from before to after finishing an SSI (non-significant paired t-test results could be due to a lack of effect, or due to a low n). SSIs receive ratings between 4 and 5 out of 5, where 5 is the highest approval rating.
 
 **Full Summary**:
 
 Looking at YES engagement:
 
 + Our YES survey was started `r n_started_survey` times
-+ In `r perc_agreed_questionnaires`% of cases, youth agreed to complete optional questionnaires
++ In `r perc_agreed_questionnaires`% of cases, people agreed to complete optional questionnaires
 + `r perc_chose_any_ssi`% of cases chose an SSI (n = `r n_chose_any_ssi`) 
 
 Across all survey starts (n = `r n_started_survey`):
@@ -677,9 +677,9 @@ Across all survey starts (n = `r n_started_survey`):
 
 Of cases with data at both time points:
 
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post ABC (dzs = `r abc_dz_values`)
++ Non-significant effects from pre to post ABC (hopelessness, agency, self-hate) but small ns (e.g., df = `r d.dep.t.diff.t(abc_hate_t_value, abc_hate_n_pairs, a = 0.05)$df`)
 + Hopelessness decreased, agency increased, and self-hate decreased pre to post CARE (dzs = `r care_dz_values`)
-+ Hopelessness decreased, agency increased, and self-hate decreased pre to post Project Personality (dzs = `r pp_dz_values`)
++ Non-significant effects from pre to post Project Personality (hopelessness, agency, self-hate) but small ns (e.g., df = `r d.dep.t.diff.t(pp_hate_t_value, pp_hate_n_pairs, a = 0.05)$df`)
 
 Of the cases where someone chose an SSI:
 
@@ -693,10 +693,6 @@ Of cases where someone started an SSI:
 + `r perc_completed_abc`% of cases completed ABC (n = `r n_completed_abc`) after starting it (n = `r n_started_abc`)
 + `r perc_completed_care`% of cases completed CARE (n = `r n_completed_care`) after starting it (n = `r n_started_care`)
 + `r perc_completed_personality`% of cases completed Project Personality (n = `r n_completed_pp`) after starting it (n = `r n_started_pp`)
-
-Drop-off is highest on pages with writing exercises:
-
-+ More than 1 in 4 people drop from one page to the next during Project Personality's first writing exercise
 
 Youth gave SSIs an overall rating of `r m_pfs_overall` out of 5:
 
@@ -779,7 +775,7 @@ sex_tallies <- data %>%
 
 ```
 
-```{r printing age tally, echo=FALSE}
+```{r printing sex tally, echo=FALSE}
 
 rempsyc::nice_table(sex_tallies)
 
@@ -2560,7 +2556,7 @@ plot_abc_pfs_ridge <- ggplot(data_abc_ridge_plot_mutated, aes(x = value,
   scale_fill_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom fill color
   scale_color_manual(values = rep("#32A2A0", length(custom_order))) +  # Custom color
   labs(y = "", x = "") +
-  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5), limits = c(1, 5))  # Set the x-axis tick positions
 
 plot_abc_pfs_ridge
 
@@ -2627,7 +2623,7 @@ plot_care_pfs_ridge <- ggplot(data_care_ridge_plot_mutated, aes(x = value,
   scale_fill_manual(values = rep("#A52B4D", length(custom_order))) +  # Custom fill color
   scale_color_manual(values = rep("#A52B4D", length(custom_order))) +  # Custom color
   labs(y = "", x = "") +
-  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5), limits = c(1, 5))  # Set the x-axis tick positions
 
 plot_care_pfs_ridge
 
@@ -2694,7 +2690,7 @@ plot_pp_pfs_ridge <- ggplot(data_pp_ridge_plot_mutated, aes(x = value,
   scale_fill_manual(values = rep("#3F9CF5", length(custom_order))) +  # Custom fill color
   scale_color_manual(values = rep("#3F9CF5", length(custom_order))) +  # Custom color
   labs(y = "", x = "") +
-  scale_x_continuous(breaks = c(1, 2, 3, 4, 5))  # Set the x-axis tick positions
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5), limits = c(1, 5))  # Set the x-axis tick positions
 
 plot_pp_pfs_ridge
 
@@ -2729,6 +2725,7 @@ plot_overall_pfs_ridge <- ggplot(data_overall_ridge_plot, aes(x = pfs_mean,
   scale_fill_manual(values = custom_colors) +
   scale_color_manual(values = custom_colors) +
   labs(y = "", x = "PFS Mean Scores") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5), limits = c(1, 5))  # Set the x-axis tick positions
   plot_annotation(title = "PFS Mean Scores by Chosen SSI",
                   caption = "Overall Program Feedback Scale mean scores by SSI, where higher scores reflect more positive feedback")
 
@@ -2745,7 +2742,8 @@ plot_overall_pfs_ridge
 library(patchwork)
 
 # Combine the plots vertically
-plot_all_ridge <- plot_abc_pfs_ridge + plot_care_pfs_ridge + plot_pp_pfs_ridge + plot_rise_pfs_ridge +
+plot_all_ridge <- plot_abc_pfs_ridge / plot_care_pfs_ridge / plot_pp_pfs_ridge +
+  plot_layout(heights = c(2, 2, 2)) + # Adjust the heights as needed
   plot_annotation(
     title = "PFS Items Scores for Each SSI",
     caption = "ABC (green), CARE (red), Project Personality (blue); higher scores reflect greater agreement"
@@ -2753,7 +2751,7 @@ plot_all_ridge <- plot_abc_pfs_ridge + plot_care_pfs_ridge + plot_pp_pfs_ridge +
 
 ```
 
-```{r printing ridge plot for all pfs, message=FALSE, warning=FALSE, include=TRUE}
+```{r printing ridge plot for all pfs, message=FALSE, warning=FALSE, include=TRUE, fig.width=7, fig.height=9}
 
 plot_all_ridge
 
@@ -2894,320 +2892,6 @@ plot_all_boxplot <- plot_boxplot_sep_1 / plot_boxplot_sep_2 / plot_boxplot_sep_3
 ```{r printing combined pfs item boxplot, include=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=10}
 
 plot_all_boxplot
-
-```
-
-# Drop-Offs
-
-## ABC Project
-
-Given extensive display logic, we can't confidently calculate largest page for drop-off in ABC.
-
-```{r selecting abc pages for plot, include=FALSE}
-
-## Selecting only abc pages
-
-data_abc_clicks <- data_abc %>%
-  select(contains("page_submit") & starts_with("abc"))
-
-```
-
-```{r mutating abc pages for count var, include=FALSE}
-
-## Mutating non-NA values to value of 1 (i.e., a page was submitted)
-
-data_abc_clicks_mutated <- data_abc_clicks %>%
-  mutate(across(everything(), ~ case_when(
-    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
-    TRUE ~ NA_real_  # Otherwise, make it NA
-  )))
-
-```
-
-```{r prepping abc page data for plot, include=FALSE}
-
-## Preparing data for plot
-
-data_abc_clicks_plot <- data_abc_clicks_mutated %>%
-    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rename(page = variable, page_submissions = count) %>%
-    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
-                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
-    mutate(page = as.numeric(page)) %>% # Converting to numeric class
-    arrange(page) # Arrange in sequential page order
-
-```
-
-```{r plotting abc page data, include=FALSE}
-
-## Plot page submissions by page
-
-plot_abc_drop <- ggplot(data_abc_clicks_plot, aes(x=page, y=page_submissions)) +
-  geom_area(fill="#32A2A0", alpha=0.4) +
-  geom_line(color="#32A2A0", linewidth=1.1) +
-  theme_light() +
-  ylim(0, 1750) +
-  ggtitle("") +
-  labs(x = "page number",
-       y = "n page submissions") +
-  geom_vline(xintercept = 16, color = "black") +
-  geom_vline(xintercept = 22, color = "black") +
-  geom_vline(xintercept = 43, color = "black") +
-  geom_vline(xintercept = 45, color = "black")
-
-```
-
-```{r abc page plot, include=FALSE}
-
-plot_abc_drop
-
-```
-
-## Project CARE
-
-Counting number of page submissions by page number (looking for drop-off). Pulling largest drop-off point during this SSI.
-
-```{r selecting care pages for plot, include=FALSE}
-
-## Selecting only care pages
-
-data_care_clicks <- data_care %>%
-  select(contains("page_submit") & starts_with("proj_care"))
-
-```
-
-```{r mutating care pages for count var, include=FALSE}
-
-## Mutating non-NA values to value of 1 (i.e., a page was submitted)
-
-data_care_clicks_mutated <- data_care_clicks %>%
-  mutate(across(everything(), ~ case_when(
-    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
-    TRUE ~ NA_real_  # Otherwise, make it NA
-  )))
-
-```
-
-```{r prepping care page data for plot, include=FALSE}
-
-## Preparing data for plot
-
-data_care_clicks_plot <- data_care_clicks_mutated %>%
-    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rename(page = variable, page_submissions = count) %>%
-    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
-                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
-    mutate(page = as.numeric(page)) %>% # Converting to numeric class
-    arrange(page) # Arrange in sequential page order
-
-```
-
-```{r largest drop in submissions care, echo=FALSE}
-
-## Finding the largest drop in page submissions between two pages
-
-largest_drop <- data_care_clicks_plot %>%
-  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
-  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
-  slice_max(drop)                                              # Find the row with the largest drop
-
-## Extracting the associated page values
-
-page_before_drop <- largest_drop$page - 1  # Page before the drop
-page_after_drop <- largest_drop$page       # Page after the drop
-
-## Printing the pages associated with the largest drop
-
-cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
-
-```
-
-```{r perc largest drop off care, echo=FALSE}
-
-## Calculating largest drop off percentage
-
-# Page submissions before and after drop
-
-submissions_before_drop <- data_care_clicks_plot %>%
-  filter(page == page_before_drop) %>%
-  pull(page_submissions)
-
-# Percentage calculation
-
-perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
-
-## Printing the percent drop associated with the largest drop
-
-cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
-
-```
-
-```{r plotting care page data, include=FALSE}
-
-## Plot page submissions by page
-
-plot_care_drop <- ggplot(data_care_clicks_plot, aes(x=page, y=page_submissions)) +
-  geom_area(fill="#A52B4D", alpha=0.4) +
-  geom_line(color="#A52B4D", linewidth=1.1) +
-  theme_light() +
-  ylim(0, 1750) +
-  ggtitle("") +
-  labs(x = "page number",
-       y = "n page submissions") +
-  geom_vline(xintercept = 4, color = "black") +
-  geom_vline(xintercept = 28, color = "black") +
-  geom_vline(xintercept = 40, color = "black") +
-  geom_vline(xintercept = 42, color = "black") +
-  geom_vline(xintercept = 43, color = "black")
-
-```
-
-```{r care page plot, include=FALSE}
-
-plot_care_drop
-
-```
-
-## Project Personality
-
-Counting number of page submissions by page number (looking for drop-off). Pulling largest drop-off point during this SSI.
-
-```{r selecting pp pages for plot, include=FALSE}
-
-## Selecting only project personality pages
-
-data_pp_clicks <- data_pp %>%
-  select(contains("page_submit") & starts_with("proj_pers"), 
-         -contains("4_tim")) # this time var was on a separate not visible page to participants
-
-```
-
-```{r mutating pp pages for count var, include=FALSE}
-
-## Mutating non-NA values to value of 1 (i.e., a page was submitted)
-
-data_pp_clicks_mutated <- data_pp_clicks %>%
-  mutate(across(everything(), ~ case_when(
-    !is.na(.) ~ 1,   # If the value is not NA, change it to "yes"
-    TRUE ~ NA_real_  # Otherwise, make it NA
-  )))
-
-```
-
-```{r prepping pp page data for plot, include=FALSE}
-
-## Preparing data for plot
-
-data_pp_clicks_plot <- data_pp_clicks_mutated %>%
-    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% # Count 1's in each column
-    pivot_longer(cols = everything(), # Convert to long format
-                 names_to = "variable", 
-                 values_to = "count") %>%
-    rename(page = variable, page_submissions = count) %>%
-    mutate(page = str_extract_all(page, "\\d+") %>% # Extract all digits from page number variables
-                  map_chr(paste0, collapse = "")) %>% # Collapse them into a single string
-    mutate(page = as.numeric(page)) %>% # Converting to numeric class
-    arrange(page) # Arrange in sequential page order
-
-```
-
-```{r largest drop in submissions pp, echo=FALSE}
-
-## Finding the largest drop in page submissions between two pages
-
-largest_drop <- data_pp_clicks_plot %>%
-  mutate(drop = lag(page_submissions) - page_submissions) %>%  # Calculate drop from previous row
-  filter(!is.na(drop)) %>%                                     # Remove NA values (first row has no previous value)
-  slice_max(drop)                                              # Find the row with the largest drop
-
-## Extracting the associated page values
-
-page_before_drop <- largest_drop$page - 1  # Page before the drop
-page_after_drop <- largest_drop$page       # Page after the drop
-
-## Printing the pages associated with the largest drop
-
-cat("The largest drop in page_submissions occurred between page", page_before_drop, "and page", page_after_drop, "\n")
-
-```
-
-```{r perc largest drop off pp, echo=FALSE}
-
-## Calculating largest drop off percentage
-
-# Page submissions before and after drop
-
-submissions_before_drop <- data_pp_clicks_plot %>%
-  filter(page == page_before_drop) %>%
-  pull(page_submissions)
-
-# Percentage calculation
-
-perc_drop <- round((largest_drop$drop / submissions_before_drop)*100, 2)
-
-## Printing the percent drop associated with the largest drop
-
-cat(perc_drop, "% of cases that submitted page", page_before_drop, "did not submit page", page_after_drop, "\n")
-
-```
-
-```{r plotting pp page data, include=FALSE}
-
-## Saving value for plot arrow
-
-pp_plot_arrow <- data_pp_clicks_plot %>%
-  filter(page == 16) %>%
-  pull(page_submissions)
-
-## Plot Project Personality page submissions by page
-
-plot_pp_drop <- ggplot(data_pp_clicks_plot, aes(x=page, y=page_submissions)) +
-  geom_area(fill="#3F9CF5", alpha=0.4) +
-  geom_line(color="#3F9CF5", linewidth=1.1) +
-  theme_light() +
-  ylim(0, 1750) +
-  ggtitle("") +
-  labs(x = "page number",
-       y = "n page submissions") +
-  geom_vline(xintercept = 16, color = "black") + 
-  geom_vline(xintercept = 30, color = "black") +
-  geom_vline(xintercept = 31, color = "black")
-
-```
-
-```{r pp page plot, include=FALSE}
-
-plot_pp_drop
-
-```
-
-## All
-
-Plotting drop-off for all SSIs. Curve slopes are steeper where drop-off is greater.
-
-```{r combining all drop plots, warning=FALSE, message=FALSE, include=FALSE}
-
-library(patchwork)
-
-# Combine the plots vertically
-plot_all_drop <- plot_abc_drop + plot_care_drop + plot_pp_drop + 
-  plot_annotation(
-    title = "Number of Page Submissions by Page of Each SSI",
-    caption = "ABC (green/left), CARE (red/middle), Project Personality (blue/right); 
-    Vertical lines are pages with writing exercises."
-  )
-
-```
-
-```{r printing plot for all dropoff, include=TRUE}
-
-plot_all_drop
 
 ```
 
