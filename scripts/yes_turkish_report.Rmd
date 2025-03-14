@@ -175,18 +175,6 @@ n_chose_pp <- data %>%
   filter(str_detect(ssi_choice, "Personality")) %>%
   tally() # chose pp
 
-n_chose_rise <- data %>%
-  filter(str_detect(ssi_choice, "RISE")) %>%
-  tally() # chose pp
-
-## Checking that all dfs have values in the ssi_choice column (d03 not present because no age item)
-
-data %>%
-  select(data_id, ssi_choice) %>%
-  filter(!is.na(ssi_choice)) %>%
-  group_by(data_id) %>%
-  tally()
-
 ```
 
 ```{r calculating perc milestones, include=FALSE}
@@ -207,10 +195,6 @@ perc_chose_care <- round((n_chose_care/n_chose_any_ssi)*100, 2)
 
 perc_chose_pp <- round((n_chose_pp/n_chose_any_ssi)*100, 2)
 
-## Percent of cases who chose pp, of those who chose any ssi
-
-perc_chose_rise <- round((n_chose_rise/n_chose_any_ssi)*100, 2)
-
 ```
 
 ```{r calculating perc complete of those who started for abc, include=FALSE}
@@ -228,24 +212,6 @@ n_completed_abc <- data %>%
   tally()
 
 perc_completed_abc <- round((n_completed_abc / n_started_abc) * 100, 2)
-
-## Checking that all dfs have values in these columns (d03 not present because no age item)
-
-data %>%
-  select(data_id, ssi_started) %>%
-  filter(!is.na(ssi_started)) %>%
-  group_by(data_id) %>%
-  tally()
-
-data %>%
-  select(data_id, ssi_completed) %>%
-  filter(!is.na(ssi_completed)) %>%
-  group_by(data_id) %>%
-  tally()
-
-# data %>%
-#   filter(data_id == "d05") %>%
-#   select(data_id, ssi_completed, dem_age) # d05 has no ssi_started responses from youth
 
 ```
 
@@ -318,19 +284,6 @@ print(perc_completed_personality)
 
 ```
 
-```{r using custom function for perc completed rise, include=FALSE}
-
-# Testing custom function for perc completion on rise
-results <- filter_and_summarize_ssi(data, "RISE", "n_started_rise", "n_completed_rise")
-print(results)
-
-# Later, you can access these vars from the global environment:
-print(n_started_rise)
-print(n_completed_rise)
-print(perc_completed_rise)
-
-```
-
 ```{r calculating perc complete of those who started any ssi, include=FALSE}
 
 n_started_any_ssi <- data %>%
@@ -361,14 +314,6 @@ n_answered_questionnaires_item <- data %>%
 
 perc_agreed_questionnaires <- round((n_agreed_questionnaires / n_answered_questionnaires_item) * 100, 2) # percent agreed, of those who were asked
 
-## Checking that all dfs have values in this columns (d03 not present because no age item, d02 does not have volunteer item)
-
-data %>%
-  select(data_id, volunteer_questionnaires_yn) %>%
-  filter(!is.na(volunteer_questionnaires_yn)) %>%
-  group_by(data_id) %>%
-  tally()
-
 ```
 
 ```{r calculating aggregated pfs mean overall, include=FALSE}
@@ -376,14 +321,6 @@ data %>%
 ## Calculating overall pfs mean, across all ssis
 
 m_pfs_overall <- round(mean(data$pfs_mean, na.rm = TRUE), 2)
-
-## Checking that all dfs have values in this column (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
-
-data %>%
-  select(data_id, pfs_mean) %>%
-  filter(!is.na(pfs_mean)) %>%
-  group_by(data_id) %>%
-  tally()
 
 ```
 
@@ -426,19 +363,6 @@ m_pfs_pp <- round(mean(data_pp$pfs_mean, na.rm = TRUE), 2)
 
 ```
 
-```{r calculating aggregated pfs mean for rise, include=FALSE}
-
-## Pulling only rise responses
-
-data_rise <- data %>%
-  filter(str_detect(ssi_choice, "RISE")) # filtering to those who chose rise
-
-## Calculating overall pfs mean for rise
-
-m_pfs_rise <- round(mean(data_rise$pfs_mean, na.rm = TRUE), 2)
-
-```
-
 ```{r t test bhs abc, include=FALSE}
 
 ## Trying this once before writing a function
@@ -463,20 +387,6 @@ abc_bhs_n_pairs <- data_abc %>%
   filter(!is.na(post_bhs_mean) & !is.na(pre_bhs_mean)) %>%
   select(post_bhs_mean, pre_bhs_mean) %>%
   nrow()
-
-## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
-
-data %>%
-  select(data_id, pre_bhs_mean) %>%
-  filter(!is.na(pre_bhs_mean)) %>%
-  group_by(data_id) %>%
-  tally()
-
-data %>%
-  select(data_id, post_bhs_mean) %>%
-  filter(!is.na(post_bhs_mean)) %>%
-  group_by(data_id) %>%
-  tally()
 
 ```
 
@@ -513,20 +423,6 @@ abc_shs_n_pairs <- data_abc %>%
   select(post_shs_mean, pre_shs_mean) %>%
   nrow()
 
-## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
-
-data %>%
-  select(data_id, pre_shs_mean) %>%
-  filter(!is.na(pre_shs_mean)) %>%
-  group_by(data_id) %>%
-  tally()
-
-data %>%
-  select(data_id, post_shs_mean) %>%
-  filter(!is.na(post_shs_mean)) %>%
-  group_by(data_id) %>%
-  tally()
-
 ```
 
 ```{r t test effect size shs abc, include=FALSE}
@@ -561,20 +457,6 @@ abc_hate_n_pairs <- data_abc %>%
   filter(!is.na(post_self_hate_mean) & !is.na(pre_self_hate_mean)) %>%
   select(post_self_hate_mean, pre_self_hate_mean) %>%
   nrow()
-
-## Checking that all dfs have values in these columns (d03 no age var, d16 has no completers yet, d05 has no youth post-responses)
-
-data %>%
-  select(data_id, pre_self_hate_mean) %>%
-  filter(!is.na(pre_self_hate_mean)) %>%
-  group_by(data_id) %>%
-  tally()
-
-data %>%
-  select(data_id, post_self_hate_mean) %>%
-  filter(!is.na(post_self_hate_mean)) %>%
-  group_by(data_id) %>%
-  tally()
 
 ```
 
@@ -701,129 +583,6 @@ print(results_hate)
 # Combine all dz values into a single vector for reporting
 pp_dz_values <- c(pp_bhs_dz_value, pp_shs_dz_value, pp_hate_dz_value) # not including non-significant outcome results
 print(pp_dz_values)
-
-```
-
-```{r running t tests for rise using custom function, include=FALSE}
-
-# BHS
-results_bhs <- run_paired_t_test(data_rise, "pre_bhs_mean", "post_bhs_mean", "rise_bhs")
-print(results_bhs)
-
-# SHS
-results_shs <- run_paired_t_test(data_rise, "pre_shs_mean", "post_shs_mean", "rise_shs")
-print(results_shs)
-
-# Self-hate
-results_hate <- run_paired_t_test(data_rise, "pre_self_hate_mean", "post_self_hate_mean", "rise_hate")
-print(results_hate)
-
-# Combine all dz values into a single vector for reporting
-rise_dz_values <- c(rise_bhs_dz_value, rise_shs_dz_value, rise_hate_dz_value) 
-print(rise_dz_values)
-
-```
-
-```{r gender identity differs from sex, include=FALSE}
-
-## Tallying number of cases where gender identity is different from sex assigned at birth
-
-n_gender_differs_from_sex <- data %>%
-  filter(dem_gender_diff_sex == "Yes") %>%
-  tally()
-
-## Tallying number of cases where gender identity aligns with assigned sex
-
-n_gender_same_as_sex <- data %>%
-  filter(dem_gender_diff_sex == "No") %>%
-  tally()
-
-## Calculating percentage of these cases, of everyone who started the survey
-
-perc_gender_differs_from_sex <- round((n_gender_differs_from_sex / n_started_survey)*100,2)
-
-perc_gender_same_as_sex <- round((n_gender_same_as_sex / n_started_survey)*100,2)
-
-## Checking that all dfs have values in this column (d03 no age var)
-
-data %>%
-  select(data_id, dem_gender_diff_sex) %>%
-  filter(!is.na(dem_gender_diff_sex)) %>%
-  group_by(data_id) %>%
-  tally()
-
-```
-
-```{r perc sexual minority, include=FALSE}
-
-## Tallying number of cases where gender identity is different from sex assigned at birth
-
-n_sex_minority <- data %>%
-  select(dem_sex_orientation) %>%
-  filter(!is.na(dem_sex_orientation) & 
-           dem_sex_orientation != "Heterosexual/Straight" &
-           dem_sex_orientation != "I do not want to respond") %>%
-  tally()
-
-## Tallying n straight folks
-
-n_sex_straight <- data %>%
-  select(dem_sex_orientation) %>%
-  filter(dem_sex_orientation == "Heterosexual/Straight") %>%
-  tally()
-
-## Calculating percentage of these cases, of everyone who started the survey
-
-perc_sex_minority <- round((n_sex_minority / n_started_survey)*100,2)
-
-perc_sex_straight <- round((n_sex_straight / n_started_survey)*100,2)
-
-## Checking that all dfs have values in this column (d03 no age var)
-
-data %>%
-  select(data_id, dem_sex_orientation) %>%
-  filter(!is.na(dem_sex_orientation)) %>%
-  group_by(data_id) %>%
-  tally()
-
-```
-
-```{r perc racial minority, include=FALSE}
-
-## Tallying number of cases where racial identity is not white or missing
-
-n_racial_minority <- data %>%
-  select(contains("dem_race"), -contains("white"), -contains("hisp")) %>%
-  filter(if_any(c(dem_race_asian, dem_race_black, dem_race_other), ~ . == "yes")) %>%
-  tally()
-
-## Tallying number of cases where ethnic identity is latine/hispanic
-
-n_racial_latine_hisp <- data %>%
-  filter(dem_race_latin_hisp == "yes") %>%
-  tally()
-
-## Tallying number of cases where racial identity is white
-
-n_racial_white <- data %>%
-  filter(dem_race_white == "yes") %>%
-  tally()
-
-## Calculating percentage of these cases, of everyone who started the survey
-
-perc_racial_minority <- round((n_racial_minority / n_started_survey)*100,2)
-
-perc_racial_latine_hisp <- round((n_racial_latine_hisp / n_started_survey)*100,2)
-
-perc_racial_white <- round((n_racial_white / n_started_survey)*100,2)
-
-## Checking that all dfs have values in this column (d03 no dem vars, d05 contains middle east specific ethnicity items)
-
-data %>%
-  select(data_id, dem_race_white) %>%
-  filter(!is.na(dem_race_white)) %>%
-  group_by(data_id) %>%
-  tally()
 
 ```
 
