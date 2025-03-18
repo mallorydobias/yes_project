@@ -63,6 +63,14 @@ library(here) # places working directory at root of project folder
 
 turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # directing to data from project folder root
 
+# test <- readRDS(here("data", "clean", "yes_data_turkish_clean_deidentified.Rds")) # directing to data from project folder root
+# 
+# glimpse(test)
+# 
+# test_2 <- read.csv(here("data", "clean", "yes_data_turkish_clean_deidentified.csv"))
+# 
+# glimpse(test_2)
+
 ```
 
 # Selecting Data
@@ -80,6 +88,21 @@ turkish_data_deidentified <- turkish_data %>%
          -contains("_tim_"))
 
 # glimpse(turkish_data_deidentified)
+
+```
+
+# Checking Characters
+
+```{r}
+
+# Check the column names
+
+test<- colnames(turkish_data_deidentified) %>% 
+  str_view_all("\\P{ASCII}")  # Finds any non-ASCII characters
+
+turkish_data_deidentified %>%
+  slice(1)
+  mutate(across(everything(), ~str_view_all(., "\\P{ASCII}")))
 
 ```
 
