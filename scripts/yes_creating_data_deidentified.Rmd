@@ -101,7 +101,7 @@ test<- colnames(turkish_data_deidentified) %>%
   str_view_all("\\P{ASCII}")  # Finds any non-ASCII characters
 
 turkish_data_deidentified %>%
-  slice(1)
+  slice(1) %>%
   mutate(across(everything(), ~str_view_all(., "\\P{ASCII}")))
 
 ```
