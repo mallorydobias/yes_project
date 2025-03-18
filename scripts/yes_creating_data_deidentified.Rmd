@@ -121,7 +121,7 @@ full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
 
-write_csv(turkish_data_deidentified, full_path)
+write.csv(turkish_data_deidentified, full_path, row.names = FALSE, quote = TRUE)
 
 # Define the folder and file path
 
