@@ -81,7 +81,7 @@ turkish_data_deidentified <- turkish_data %>%
 
 # Saving Data
 
-```{r saving cleaned deidentified data}
+```{r saving cleaned deidentified turkish data}
 
 # Define the folder and file path
 
@@ -92,5 +92,11 @@ full_path <- file.path(folder_path, file_name)
 # Save the dataframe to the .csv file
 
 write_csv(turkish_data_deidentified, full_path)
+
+# Save the dataframe to the .rds file
+
+saveRDS(turkish_data_deidentified, full_path)
+
+```
 
 ```
