@@ -564,10 +564,10 @@ Cleaning dem_receive_support
 ```{r mutating support var for future joins, include=FALSE}
 
 data_support_cleaned <- data_questionnaires_yn_cleaned %>%
-  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, şu anda destek alıyorum", "yes, I am getting support now")) %>%
-  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, geçmişte destek aldım", "yes, I have gotten support in the past")) %>%
-  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır, ama geçmişte destek almak istedim", "no, but I have wanted to get support before")) %>%
-  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır ve geçmişte destek almak istemedim", "no, and I have not wanted to get support before"))
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, şu anda destek alıyorum.", "yes, I am getting support now")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Evet, geçmişte destek aldım.", "yes, I have gotten support in the past")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır, ama geçmişte destek almak istedim.", "no, but I have wanted to get support before")) %>%
+  mutate(dem_receive_support = str_replace(dem_receive_support, "Hayır ve geçmişte destek almak istemedim.", "no, and I have not wanted to get support before"))
 
 ```
 
