@@ -63,14 +63,6 @@ library(here) # places working directory at root of project folder
 
 turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # directing to data from project folder root
 
-# test <- readRDS(here("data", "clean", "yes_data_turkish_clean_deidentified.Rds")) # directing to data from project folder root
-# 
-# glimpse(test)
-# 
-# test_2 <- read.csv(here("data", "clean", "yes_data_turkish_clean_deidentified.csv"))
-# 
-# glimpse(test_2)
-
 ```
 
 # Selecting Data
