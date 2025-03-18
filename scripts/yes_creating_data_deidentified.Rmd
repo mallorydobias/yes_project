@@ -1,0 +1,842 @@
+---
+title: "yes_data_binding"
+author: "Mallory Dobias"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  word_document:
+    toc: yes
+    toc_depth: '5'
+geometry: margin=0.50in
+---
+
+```{r setup, include=FALSE}
+
+## Setting up R
+
+knitr::opts_chunk$set(echo = TRUE)
+
+if(!require(pointblank)){install.packages('pointblank')}
+library(pointblank) # installing and calling pointblank package early in Markdown
+
+validate_rmd(summary = TRUE, log_to_file = FALSE) # allowing validation from pointblank package within Markdown
+
+```
+
+```{r, include=FALSE}
+
+if(!require(here)){install.packages('here')}
+library(here)
+
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+if(!require(stringr)){install.packages('stringr')}
+library(stringr)
+
+if(!require(tidyr)){install.packages('tidyr')}
+library(tidyr)
+
+if(!require(readr)){install.packages('readr')}
+library(readr)
+
+if(!require(purrr)){install.packages('purrr')}
+library(purrr)
+
+```
+
+# Data Reading
+
+```{r reading in data}
+
+## Reading in all cleaned english survey data
+
+library(here) # places working directory at root of project folder
+
+d01_data <- readRDS(here("data", "clean", "yes_data_d01_english_clean.Rds")) # directing to data from project folder root
+
+d02_data <- readRDS(here("data", "clean", "yes_data_d02_english_clean.Rds"))
+
+d03_data <- readRDS(here("data", "clean", "yes_data_d03_english_clean.Rds")) 
+
+d05_data <- readRDS(here("data", "clean", "yes_data_d05_english_clean.Rds")) 
+
+d07_data <- readRDS(here("data", "clean", "yes_data_d07_turkish_clean.Rds")) 
+
+d09_data <- readRDS(here("data", "clean", "yes_data_d09_english_clean.Rds")) 
+
+d16_data <- readRDS(here("data", "clean", "yes_data_d16_english_clean.Rds")) 
+
+```
+
+# Binding Data
+
+```{r binding data}
+
+## Binding data from all english sources
+
+english_data_bound <- bind_rows(d02_data, d03_data, d05_data, d09_data, d16_data, d01_data) %>%
+  mutate(data_id = factor(data_id, levels = c("d01", "d02", "d03", "d05", "d09", "d16"))) %>%
+  arrange(data_id)
+
+## Binding data from all sources (across languages)
+
+all_data_bound <- bind_rows(d02_data, d03_data, d05_data, d07_data, d09_data, d16_data, d01_data) %>%
+  mutate(data_id = factor(data_id, levels = c("d01", "d02", "d03", "d05", "d07", "d09", "d16"))) %>%
+  arrange(data_id)
+
+```
+
+Checking final English data has expected number of rows
+
+```{r checking n rows english data, validate = TRUE}
+
+## Checking if the row count of data equals the sum of row counts of component dfs
+
+validation_result <- 
+  english_data_bound %>%
+  expect_row_count_match(nrow(d01_data) + nrow(d02_data) + nrow(d03_data) + nrow(d05_data) + nrow(d09_data) + nrow(d16_data))
+
+## Printing the validation result - runs if passes
+
+validation_result
+
+```
+
+```{r checking n rows all data, validate = TRUE}
+
+## Checking if the row count of data equals the sum of row counts of component dfs
+
+validation_result_all <- 
+  all_data_bound %>%
+  expect_row_count_match(nrow(d01_data) + nrow(d02_data) + nrow(d03_data) + 
+                         nrow(d07_data) + nrow(d05_data) + nrow(d09_data) + nrow(d16_data))
+
+## Printing the validation result - runs if passes
+
+validation_result_all
+
+```
+
+Checking final data has expected columns
+
+```{r pulling colnames for all dfs}
+
+## Creating dfs of col names from data and each component df
+
+data_cols_english <- data.frame(column_name = names(english_data_bound))
+
+data_cols_all <- data.frame(column_name = names(all_data_bound))
+
+d01_cols <- data.frame(column_name = names(d01_data))
+
+d02_cols <- data.frame(column_name = names(d02_data))
+
+d03_cols <- data.frame(column_name = names(d03_data))
+
+d05_cols <- data.frame(column_name = names(d05_data))
+
+d07_cols <- data.frame(column_name = names(d07_data))
+
+d09_cols <- data.frame(column_name = names(d09_data))
+
+d16_cols <- data.frame(column_name = names(d16_data))
+
+```
+
+```{r confirming no new cols in english data, message=FALSE}
+
+## Confirming no columns exist in final df that are not in a component df
+
+n_new_cols <- data_cols_english %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols) %>%
+  nrow()
+
+pass_new_cols <- n_new_cols == 0
+
+pass_new_cols # true if passes and no new cols
+
+```
+
+```{r confirming no new cols in all data, message=FALSE}
+
+## Confirming no columns exist in final df that are not in a component df
+
+n_new_cols <- data_cols_all %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols) %>%
+  nrow()
+
+pass_new_cols <- n_new_cols == 0
+
+pass_new_cols # true if passes and no new cols
+
+```
+
+```{r calculating expected v actual n cols for d02}
+
+## Pulling expected vs actual cols from d02 df
+
+n_expected_cols_d02 <- d02_cols # colnames from original df
+
+n_actual_cols_d02_english <- data_cols_english %>%
+  inner_join(d02_cols) # colnames in bound df
+
+n_actual_cols_d02_all <- data_cols_all %>%
+  inner_join(d02_cols) # colnames in bound df
+
+```
+
+Checking final data has expected number of columns in English data
+
+```{r checking n columns d02 english, validate = TRUE}
+
+## Checking if all colnames from d02 are also in final data
+
+## number of colnames should match between original df and those pulled from 
+## the final dataset
+
+validation_result <- 
+  n_expected_cols_d02 %>%
+  expect_row_count_match(nrow(n_actual_cols_d02_english))
+
+## Printing the validation result - runs if passes
+
+validation_result
+
+```
+
+Checking final data has expected number of columns in all data
+
+```{r checking n columns d02 all, validate = TRUE}
+
+## Checking if all colnames from d02 are also in final data
+
+## number of colnames should match between original df and those pulled from 
+## the final dataset
+
+validation_result_all <- 
+  n_expected_cols_d02 %>%
+  expect_row_count_match(nrow(n_actual_cols_d02_all))
+
+## Printing the validation result - runs if passes
+
+validation_result_all
+
+```
+
+```{r custom function to check colnames}
+
+# Custom function to calculate expected and actual column counts, and validate them
+validate_column_counts <- function(original_cols, bound_cols) {
+  
+  # Step 1: Calculate the expected column count (colnames from the original dataframe)
+  n_expected_cols <- original_cols
+  
+  # Step 2: Calculate the actual column count (matching colnames in the bound dataframe)
+  n_actual_cols <- bound_cols %>%
+    inner_join(original_cols, by = "column_name")
+  
+  # Step 3: Validation check if the actual column count matches the expected column count
+  # validation_result <- expect_equal(n_actual_cols, n_expected_cols, 
+  #                                   label = "Column count match validation")
+  
+  validation_result <- 
+    n_expected_cols %>%
+    expect_row_count_match(nrow(n_actual_cols))
+  
+  # Return the validation result and the column counts
+  return(list(
+    n_expected_cols = n_expected_cols,
+    n_actual_cols = n_actual_cols,
+    validation_result = validation_result
+  ))
+}
+
+```
+
+```{r d01 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d01 <- validate_column_counts(d01_cols, data_cols_english)
+
+validation_result_d01_all <- validate_column_counts(d01_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d01$validation_result) # runs if passes
+
+print(validation_result_d01_all$validation_result) # runs if passes
+
+```
+
+```{r d02 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d02 <- validate_column_counts(d02_cols, data_cols_english)
+
+validation_result_d02_all <- validate_column_counts(d02_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d02$validation_result) # runs if passes
+
+print(validation_result_d02_all$validation_result) # runs if passes
+
+```
+
+```{r d03 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d03 <- validate_column_counts(d03_cols, data_cols_english)
+
+validation_result_d03_all <- validate_column_counts(d03_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d03$validation_result) # runs if passes
+
+print(validation_result_d03_all$validation_result) # runs if passes
+
+```
+
+```{r d05 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d05 <- validate_column_counts(d05_cols, data_cols_english)
+
+validation_result_d05_all <- validate_column_counts(d05_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d05$validation_result) # runs if passes
+
+print(validation_result_d05_all$validation_result) # runs if passes
+
+```
+
+```{r d07 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d07_all <- validate_column_counts(d07_cols, data_cols_all) # d07 is not in the english df (turkish)
+
+## Printing results
+
+print(validation_result_d07_all$validation_result) # runs if passes
+
+```
+
+```{r d09 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d09 <- validate_column_counts(d09_cols, data_cols_english)
+
+validation_result_d09_all <- validate_column_counts(d09_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d09$validation_result) # runs if passes
+
+print(validation_result_d09_all$validation_result) # runs if passes
+
+```
+
+```{r d16 validation, validate=TRUE}
+
+## Running the validation function
+
+validation_result_d16 <- validate_column_counts(d16_cols, data_cols_english)
+
+validation_result_d16_all <- validate_column_counts(d16_cols, data_cols_all)
+
+## Printing results
+
+print(validation_result_d16$validation_result) # runs if passes
+
+print(validation_result_d16_all$validation_result) # runs if passes
+
+```
+
+Visual inspection of unique cols to each df
+
+```{r pulling unique cols, message=FALSE}
+
+## Pulling cols unique to each df 
+
+## visual inspection here will help find vars that need renaming
+## to keep consistency between dfs var naming
+
+unique_cols_d01 <- d01_cols %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d02 <- d02_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d03 <- d03_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d05 <- d05_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d07 <- d07_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d09_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d09 <- d09_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d16_cols)
+
+unique_cols_d16 <- d16_cols %>%
+  anti_join(d01_cols) %>%
+  anti_join(d02_cols) %>%
+  anti_join(d03_cols) %>%
+  anti_join(d05_cols) %>%
+  anti_join(d07_cols) %>%
+  anti_join(d09_cols)
+
+```
+
+```{r printing unique cols}
+
+## Printing colnames unique to each df
+
+unique_cols_d01 %>%
+  rename(d01_column_name = column_name)
+
+unique_cols_d02 %>%
+  rename(d02_column_name = column_name)
+
+unique_cols_d03 %>%
+  rename(d03_column_name = column_name)
+
+unique_cols_d05 %>%
+  rename(d05_column_name = column_name)
+
+unique_cols_d07 %>%
+  rename(d07_column_name = column_name)
+
+unique_cols_d09 %>%
+  rename(d09_column_name = column_name)
+
+unique_cols_d16 %>%
+  rename(d16_column_name = column_name)
+
+```
+
+Fixing ssi var factor options in english data
+
+```{r fixing factor options in ssi vars for english data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+english_data_mutated <- english_data_bound %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed)) %>%
+  mutate(ssi_started = as.factor(ssi_started),
+         ssi_completed = as.factor(ssi_completed))
+
+```
+
+Reorganizing column order in english data
+
+```{r reorganizing cols english data}
+
+english_data_reorged <- english_data_mutated %>%
+  select(response_id, language, data_id, contains("date"),
+         perc_progress, finished, ssi_choice, ssi_source,
+         starts_with("volunteer_") & !contains("tim"),
+         contains("reliant"), contains("san_antonio"), contains("middle_east_"),
+         contains("hear_proj"), dem_why_interest, dem_receive_support, dem_why_no_support, dem_location, dem_adult, dem_age, dem_sex,
+         starts_with("dem_gender_") & !contains("tim"),
+         starts_with("dem_sex_orientation") & !contains("tim"), 
+         starts_with("dem_race") & !contains("tim"),
+         starts_with("dem_ethnicity") & !contains("tim"),
+         starts_with("ssi_prev"), starts_with("ssi_times"), 
+         starts_with("mfq_") & !contains("tim"), 
+         starts_with("pre_bhs_") & !contains("tim"), 
+         starts_with("pre_shs_") & !contains("tim"), 
+         starts_with("pre_self_hate_") & !contains("tim"),
+         starts_with("pre_perceived_control") & !contains("tim"),
+         ssi_started,
+         starts_with("abc") & !contains("tim"),
+         starts_with("proj_care") & !contains("tim"),
+         starts_with("proj_pers") & !contains("tim"),
+         starts_with("proj_rise") & !contains("tim"),
+         ssi_completed,
+         starts_with("advice") & !contains("tim"),
+         starts_with("pfs_") & !contains("tim"),
+         starts_with("perc_change_") & !contains("tim"),
+         starts_with("post_bhs_") & !contains("tim"),
+         starts_with("post_shs_") & !contains("tim"),
+         starts_with("post_self_hate_") & !contains("tim"),
+         starts_with("post_perceived_control") & !contains("tim"),
+         contains("tim") & starts_with("select_language"),
+         contains("tim") & starts_with("intro"),
+         contains("tim") & starts_with("into"),
+         contains("tim") & starts_with("volunteer"),
+         contains("tim") & starts_with("dem"),
+         contains("tim") & starts_with("ssi"),
+         contains("tim") & starts_with("mfq"),
+         contains("tim") & starts_with("pre_"),
+         contains("tim") & starts_with("abc"),
+         contains("tim") & starts_with("proj_care"),
+         contains("tim") & starts_with("proj_rise"),
+         contains("tim") & starts_with("proj_pers"),
+         contains("tim") & starts_with("advice_"),
+         contains("tim") & starts_with("pfs_"),
+         contains("tim") & starts_with("perc_change_"),
+         contains("tim") & starts_with("post_"))
+
+```
+
+```{r checking col order setup english data, include=FALSE}
+
+## creating data frames of names pre and post reorg for comparison
+
+pre_reorg_names <- english_data_mutated %>%
+  names() # names pre
+
+post_reorg_names <- english_data_reorged %>%
+  names() # names post
+
+# Create tibbles for easier manipulation
+
+pre_reorg_df <- tibble(names = pre_reorg_names)
+post_reorg_df <- tibble(names = post_reorg_names)
+
+# Get the unique names (names not in both data frames)
+
+test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
+  group_by(names) %>%
+  filter(n() == 1)
+         
+```
+
+Checking that reorganizing happened correctly (i.e., no columns dropped) in english data
+
+```{r checking reorg did not lose cols 2 english data}
+
+## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
+
+n_cols_dropped <- test_reorg %>%
+  nrow() == 0
+
+n_cols_dropped # true if no columns were dropped by reorg
+
+```
+
+Fixing ssi var factor options in turkish data
+
+```{r fixing factor options in ssi vars for turkish data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+turkish_data_mutated <- d07_data %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed)) %>%
+  mutate(ssi_started = as.factor(ssi_started),
+         ssi_completed = as.factor(ssi_completed))
+
+```
+
+Reorganizing column order in turkish data (no binding necessary)
+
+```{r reorganizing cols turkish data}
+
+turkish_data_reorged <- turkish_data_mutated %>%
+  select(response_id, language, data_id, contains("date"),
+         perc_progress, finished, q_recaptcha_score, ssi_choice,
+         starts_with("volunteer_") & !contains("tim"),
+         contains("reliant"), contains("san_antonio"), contains("middle_east_"),
+         contains("hear_proj"), dem_why_interest, dem_receive_support, dem_why_no_support, dem_age, dem_sex,
+         starts_with("dem_race") & !contains("tim"),
+         starts_with("dem_ethnicity") & !contains("tim"),
+         starts_with("ssi_prev"), starts_with("ssi_times"), 
+         starts_with("mfq_") & !contains("tim"), 
+         starts_with("pre_bhs_") & !contains("tim"), 
+         starts_with("pre_shs_") & !contains("tim"), 
+         starts_with("pre_self_hate_") & !contains("tim"),
+         starts_with("pre_perceived_control") & !contains("tim"),
+         ssi_started,
+         starts_with("abc") & !contains("tim"),
+         starts_with("proj_care") & !contains("tim"),
+         starts_with("proj_pers") & !contains("tim"),
+         starts_with("proj_rise") & !contains("tim"),
+         ssi_completed,
+         starts_with("advice") & !contains("tim"),
+         starts_with("pfs_") & !contains("tim"),
+         starts_with("perc_change_") & !contains("tim"),
+         starts_with("post_bhs_") & !contains("tim"),
+         starts_with("post_shs_") & !contains("tim"),
+         starts_with("post_self_hate_") & !contains("tim"),
+         starts_with("post_perceived_control") & !contains("tim"),
+         contains("tim") & starts_with("select_language"),
+         contains("tim") & starts_with("intro"),
+         contains("tim") & starts_with("into"),
+         contains("tim") & starts_with("volunteer"),
+         contains("tim") & starts_with("dem"),
+         contains("tim") & starts_with("ssi"),
+         contains("tim") & starts_with("mfq"),
+         contains("tim") & starts_with("pre_"),
+         contains("tim") & starts_with("abc"),
+         contains("tim") & starts_with("proj_care"),
+         contains("tim") & starts_with("proj_rise"),
+         contains("tim") & starts_with("proj_pers"),
+         contains("tim") & starts_with("advice_"),
+         contains("tim") & starts_with("pfs_"),
+         contains("tim") & starts_with("perc_change_"),
+         contains("tim") & starts_with("post_"))
+
+```
+
+```{r checking col order setup turkish data, include=FALSE}
+
+## creating data frames of names pre and post reorg for comparison
+
+pre_reorg_names <- turkish_data_mutated %>%
+  names() # names pre
+
+post_reorg_names <- turkish_data_reorged %>%
+  names() # names post
+
+# Create tibbles for easier manipulation
+
+pre_reorg_df <- tibble(names = pre_reorg_names)
+post_reorg_df <- tibble(names = post_reorg_names)
+
+# Get the unique names (names not in both data frames)
+
+test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
+  group_by(names) %>%
+  filter(n() == 1)
+         
+```
+
+Checking that reorganizing happened correctly (i.e., no columns dropped) in turkish data
+
+```{r checking reorg did not lose cols 2 turkish data}
+
+## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
+
+n_cols_dropped <- test_reorg %>%
+  nrow() == 0
+
+n_cols_dropped # true if no columns were dropped by reorg
+
+```
+
+Fixing ssi var factor options in all data
+
+```{r fixing factor options in ssi vars for all data}
+
+## Fixing variations on ssi names for consistent factor levels
+
+all_data_mutated <- all_data_bound %>%
+  mutate(ssi_started = case_when(str_detect(ssi_started, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_started, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_started)) %>%
+  mutate(ssi_completed = case_when(str_detect(ssi_completed, "A.B.C") ~ "ABC Project",
+                                 str_detect(ssi_completed, "C.A.R.E") ~ "Project CARE",
+                                 TRUE ~ ssi_completed)) %>%
+  mutate(ssi_started = as.factor(ssi_started),
+         ssi_completed = as.factor(ssi_completed))
+
+```
+
+Reorganizing cols in all data df
+
+```{r reorganizing cols all data}
+
+all_data_reorged <- all_data_mutated %>%
+  select(response_id, language, data_id, contains("date"),
+         perc_progress, finished, q_recaptcha_score, ssi_choice, ssi_source,
+         starts_with("volunteer_") & !contains("tim"),
+         contains("reliant"), contains("san_antonio"), contains("middle_east_"),
+         contains("hear_proj"), dem_why_interest, dem_receive_support, dem_why_no_support, dem_location, dem_adult, dem_age, dem_sex,
+         starts_with("dem_gender_") & !contains("tim"),
+         starts_with("dem_sex_orientation") & !contains("tim"), 
+         starts_with("dem_race") & !contains("tim"),
+         starts_with("dem_ethnicity") & !contains("tim"),
+         starts_with("ssi_prev"), starts_with("ssi_times"), 
+         starts_with("mfq_") & !contains("tim"), 
+         starts_with("pre_bhs_") & !contains("tim"), 
+         starts_with("pre_shs_") & !contains("tim"), 
+         starts_with("pre_self_hate_") & !contains("tim"),
+         starts_with("pre_perceived_control") & !contains("tim"),
+         ssi_started,
+         starts_with("abc") & !contains("tim"),
+         starts_with("proj_care") & !contains("tim"),
+         starts_with("proj_pers") & !contains("tim"),
+         starts_with("proj_rise") & !contains("tim"),
+         ssi_completed,
+         starts_with("advice") & !contains("tim"),
+         starts_with("pfs_") & !contains("tim"),
+         starts_with("perc_change_") & !contains("tim"),
+         starts_with("post_bhs_") & !contains("tim"),
+         starts_with("post_shs_") & !contains("tim"),
+         starts_with("post_self_hate_") & !contains("tim"),
+         starts_with("post_perceived_control") & !contains("tim"),
+         contains("tim") & starts_with("select_language"),
+         contains("tim") & starts_with("intro"),
+         contains("tim") & starts_with("into"),
+         contains("tim") & starts_with("volunteer"),
+         contains("tim") & starts_with("dem"),
+         contains("tim") & starts_with("ssi"),
+         contains("tim") & starts_with("mfq"),
+         contains("tim") & starts_with("pre_"),
+         contains("tim") & starts_with("abc"),
+         contains("tim") & starts_with("proj_care"),
+         contains("tim") & starts_with("proj_rise"),
+         contains("tim") & starts_with("proj_pers"),
+         contains("tim") & starts_with("advice_"),
+         contains("tim") & starts_with("pfs_"),
+         contains("tim") & starts_with("perc_change_"),
+         contains("tim") & starts_with("post_"))
+
+```
+
+```{r checking col order setup all data, include=FALSE}
+
+## creating data frames of names pre and post reorg for comparison
+
+pre_reorg_names <- all_data_bound %>%
+  names() # names pre
+
+post_reorg_names <- all_data_reorged %>%
+  names() # names post
+
+# Create tibbles for easier manipulation
+
+pre_reorg_df <- tibble(names = pre_reorg_names)
+post_reorg_df <- tibble(names = post_reorg_names)
+
+# Get the unique names (names not in both data frames)
+
+test_reorg <- bind_rows(pre_reorg_df, post_reorg_df) %>%
+  group_by(names) %>%
+  filter(n() == 1)
+         
+```
+
+Checking that reorganizing happened correctly (i.e., no columns dropped) in all data
+
+```{r checking reorg did not lose cols 2 all data}
+
+## Checking if df with any columns unique to pre-reorg data is empty (i.e., no columns dropped)
+
+n_cols_dropped <- test_reorg %>%
+  nrow() == 0
+
+n_cols_dropped # true if no columns were dropped by reorg
+
+```
+
+# Saving Data
+
+```{r saving cleaned bound english data}
+
+english_data <- english_data_reorged
+
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_english_clean.Rds"
+full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .csv file
+
+saveRDS(english_data, full_path)
+
+```
+
+```{r saving cleaned turkish data}
+
+turkish_data <- turkish_data_reorged
+
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_turkish_clean.Rds"
+full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .csv file
+
+saveRDS(turkish_data, full_path)
+
+```
+
+```{r saving cleaned bound all data}
+
+all_data <- all_data_reorged
+
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_all_languages_clean.Rds"
+full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .csv file
+
+saveRDS(all_data, full_path)
+
+```
