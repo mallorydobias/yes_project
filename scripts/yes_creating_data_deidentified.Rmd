@@ -93,6 +93,12 @@ full_path <- file.path(folder_path, file_name)
 
 write_csv(turkish_data_deidentified, full_path)
 
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_turkish_clean_deidentified.Rds"
+full_path <- file.path(folder_path, file_name)
+
 # Save the dataframe to the .rds file
 
 saveRDS(turkish_data_deidentified, full_path)
