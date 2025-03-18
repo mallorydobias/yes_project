@@ -61,13 +61,15 @@ library(purrr)
 
 library(here) # places working directory at root of project folder
 
-turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # directing to data from project folder root
+turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds"))
+
+all_data <- readRDS(here("data", "clean", "yes_data_all_languages_clean.Rds"))
 
 ```
 
 # Selecting Data
 
-```{r removing qual and text data}
+```{r removing qual and text data for turkish deidentified}
 
 ## Removing text and qual vars
 
@@ -83,9 +85,18 @@ turkish_data_deidentified <- turkish_data %>%
 
 ```
 
+```{r selecting to mfq scores for shiny}
+
+## Selecting to mfq for shiny
+
+all_mfq_shiny <- all_data %>%
+  select(contains("mfq"), -contains("_tim_"))
+
+```
+
 # Checking Characters
 
-```{r}
+```{r checking non ascii characters in turkish data}
 
 # Check column names for non-ASCII characters
 
@@ -126,3 +137,18 @@ full_path <- file.path(folder_path, file_name)
 saveRDS(turkish_data_deidentified, full_path)
 
 ```
+
+```{r saving cleaned mfq data for shiny app}
+
+# Define the folder and file path
+
+folder_path <- here("data", "clean")  # Path to my desired folder
+file_name <- "yes_data_mfq_shiny.Rds"
+full_path <- file.path(folder_path, file_name)
+
+# Save the dataframe to the .rds file
+
+saveRDS(all_mfq_shiny, full_path)
+
+```
+
