@@ -76,9 +76,10 @@ turkish_data_deidentified <- turkish_data %>%
          -pfs_like, -pfs_change, -pfs_more_feedback, -advice,
          -(starts_with("abc_") & !contains("commit")), 
          -(starts_with("proj_care_") & !contains("commit")),
-         -(starts_with("proj_pers_") & !contains("commit")))
+         -(starts_with("proj_pers_") & !contains("commit")),
+         -contains("_tim_"))
 
-glimpse(turkish_data_deidentified)
+# glimpse(turkish_data_deidentified)
 
 ```
 
