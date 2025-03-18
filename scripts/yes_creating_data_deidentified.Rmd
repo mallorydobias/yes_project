@@ -95,14 +95,17 @@ turkish_data_deidentified <- turkish_data %>%
 
 ```{r}
 
-# Check the column names
+# Check column names for non-ASCII characters
 
-test<- colnames(turkish_data_deidentified) %>% 
-  str_view_all("\\P{ASCII}")  # Finds any non-ASCII characters
+colnames(turkish_data_deidentified) %>% 
+  str_detect("\\P{ASCII}") %>%
+  which(. == TRUE) # no col names with non-ascii chars
+
+# Check values for non-ASCII characters
 
 turkish_data_deidentified %>%
-  slice(1) %>%
-  mutate(across(everything(), ~str_view_all(., "\\P{ASCII}")))
+  mutate(across(everything(), ~str_detect(., "\\P{ASCII}"))) %>%  # Detect non-ASCII characters
+  filter(rowSums(.) > 0) # no values with non-ascii chars
 
 ```
 
