@@ -67,7 +67,7 @@ turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # d
 
 # Selecting Data
 
-```{r binding data}
+```{r removing qual and text data}
 
 ## Removing text and qual vars
 
@@ -81,18 +81,16 @@ turkish_data_deidentified <- turkish_data %>%
 
 # Saving Data
 
-```{r saving cleaned bound all data}
-
-all_data <- all_data_reorged
+```{r saving cleaned deidentified data}
 
 # Define the folder and file path
 
 folder_path <- here("data", "clean")  # Path to my desired folder
-file_name <- "yes_data_all_languages_clean.Rds"
+file_name <- "yes_data_turkish_clean_deidentified.csv"
 full_path <- file.path(folder_path, file_name)
 
 # Save the dataframe to the .csv file
 
-saveRDS(all_data, full_path)
+write_csv(turkish_data_deidentified, full_path)
 
 ```
