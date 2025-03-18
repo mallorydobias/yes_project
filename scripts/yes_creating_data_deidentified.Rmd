@@ -98,5 +98,3 @@ write_csv(turkish_data_deidentified, full_path)
 saveRDS(turkish_data_deidentified, full_path)
 
 ```
-
-```
