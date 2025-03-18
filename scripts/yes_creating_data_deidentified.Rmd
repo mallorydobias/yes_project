@@ -73,9 +73,12 @@ turkish_data <- readRDS(here("data", "clean", "yes_data_turkish_clean.Rds")) # d
 
 turkish_data_deidentified <- turkish_data %>%
   select(-contains("text"), -dem_hear_proj, -dem_why_interest, -dem_why_no_support, 
-         -pfs_like, -pfs_change, -pfs_more_feedback, -advice)
+         -pfs_like, -pfs_change, -pfs_more_feedback, -advice,
+         -(starts_with("abc_") & !contains("commit")), 
+         -(starts_with("proj_care_") & !contains("commit")),
+         -(starts_with("proj_pers_") & !contains("commit")))
 
-# glimpse(turkish_data_deidentified)
+glimpse(turkish_data_deidentified)
 
 ```
 
